@@ -1,0 +1,581 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 55;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		D94A4222283DC94B00A504BD /* MedoHelperApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = D94A4221283DC94B00A504BD /* MedoHelperApp.swift */; };
+		D94A4224283DC94B00A504BD /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D94A4223283DC94B00A504BD /* ContentView.swift */; };
+		D94A4226283DC94D00A504BD /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D94A4225283DC94D00A504BD /* Assets.xcassets */; };
+		D94A4229283DC94D00A504BD /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D94A4228283DC94D00A504BD /* Preview Assets.xcassets */; };
+		D94A4234283DC94D00A504BD /* MedoHelperTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D94A4233283DC94D00A504BD /* MedoHelperTests.swift */; };
+		D94A423E283DC94D00A504BD /* MedoHelperUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D94A423D283DC94D00A504BD /* MedoHelperUITests.swift */; };
+		D94A4240283DC94D00A504BD /* MedoHelperUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D94A423F283DC94D00A504BD /* MedoHelperUITestsLaunchTests.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		D94A4230283DC94D00A504BD /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = D94A4216283DC94B00A504BD /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = D94A421D283DC94B00A504BD;
+			remoteInfo = MedoHelper;
+		};
+		D94A423A283DC94D00A504BD /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = D94A4216283DC94B00A504BD /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = D94A421D283DC94B00A504BD;
+			remoteInfo = MedoHelper;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		D94A421E283DC94B00A504BD /* MedoHelper.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MedoHelper.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		D94A4221283DC94B00A504BD /* MedoHelperApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MedoHelperApp.swift; sourceTree = "<group>"; };
+		D94A4223283DC94B00A504BD /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		D94A4225283DC94D00A504BD /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		D94A4228283DC94D00A504BD /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
+		D94A422A283DC94D00A504BD /* MedoHelper.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = MedoHelper.entitlements; sourceTree = "<group>"; };
+		D94A422F283DC94D00A504BD /* MedoHelperTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MedoHelperTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		D94A4233283DC94D00A504BD /* MedoHelperTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MedoHelperTests.swift; sourceTree = "<group>"; };
+		D94A4239283DC94D00A504BD /* MedoHelperUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MedoHelperUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		D94A423D283DC94D00A504BD /* MedoHelperUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MedoHelperUITests.swift; sourceTree = "<group>"; };
+		D94A423F283DC94D00A504BD /* MedoHelperUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MedoHelperUITestsLaunchTests.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		D94A421B283DC94B00A504BD /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D94A422C283DC94D00A504BD /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D94A4236283DC94D00A504BD /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		D94A4215283DC94B00A504BD = {
+			isa = PBXGroup;
+			children = (
+				D94A4220283DC94B00A504BD /* MedoHelper */,
+				D94A4232283DC94D00A504BD /* MedoHelperTests */,
+				D94A423C283DC94D00A504BD /* MedoHelperUITests */,
+				D94A421F283DC94B00A504BD /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		D94A421F283DC94B00A504BD /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				D94A421E283DC94B00A504BD /* MedoHelper.app */,
+				D94A422F283DC94D00A504BD /* MedoHelperTests.xctest */,
+				D94A4239283DC94D00A504BD /* MedoHelperUITests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		D94A4220283DC94B00A504BD /* MedoHelper */ = {
+			isa = PBXGroup;
+			children = (
+				D94A4221283DC94B00A504BD /* MedoHelperApp.swift */,
+				D94A4223283DC94B00A504BD /* ContentView.swift */,
+				D94A4225283DC94D00A504BD /* Assets.xcassets */,
+				D94A422A283DC94D00A504BD /* MedoHelper.entitlements */,
+				D94A4227283DC94D00A504BD /* Preview Content */,
+			);
+			path = MedoHelper;
+			sourceTree = "<group>";
+		};
+		D94A4227283DC94D00A504BD /* Preview Content */ = {
+			isa = PBXGroup;
+			children = (
+				D94A4228283DC94D00A504BD /* Preview Assets.xcassets */,
+			);
+			path = "Preview Content";
+			sourceTree = "<group>";
+		};
+		D94A4232283DC94D00A504BD /* MedoHelperTests */ = {
+			isa = PBXGroup;
+			children = (
+				D94A4233283DC94D00A504BD /* MedoHelperTests.swift */,
+			);
+			path = MedoHelperTests;
+			sourceTree = "<group>";
+		};
+		D94A423C283DC94D00A504BD /* MedoHelperUITests */ = {
+			isa = PBXGroup;
+			children = (
+				D94A423D283DC94D00A504BD /* MedoHelperUITests.swift */,
+				D94A423F283DC94D00A504BD /* MedoHelperUITestsLaunchTests.swift */,
+			);
+			path = MedoHelperUITests;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		D94A421D283DC94B00A504BD /* MedoHelper */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = D94A4243283DC94D00A504BD /* Build configuration list for PBXNativeTarget "MedoHelper" */;
+			buildPhases = (
+				D94A421A283DC94B00A504BD /* Sources */,
+				D94A421B283DC94B00A504BD /* Frameworks */,
+				D94A421C283DC94B00A504BD /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = MedoHelper;
+			productName = MedoHelper;
+			productReference = D94A421E283DC94B00A504BD /* MedoHelper.app */;
+			productType = "com.apple.product-type.application";
+		};
+		D94A422E283DC94D00A504BD /* MedoHelperTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = D94A4246283DC94D00A504BD /* Build configuration list for PBXNativeTarget "MedoHelperTests" */;
+			buildPhases = (
+				D94A422B283DC94D00A504BD /* Sources */,
+				D94A422C283DC94D00A504BD /* Frameworks */,
+				D94A422D283DC94D00A504BD /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				D94A4231283DC94D00A504BD /* PBXTargetDependency */,
+			);
+			name = MedoHelperTests;
+			productName = MedoHelperTests;
+			productReference = D94A422F283DC94D00A504BD /* MedoHelperTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		D94A4238283DC94D00A504BD /* MedoHelperUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = D94A4249283DC94D00A504BD /* Build configuration list for PBXNativeTarget "MedoHelperUITests" */;
+			buildPhases = (
+				D94A4235283DC94D00A504BD /* Sources */,
+				D94A4236283DC94D00A504BD /* Frameworks */,
+				D94A4237283DC94D00A504BD /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				D94A423B283DC94D00A504BD /* PBXTargetDependency */,
+			);
+			name = MedoHelperUITests;
+			productName = MedoHelperUITests;
+			productReference = D94A4239283DC94D00A504BD /* MedoHelperUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		D94A4216283DC94B00A504BD /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1340;
+				LastUpgradeCheck = 1340;
+				TargetAttributes = {
+					D94A421D283DC94B00A504BD = {
+						CreatedOnToolsVersion = 13.4;
+					};
+					D94A422E283DC94D00A504BD = {
+						CreatedOnToolsVersion = 13.4;
+						TestTargetID = D94A421D283DC94B00A504BD;
+					};
+					D94A4238283DC94D00A504BD = {
+						CreatedOnToolsVersion = 13.4;
+						TestTargetID = D94A421D283DC94B00A504BD;
+					};
+				};
+			};
+			buildConfigurationList = D94A4219283DC94B00A504BD /* Build configuration list for PBXProject "MedoHelper" */;
+			compatibilityVersion = "Xcode 13.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = D94A4215283DC94B00A504BD;
+			productRefGroup = D94A421F283DC94B00A504BD /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				D94A421D283DC94B00A504BD /* MedoHelper */,
+				D94A422E283DC94D00A504BD /* MedoHelperTests */,
+				D94A4238283DC94D00A504BD /* MedoHelperUITests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		D94A421C283DC94B00A504BD /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D94A4229283DC94D00A504BD /* Preview Assets.xcassets in Resources */,
+				D94A4226283DC94D00A504BD /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D94A422D283DC94D00A504BD /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D94A4237283DC94D00A504BD /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		D94A421A283DC94B00A504BD /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D94A4224283DC94B00A504BD /* ContentView.swift in Sources */,
+				D94A4222283DC94B00A504BD /* MedoHelperApp.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D94A422B283DC94D00A504BD /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D94A4234283DC94D00A504BD /* MedoHelperTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D94A4235283DC94D00A504BD /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D94A423E283DC94D00A504BD /* MedoHelperUITests.swift in Sources */,
+				D94A4240283DC94D00A504BD /* MedoHelperUITestsLaunchTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		D94A4231283DC94D00A504BD /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = D94A421D283DC94B00A504BD /* MedoHelper */;
+			targetProxy = D94A4230283DC94D00A504BD /* PBXContainerItemProxy */;
+		};
+		D94A423B283DC94D00A504BD /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = D94A421D283DC94B00A504BD /* MedoHelper */;
+			targetProxy = D94A423A283DC94D00A504BD /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		D94A4241283DC94D00A504BD /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 12.3;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		D94A4242283DC94D00A504BD /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 12.3;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = macosx;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+			};
+			name = Release;
+		};
+		D94A4244283DC94D00A504BD /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = MedoHelper/MedoHelper.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "\"MedoHelper/Preview Content\"";
+				DEVELOPMENT_TEAM = L8X3H5XA82;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.rafaelschmitt.MedoHelper;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		D94A4245283DC94D00A504BD /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = MedoHelper/MedoHelper.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "\"MedoHelper/Preview Content\"";
+				DEVELOPMENT_TEAM = L8X3H5XA82;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.rafaelschmitt.MedoHelper;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		D94A4247283DC94D00A504BD /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = L8X3H5XA82;
+				GENERATE_INFOPLIST_FILE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 12.3;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.rafaelschmitt.MedoHelperTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/MedoHelper.app/Contents/MacOS/MedoHelper";
+			};
+			name = Debug;
+		};
+		D94A4248283DC94D00A504BD /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = L8X3H5XA82;
+				GENERATE_INFOPLIST_FILE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 12.3;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.rafaelschmitt.MedoHelperTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/MedoHelper.app/Contents/MacOS/MedoHelper";
+			};
+			name = Release;
+		};
+		D94A424A283DC94D00A504BD /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = L8X3H5XA82;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.rafaelschmitt.MedoHelperUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TEST_TARGET_NAME = MedoHelper;
+			};
+			name = Debug;
+		};
+		D94A424B283DC94D00A504BD /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = L8X3H5XA82;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.rafaelschmitt.MedoHelperUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TEST_TARGET_NAME = MedoHelper;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		D94A4219283DC94B00A504BD /* Build configuration list for PBXProject "MedoHelper" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D94A4241283DC94D00A504BD /* Debug */,
+				D94A4242283DC94D00A504BD /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		D94A4243283DC94D00A504BD /* Build configuration list for PBXNativeTarget "MedoHelper" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D94A4244283DC94D00A504BD /* Debug */,
+				D94A4245283DC94D00A504BD /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		D94A4246283DC94D00A504BD /* Build configuration list for PBXNativeTarget "MedoHelperTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D94A4247283DC94D00A504BD /* Debug */,
+				D94A4248283DC94D00A504BD /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		D94A4249283DC94D00A504BD /* Build configuration list for PBXNativeTarget "MedoHelperUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D94A424A283DC94D00A504BD /* Debug */,
+				D94A424B283DC94D00A504BD /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = D94A4216283DC94B00A504BD /* Project object */;
+}
