@@ -2,47 +2,35 @@ import SwiftUI
 
 struct SoundView: View {
 
-    @State private var soundTitle: String = ""
-    @State private var soundDescription: String = ""
-    @State private var soundFilename: String = ""
-    @State private var soundDateAdded: Date = Date()
-    @State private var soundIsOffensive: Bool = false
-    @State private var soundJSONCopied: String = "..."
+    @Binding var sound: Sound
     
     var body: some View {
-        VStack {
-            Button("Limpar tudo") {
-                soundTitle = ""
-                soundDescription = ""
-                soundFilename = ""
-                soundIsOffensive = false
-            }
-            
-            TextField("Título do Som", text: $soundTitle)
+        VStack {            
+            TextField("Título do Som", text: $sound.title)
                 .padding()
             
-            TextField("Descrição do Som", text: $soundDescription)
+            TextField("Descrição do Som", text: $sound.description)
                 .padding()
             
-            TextField("Nome do arquivo (sem .mp3)", text: $soundFilename)
+            TextField("Nome do arquivo (sem .mp3)", text: $sound.filename)
                 .padding()
             
-            DatePicker("Data de adição", selection: $soundDateAdded, displayedComponents: .date)
+            DatePicker("Data de adição", selection: $sound.dateAdded, displayedComponents: .date)
                 .datePickerStyle(.compact)
                 .labelsHidden()
                 .padding()
             
-            Toggle("É ofensivo", isOn: $soundIsOffensive)
+            Toggle("É ofensivo", isOn: $sound.isOffensive)
                 .padding()
             
             Button("Gerar JSON Som") {
                 let pasteboard = NSPasteboard.general
                 pasteboard.clearContents()
                 pasteboard.setString(generateSoundJSON(), forType: .string)
-                soundJSONCopied = "JSON de X copiado!"
+                sound.successMessage = "JSON de X copiado!"
             }
 
-            Text(soundJSONCopied)
+            Text(sound.successMessage)
                 .padding()
         }
     }
@@ -51,7 +39,7 @@ struct SoundView: View {
         let soundId = UUID().uuidString
         
         var dateString = ""
-        let components = soundDateAdded.get(.day, .month, .year)
+        let components = sound.dateAdded.get(.day, .month, .year)
         if let day = components.day, let month = components.month, let year = components.year {
             let formattedMonth = String(format: "%02d", month)
             let formattedDay = String(format: "%02d", day)
@@ -59,7 +47,7 @@ struct SoundView: View {
             dateString = "\(year)-\(formattedMonth)-\(formattedDay)"
         }
         
-        return ",\n{\n\t\"id\": \"\(soundId)\",\n\t\"title\": \"\(soundTitle)\",\n\t\"authorId\": \"\(authorId)\",\n\t\"description\": \"\(soundDescription)\",\n\t\"filename\": \"\(soundFilename).mp3\",\n\t\"dateAdded\": \"\(dateString)T00:00:00Z\",\n\t\"isOffensive\": \(soundIsOffensive ? "true": "false")\n}"
+        return ",\n{\n\t\"id\": \"\(soundId)\",\n\t\"title\": \"\(sound.title)\",\n\t\"authorId\": \"\(authorId)\",\n\t\"description\": \"\(sound.description)\",\n\t\"filename\": \"\(sound.filename).mp3\",\n\t\"dateAdded\": \"\(dateString)T00:00:00Z\",\n\t\"isOffensive\": \(sound.isOffensive ? "true": "false")\n}"
     }
 
 }
@@ -67,7 +55,7 @@ struct SoundView: View {
 struct SoundView_Previews: PreviewProvider {
 
     static var previews: some View {
-        SoundView()
+        SoundView(sound: .constant(Sound(title: "", description: "", filename: "", dateAdded: Date(), isOffensive: false, successMessage: "...")))
     }
 
 }

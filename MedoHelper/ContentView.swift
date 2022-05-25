@@ -7,11 +7,27 @@ struct ContentView: View {
 
     var body: some View {
         VStack {
-            AuthorView()
+            Text("Gerador de JSONs para o app Medo e Delírio em Brasília (iOS)")
+                .font(.title)
+                .bold()
+                .padding()
+            
+            HStack(spacing: 15) {
+                Spacer()
+                Button("Limpar Tudo") {
+                    author = Author(name: "", successMessage: "...")
+                    sound = Sound(title: "", description: "", filename: "", dateAdded: Date(), isOffensive: false, successMessage: "...")
+                }
+                Button("Limpar Apenas Som") {
+                    sound = Sound(title: "", description: "", filename: "", dateAdded: Date(), isOffensive: false, successMessage: "...")
+                }
+            }
+            
+            AuthorView(author: $author)
 
             Divider()
             
-            SoundView()
+            SoundView(sound: $sound)
         }
         .frame(minWidth: 500, minHeight: 600)
     }
