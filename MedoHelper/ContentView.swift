@@ -1,21 +1,27 @@
-//
-//  ContentView.swift
-//  MedoHelper
-//
-//  Created by Rafael Schmitt on 24/05/22.
-//
-
 import SwiftUI
 
 struct ContentView: View {
+    
+    @State var author = Author(name: "", successMessage: "...")
+    @State var sound = Sound(title: "", description: "", filename: "", dateAdded: Date(), isOffensive: false, successMessage: "...")
+
     var body: some View {
-        Text("Hello, world!")
-            .padding()
+        VStack {
+            AuthorView()
+
+            Divider()
+            
+            SoundView()
+        }
+        .frame(minWidth: 500, minHeight: 600)
     }
+
 }
 
 struct ContentView_Previews: PreviewProvider {
+
     static var previews: some View {
         ContentView()
     }
+
 }
