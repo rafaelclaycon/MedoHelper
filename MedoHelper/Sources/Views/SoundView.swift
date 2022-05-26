@@ -23,11 +23,11 @@ struct SoundView: View {
             Toggle("É ofensivo", isOn: $sound.isOffensive)
                 .padding()
             
-            Button("Gerar JSON Som") {
+            Button("Copiar JSON Som") {
                 let pasteboard = NSPasteboard.general
                 pasteboard.clearContents()
                 pasteboard.setString(generateSoundJSON(), forType: .string)
-                sound.successMessage = "JSON de X copiado!"
+                sound.successMessage = "JSON de '\(sound.title)' copiado!"
             }
 
             Text(sound.successMessage)

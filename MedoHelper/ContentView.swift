@@ -10,6 +10,7 @@ struct ContentView: View {
             Text("Gerador de JSONs para o app Medo e Delírio em Brasília (iOS)")
                 .font(.title)
                 .bold()
+                .multilineTextAlignment(.center)
                 .padding()
             
             HStack(spacing: 15) {
@@ -22,6 +23,7 @@ struct ContentView: View {
                     sound = Sound(title: "", description: "", filename: "", dateAdded: Date(), isOffensive: false, successMessage: "...")
                 }
             }
+            .padding(.trailing, 15)
             
             AuthorView(author: $author)
 
@@ -29,7 +31,7 @@ struct ContentView: View {
             
             SoundView(sound: $sound)
         }
-        .frame(minWidth: 500, minHeight: 600)
+        .frame(minWidth: 500, minHeight: 620)
     }
 
 }
