@@ -12,8 +12,6 @@
 		D94A4226283DC94D00A504BD /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D94A4225283DC94D00A504BD /* Assets.xcassets */; };
 		D94A4229283DC94D00A504BD /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D94A4228283DC94D00A504BD /* Preview Assets.xcassets */; };
 		D94A4234283DC94D00A504BD /* MedoHelperTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D94A4233283DC94D00A504BD /* MedoHelperTests.swift */; };
-		D94A423E283DC94D00A504BD /* MedoHelperUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D94A423D283DC94D00A504BD /* MedoHelperUITests.swift */; };
-		D94A4240283DC94D00A504BD /* MedoHelperUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D94A423F283DC94D00A504BD /* MedoHelperUITestsLaunchTests.swift */; };
 		D94A424F283E704300A504BD /* AuthorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D94A424E283E704300A504BD /* AuthorView.swift */; };
 		D94A4251283E705100A504BD /* SoundView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D94A4250283E705100A504BD /* SoundView.swift */; };
 		D94A4254283E7E5B00A504BD /* Date+GetComponents.swift in Sources */ = {isa = PBXBuildFile; fileRef = D94A4253283E7E5B00A504BD /* Date+GetComponents.swift */; };
@@ -50,8 +48,6 @@
 		D94A422F283DC94D00A504BD /* MedoHelperTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MedoHelperTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		D94A4233283DC94D00A504BD /* MedoHelperTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MedoHelperTests.swift; sourceTree = "<group>"; };
 		D94A4239283DC94D00A504BD /* MedoHelperUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MedoHelperUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		D94A423D283DC94D00A504BD /* MedoHelperUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MedoHelperUITests.swift; sourceTree = "<group>"; };
-		D94A423F283DC94D00A504BD /* MedoHelperUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MedoHelperUITestsLaunchTests.swift; sourceTree = "<group>"; };
 		D94A424E283E704300A504BD /* AuthorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthorView.swift; sourceTree = "<group>"; };
 		D94A4250283E705100A504BD /* SoundView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SoundView.swift; sourceTree = "<group>"; };
 		D94A4253283E7E5B00A504BD /* Date+GetComponents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Date+GetComponents.swift"; sourceTree = "<group>"; };
@@ -91,7 +87,6 @@
 			children = (
 				D94A4220283DC94B00A504BD /* MedoHelper */,
 				D94A4232283DC94D00A504BD /* MedoHelperTests */,
-				D94A423C283DC94D00A504BD /* MedoHelperUITests */,
 				D94A421F283DC94B00A504BD /* Products */,
 			);
 			sourceTree = "<group>";
@@ -110,10 +105,7 @@
 			isa = PBXGroup;
 			children = (
 				D94A424C283E702A00A504BD /* Sources */,
-				D94A4221283DC94B00A504BD /* MedoHelperApp.swift */,
-				D94A4225283DC94D00A504BD /* Assets.xcassets */,
-				D94A422A283DC94D00A504BD /* MedoHelper.entitlements */,
-				D94A4227283DC94D00A504BD /* Preview Content */,
+				D9B8784C286513ED009CA7AD /* Resources */,
 			);
 			path = MedoHelper;
 			sourceTree = "<group>";
@@ -134,22 +126,14 @@
 			path = MedoHelperTests;
 			sourceTree = "<group>";
 		};
-		D94A423C283DC94D00A504BD /* MedoHelperUITests */ = {
-			isa = PBXGroup;
-			children = (
-				D94A423D283DC94D00A504BD /* MedoHelperUITests.swift */,
-				D94A423F283DC94D00A504BD /* MedoHelperUITestsLaunchTests.swift */,
-			);
-			path = MedoHelperUITests;
-			sourceTree = "<group>";
-		};
 		D94A424C283E702A00A504BD /* Sources */ = {
 			isa = PBXGroup;
 			children = (
 				D94A4255283E804100A504BD /* Models */,
-				D9B8784928650F3E009CA7AD /* Helpers */,
 				D94A424D283E703100A504BD /* Views */,
+				D9B8784928650F3E009CA7AD /* Helpers */,
 				D94A4252283E7E3500A504BD /* Extensions */,
+				D9B8784D28651416009CA7AD /* AppSupport */,
 			);
 			path = Sources;
 			sourceTree = "<group>";
@@ -188,6 +172,24 @@
 				D9B8784A28650F4E009CA7AD /* CSVParser.swift */,
 			);
 			path = Helpers;
+			sourceTree = "<group>";
+		};
+		D9B8784C286513ED009CA7AD /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				D94A4225283DC94D00A504BD /* Assets.xcassets */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		D9B8784D28651416009CA7AD /* AppSupport */ = {
+			isa = PBXGroup;
+			children = (
+				D94A4221283DC94B00A504BD /* MedoHelperApp.swift */,
+				D94A422A283DC94D00A504BD /* MedoHelper.entitlements */,
+				D94A4227283DC94D00A504BD /* Preview Content */,
+			);
+			path = AppSupport;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -344,8 +346,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D94A423E283DC94D00A504BD /* MedoHelperUITests.swift in Sources */,
-				D94A4240283DC94D00A504BD /* MedoHelperUITestsLaunchTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -483,11 +483,11 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_ENTITLEMENTS = MedoHelper/MedoHelper.entitlements;
+				CODE_SIGN_ENTITLEMENTS = MedoHelper/Sources/AppSupport/MedoHelper.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_ASSET_PATHS = "\"MedoHelper/Preview Content\"";
+				DEVELOPMENT_ASSET_PATHS = "\"MedoHelper/Sources/AppSupport/Preview Content\"";
 				DEVELOPMENT_TEAM = L8X3H5XA82;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
@@ -510,11 +510,11 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_ENTITLEMENTS = MedoHelper/MedoHelper.entitlements;
+				CODE_SIGN_ENTITLEMENTS = MedoHelper/Sources/AppSupport/MedoHelper.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_ASSET_PATHS = "\"MedoHelper/Preview Content\"";
+				DEVELOPMENT_ASSET_PATHS = "\"MedoHelper/Sources/AppSupport/Preview Content\"";
 				DEVELOPMENT_TEAM = L8X3H5XA82;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
