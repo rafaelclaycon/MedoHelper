@@ -7,7 +7,7 @@ struct MedoHelperApp: App {
 
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            MainView()
         }
     }
 

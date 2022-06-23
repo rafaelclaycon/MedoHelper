@@ -8,7 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		D94A4222283DC94B00A504BD /* MedoHelperApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = D94A4221283DC94B00A504BD /* MedoHelperApp.swift */; };
-		D94A4224283DC94B00A504BD /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D94A4223283DC94B00A504BD /* ContentView.swift */; };
+		D94A4224283DC94B00A504BD /* MainView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D94A4223283DC94B00A504BD /* MainView.swift */; };
 		D94A4226283DC94D00A504BD /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D94A4225283DC94D00A504BD /* Assets.xcassets */; };
 		D94A4229283DC94D00A504BD /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D94A4228283DC94D00A504BD /* Preview Assets.xcassets */; };
 		D94A4234283DC94D00A504BD /* MedoHelperTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D94A4233283DC94D00A504BD /* MedoHelperTests.swift */; };
@@ -19,6 +19,8 @@
 		D94A4254283E7E5B00A504BD /* Date+GetComponents.swift in Sources */ = {isa = PBXBuildFile; fileRef = D94A4253283E7E5B00A504BD /* Date+GetComponents.swift */; };
 		D94A4257283E805900A504BD /* Author.swift in Sources */ = {isa = PBXBuildFile; fileRef = D94A4256283E805900A504BD /* Author.swift */; };
 		D94A4259283E809000A504BD /* Sound.swift in Sources */ = {isa = PBXBuildFile; fileRef = D94A4258283E809000A504BD /* Sound.swift */; };
+		D9B878482864FA73009CA7AD /* ParseSoundRankingCSVView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9B878472864FA73009CA7AD /* ParseSoundRankingCSVView.swift */; };
+		D9B8784B28650F4E009CA7AD /* CSVParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9B8784A28650F4E009CA7AD /* CSVParser.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -41,7 +43,7 @@
 /* Begin PBXFileReference section */
 		D94A421E283DC94B00A504BD /* MedoHelper.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MedoHelper.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D94A4221283DC94B00A504BD /* MedoHelperApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MedoHelperApp.swift; sourceTree = "<group>"; };
-		D94A4223283DC94B00A504BD /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		D94A4223283DC94B00A504BD /* MainView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainView.swift; sourceTree = "<group>"; };
 		D94A4225283DC94D00A504BD /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		D94A4228283DC94D00A504BD /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		D94A422A283DC94D00A504BD /* MedoHelper.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = MedoHelper.entitlements; sourceTree = "<group>"; };
@@ -55,6 +57,8 @@
 		D94A4253283E7E5B00A504BD /* Date+GetComponents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Date+GetComponents.swift"; sourceTree = "<group>"; };
 		D94A4256283E805900A504BD /* Author.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Author.swift; sourceTree = "<group>"; };
 		D94A4258283E809000A504BD /* Sound.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sound.swift; sourceTree = "<group>"; };
+		D9B878472864FA73009CA7AD /* ParseSoundRankingCSVView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ParseSoundRankingCSVView.swift; sourceTree = "<group>"; };
+		D9B8784A28650F4E009CA7AD /* CSVParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CSVParser.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -107,7 +111,6 @@
 			children = (
 				D94A424C283E702A00A504BD /* Sources */,
 				D94A4221283DC94B00A504BD /* MedoHelperApp.swift */,
-				D94A4223283DC94B00A504BD /* ContentView.swift */,
 				D94A4225283DC94D00A504BD /* Assets.xcassets */,
 				D94A422A283DC94D00A504BD /* MedoHelper.entitlements */,
 				D94A4227283DC94D00A504BD /* Preview Content */,
@@ -144,6 +147,7 @@
 			isa = PBXGroup;
 			children = (
 				D94A4255283E804100A504BD /* Models */,
+				D9B8784928650F3E009CA7AD /* Helpers */,
 				D94A424D283E703100A504BD /* Views */,
 				D94A4252283E7E3500A504BD /* Extensions */,
 			);
@@ -153,8 +157,10 @@
 		D94A424D283E703100A504BD /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				D94A4223283DC94B00A504BD /* MainView.swift */,
 				D94A424E283E704300A504BD /* AuthorView.swift */,
 				D94A4250283E705100A504BD /* SoundView.swift */,
+				D9B878472864FA73009CA7AD /* ParseSoundRankingCSVView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -174,6 +180,14 @@
 				D94A4258283E809000A504BD /* Sound.swift */,
 			);
 			path = Models;
+			sourceTree = "<group>";
+		};
+		D9B8784928650F3E009CA7AD /* Helpers */ = {
+			isa = PBXGroup;
+			children = (
+				D9B8784A28650F4E009CA7AD /* CSVParser.swift */,
+			);
+			path = Helpers;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -308,10 +322,12 @@
 			files = (
 				D94A4259283E809000A504BD /* Sound.swift in Sources */,
 				D94A4257283E805900A504BD /* Author.swift in Sources */,
+				D9B8784B28650F4E009CA7AD /* CSVParser.swift in Sources */,
 				D94A424F283E704300A504BD /* AuthorView.swift in Sources */,
-				D94A4224283DC94B00A504BD /* ContentView.swift in Sources */,
+				D94A4224283DC94B00A504BD /* MainView.swift in Sources */,
 				D94A4251283E705100A504BD /* SoundView.swift in Sources */,
 				D94A4254283E7E5B00A504BD /* Date+GetComponents.swift in Sources */,
+				D9B878482864FA73009CA7AD /* ParseSoundRankingCSVView.swift in Sources */,
 				D94A4222283DC94B00A504BD /* MedoHelperApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
