@@ -2,7 +2,7 @@ import SwiftUI
 
 struct SoundView: View {
 
-    @Binding var sound: Sound
+    @Binding var sound: ProtoSound
     
     var body: some View {
         VStack {            
@@ -55,7 +55,7 @@ struct SoundView: View {
 struct SoundView_Previews: PreviewProvider {
 
     static var previews: some View {
-        SoundView(sound: .constant(Sound(title: "", description: "", filename: "", dateAdded: Date(), isOffensive: false, successMessage: "...")))
+        SoundView(sound: .constant(ProtoSound(title: "", description: "", filename: "", dateAdded: Date(), isOffensive: false, successMessage: "...")))
     }
 
 }

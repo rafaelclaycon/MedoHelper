@@ -4,7 +4,7 @@ struct MainView: View {
 
     @State private var currentTab = 0
     @State var author = Author(name: "", successMessage: "...")
-    @State var sound = Sound(title: "", description: "", filename: "", dateAdded: Date(), isOffensive: false, successMessage: "...")
+    @State var sound = ProtoSound(title: "", description: "", filename: "", dateAdded: Date(), isOffensive: false, successMessage: "...")
 
     var body: some View {
         VStack {
@@ -20,10 +20,10 @@ struct MainView: View {
                     Spacer()
                     Button("Limpar Tudo") {
                         author = Author(name: "", successMessage: "...")
-                        sound = Sound(title: "", description: "", filename: "", dateAdded: Date(), isOffensive: false, successMessage: "...")
+                        sound = ProtoSound(title: "", description: "", filename: "", dateAdded: Date(), isOffensive: false, successMessage: "...")
                     }
                     Button("Limpar Apenas Som") {
-                        sound = Sound(title: "", description: "", filename: "", dateAdded: Date(), isOffensive: false, successMessage: "...")
+                        sound = ProtoSound(title: "", description: "", filename: "", dateAdded: Date(), isOffensive: false, successMessage: "...")
                     }
                 }
                 .padding(.trailing, 15)
