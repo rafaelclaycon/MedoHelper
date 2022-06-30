@@ -2,14 +2,19 @@ import SwiftUI
 
 struct ParseSoundRankingCSVView: View {
 
+    enum ImportType {
+        case sounds, authors, csvLogFile
+    }
+    
     @State private var filePath: String = ""
     @State private var showAlert: Bool = false
-    @State private var isImportingSoundsFile: Bool = false
+    @State private var thingBeingImported: ImportType? = nil
     @State private var showFileImporterModal: Bool = false
     @State private var importedFileName: String = ""
     @State private var resultString: String = ""
     
     @State private var soundData: [Sound]? = nil
+    @State private var authorData: [Author]? = nil
     @State private var globalFileContent: String = ""
     
     var body: some View {
@@ -18,12 +23,19 @@ struct ParseSoundRankingCSVView: View {
                 .padding()
                 .disabled(true)
             
-            Button("Carregar sons") {
-                isImportingSoundsFile = true
-                showFileImporterModal = true
+            HStack(spacing: 20) {
+                Button("Carregar sons") {
+                    thingBeingImported = .sounds
+                    showFileImporterModal = true
+                }
+                
+                Button("Carregar autores") {
+                    thingBeingImported = .authors
+                    showFileImporterModal = true
+                }
             }
             
-            Text(soundData == nil ? "" : "\(soundData!.count) sons")
+            Text(soundData == nil ? "" : "\(soundData!.count) sons, \(authorData?.count ?? 0) autores")
                 .padding()
             
             Button("Selecionar arquivo CSV...") {
@@ -36,12 +48,12 @@ struct ParseSoundRankingCSVView: View {
             HStack(spacing: 20) {
                 Button("Interpretar") {
                     resultString = ""
-                    guard let rank = CSVParser.parseToRank(string: globalFileContent, using: soundData!) else {
+                    guard let rank = CSVParser.parseToRank(string: globalFileContent, using: soundData!, and: authorData!) else {
                         return showAlert = true
                     }
                     
                     for i in 0...(rank.count - 1) {
-                        resultString.append("\(i + 1). \(rank[i].title)    \(rank[i].shareCount)\n")
+                        resultString.append("\(i + 1). \(rank[i].authorName) - \(rank[i].title)    \(rank[i].shareCount)\n")
                     }
                 }
                 .alert(isPresented: $showAlert) {
@@ -50,13 +62,13 @@ struct ParseSoundRankingCSVView: View {
                 
                 Button("Copiar top 10") {
                     var localRankString = ""
-                    guard let rank = CSVParser.parseToRank(string: globalFileContent, using: soundData!), rank.count >= 10 else {
+                    guard let rank = CSVParser.parseToRank(string: globalFileContent, using: soundData!, and: authorData!), rank.count >= 10 else {
                         print("Não tem 10 itens para fazer um top 10!")
                         return
                     }
                     
                     for i in 0...9 {
-                        localRankString.append("\(i + 1). \(rank[i].title)\n")
+                        localRankString.append("\(i + 1). \(rank[i].authorName) - \(rank[i].title)\n")
                     }
                     
                     let pasteboard = NSPasteboard.general
@@ -76,15 +88,22 @@ struct ParseSoundRankingCSVView: View {
             allowsMultipleSelection: false
         ) { result in
             do {
-                if isImportingSoundsFile {
+                switch thingBeingImported {
+                case .sounds:
                     guard let selectedFile: URL = try result.get().first else { return }
                     
                     let tempSounds: [Sound] = JSONFileToData.load(selectedFile)
                     soundData = tempSounds
                     
                     filePath = selectedFile.absoluteString
-                    isImportingSoundsFile = false
-                } else {
+                case .authors:
+                    guard let selectedFile: URL = try result.get().first else { return }
+                    
+                    let tempAuthors: [Author] = JSONFileToData.load(selectedFile)
+                    authorData = tempAuthors
+                    
+                    filePath = selectedFile.absoluteString
+                default:
                     guard let selectedFile: URL = try result.get().first else { return }
                     guard let fileContent = String(data: try Data(contentsOf: selectedFile), encoding: .utf8) else { return }
                     
@@ -94,7 +113,9 @@ struct ParseSoundRankingCSVView: View {
                 }
             } catch {
                 // TODO: Implementar alert para exibir mensagem de erro.
+                thingBeingImported = nil
             }
+            thingBeingImported = nil
         }
     }
 

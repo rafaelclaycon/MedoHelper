@@ -3,7 +3,7 @@ import SwiftUI
 struct MainView: View {
 
     @State private var currentTab = 0
-    @State var author = Author(name: "", successMessage: "...")
+    @State var author = ProtoAuthor(name: "", successMessage: "...")
     @State var sound = ProtoSound(title: "", description: "", filename: "", dateAdded: Date(), isOffensive: false, successMessage: "...")
 
     var body: some View {
@@ -19,7 +19,7 @@ struct MainView: View {
                 HStack(spacing: 15) {
                     Spacer()
                     Button("Limpar Tudo") {
-                        author = Author(name: "", successMessage: "...")
+                        author = ProtoAuthor(name: "", successMessage: "...")
                         sound = ProtoSound(title: "", description: "", filename: "", dateAdded: Date(), isOffensive: false, successMessage: "...")
                     }
                     Button("Limpar Apenas Som") {

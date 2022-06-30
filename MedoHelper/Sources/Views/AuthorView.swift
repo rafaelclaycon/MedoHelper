@@ -2,7 +2,7 @@ import SwiftUI
 
 struct AuthorView: View {
 
-    @Binding var author: Author
+    @Binding var author: ProtoAuthor
     @State var createNewAuthor: Bool = false
     @State var existingAuthorUUID = ""
     
@@ -45,7 +45,7 @@ struct AuthorView: View {
 struct AuthorView_Previews: PreviewProvider {
 
     static var previews: some View {
-        AuthorView(author: .constant(Author(name: "", successMessage: "...")))
+        AuthorView(author: .constant(ProtoAuthor(name: "", successMessage: "...")))
     }
 
 }

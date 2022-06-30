@@ -1,8 +1,8 @@
 import Foundation
 
-struct Author {
+struct Author: Hashable, Codable, Identifiable {
 
-    var name: String
-    var successMessage: String
+    let id: String
+    let name: String
 
 }

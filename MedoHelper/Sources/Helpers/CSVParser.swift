@@ -2,7 +2,7 @@ import Foundation
 
 class CSVParser {
 
-    static func parseToRank(string: String, using titleSource: [Sound]) -> [RankItem]? {
+    static func parseToRank(string: String, using titleSource: [Sound], and authorNameSource: [Author]) -> [RankItem]? {
         guard string.isEmpty == false else {
             return nil
         }
@@ -33,9 +33,14 @@ class CSVParser {
             }
             
             if let sound = titleSource.first(where: {$0.id == soundId}) {
-                result.append(RankItem(id: soundId, title: sound.title, shareCount: Int(count) ?? 0))
+                if let author = authorNameSource.first(where: {$0.id == sound.authorId}) {
+                    result.append(RankItem(id: soundId, title: sound.title, authorName: author.name, shareCount: Int(count) ?? 0))
+                } else {
+                    result.append(RankItem(id: soundId, title: sound.title, authorName: "", shareCount: Int(count) ?? 0))
+                }
+                
             } else {
-                result.append(RankItem(id: soundId, title: "", shareCount: Int(count) ?? 0))
+                result.append(RankItem(id: soundId, title: "", authorName: "", shareCount: Int(count) ?? 0))
             }
         }
         
