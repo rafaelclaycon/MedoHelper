@@ -34,13 +34,13 @@ class CSVParser {
             
             if let sound = titleSource.first(where: {$0.id == soundId}) {
                 if let author = authorNameSource.first(where: {$0.id == sound.authorId}) {
-                    result.append(RankItem(id: soundId, title: sound.title, authorName: author.name, shareCount: Int(count) ?? 0))
+                    result.append(RankItem(soundId: soundId, title: sound.title, authorName: author.name, shareCount: Int(count) ?? 0))
                 } else {
-                    result.append(RankItem(id: soundId, title: sound.title, authorName: "", shareCount: Int(count) ?? 0))
+                    result.append(RankItem(soundId: soundId, title: sound.title, authorName: "", shareCount: Int(count) ?? 0))
                 }
                 
             } else {
-                result.append(RankItem(id: soundId, title: "", authorName: "", shareCount: Int(count) ?? 0))
+                result.append(RankItem(soundId: soundId, title: "", authorName: "", shareCount: Int(count) ?? 0))
             }
         }
         
