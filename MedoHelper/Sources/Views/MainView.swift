@@ -8,11 +8,15 @@ struct MainView: View {
 
     var body: some View {
         VStack {
-            Picker("", selection: $currentTab) {
-                Text("Gerador de JSONs").tag(0)
-                Text("Interpretador de ranking de compartilhamento").tag(1)
+            HStack {
+                Text("Utilitário:")
+                
+                Picker("", selection: $currentTab) {
+                    Text("Gerador de JSONs").tag(0)
+                    Text("Interpretador de ranking de compartilhamento").tag(1)
+                }
+                .frame(width: 350)
             }
-            .pickerStyle(.segmented)
             .padding()
             
             if currentTab == 0 {
