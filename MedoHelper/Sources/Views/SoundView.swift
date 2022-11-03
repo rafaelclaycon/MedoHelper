@@ -47,7 +47,7 @@ struct SoundView: View {
             dateString = "\(year)-\(formattedMonth)-\(formattedDay)"
         }
         
-        return ",\n{\n\t\"id\": \"\(soundId)\",\n\t\"title\": \"\(sound.title)\",\n\t\"authorId\": \"\(authorId)\",\n\t\"description\": \"\(sound.description)\",\n\t\"filename\": \"\(sound.filename).mp3\",\n\t\"dateAdded\": \"\(dateString)T00:00:00Z\",\n\t\"isOffensive\": \(sound.isOffensive ? "true": "false")\n}"
+        return ",\n{\n\t\"id\": \"\(soundId)\",\n\t\"title\": \"\(sound.title)\",\n\t\"authorId\": \"\(authorId)\",\n\t\"description\": \"\(sound.description)\",\n\t\"filename\": \"\(sound.filename).mp3\",\n\t\"dateAdded\": \"\(dateString)T00:00:00Z\",\n\t\"isOffensive\": \(sound.isOffensive ? "true": "false"),\n\t\"isNew\": true\n}"
     }
 
 }
