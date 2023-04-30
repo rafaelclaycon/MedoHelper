@@ -23,7 +23,7 @@ struct MainView: View {
                 }
                 
                 NavigationLink {
-                    ParseSoundRankingCSVView()
+                    ManageFromServerView()
                 } label: {
                     Text("Gerenciar Sons no Servidor")
                 }

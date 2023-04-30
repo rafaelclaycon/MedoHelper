@@ -23,6 +23,7 @@
 		D9B8784F2865324F009CA7AD /* RankItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9B8784E2865324F009CA7AD /* RankItem.swift */; };
 		D9B87851286538C6009CA7AD /* JSONFileToData.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9B87850286538C6009CA7AD /* JSONFileToData.swift */; };
 		D9B87853286540E5009CA7AD /* Sound.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9B87852286540E5009CA7AD /* Sound.swift */; };
+		D9FB1D9D29FEEF3900AE8744 /* ManageFromServerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9FB1D9C29FEEF3900AE8744 /* ManageFromServerView.swift */; };
 		D9FB487E286E435A00FF90D0 /* Author.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9FB487D286E435A00FF90D0 /* Author.swift */; };
 /* End PBXBuildFile section */
 
@@ -56,6 +57,7 @@
 		D9B8784E2865324F009CA7AD /* RankItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RankItem.swift; sourceTree = "<group>"; };
 		D9B87850286538C6009CA7AD /* JSONFileToData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSONFileToData.swift; sourceTree = "<group>"; };
 		D9B87852286540E5009CA7AD /* Sound.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sound.swift; sourceTree = "<group>"; };
+		D9FB1D9C29FEEF3900AE8744 /* ManageFromServerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManageFromServerView.swift; sourceTree = "<group>"; };
 		D9FB487D286E435A00FF90D0 /* Author.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Author.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -136,9 +138,9 @@
 			isa = PBXGroup;
 			children = (
 				D94A4223283DC94B00A504BD /* MainView.swift */,
-				D94A424E283E704300A504BD /* AuthorView.swift */,
-				D94A4250283E705100A504BD /* SoundView.swift */,
-				D9B878472864FA73009CA7AD /* ParseSoundRankingCSVView.swift */,
+				D9FB1D9929FEEF0A00AE8744 /* Create */,
+				D9FB1D9A29FEEF1500AE8744 /* Parse */,
+				D9FB1D9B29FEEF1F00AE8744 /* Manage */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -189,6 +191,31 @@
 				D94A4227283DC94D00A504BD /* Preview Content */,
 			);
 			path = AppSupport;
+			sourceTree = "<group>";
+		};
+		D9FB1D9929FEEF0A00AE8744 /* Create */ = {
+			isa = PBXGroup;
+			children = (
+				D94A424E283E704300A504BD /* AuthorView.swift */,
+				D94A4250283E705100A504BD /* SoundView.swift */,
+			);
+			path = Create;
+			sourceTree = "<group>";
+		};
+		D9FB1D9A29FEEF1500AE8744 /* Parse */ = {
+			isa = PBXGroup;
+			children = (
+				D9B878472864FA73009CA7AD /* ParseSoundRankingCSVView.swift */,
+			);
+			path = Parse;
+			sourceTree = "<group>";
+		};
+		D9FB1D9B29FEEF1F00AE8744 /* Manage */ = {
+			isa = PBXGroup;
+			children = (
+				D9FB1D9C29FEEF3900AE8744 /* ManageFromServerView.swift */,
+			);
+			path = Manage;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -291,6 +318,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D9FB1D9D29FEEF3900AE8744 /* ManageFromServerView.swift in Sources */,
 				D9B87851286538C6009CA7AD /* JSONFileToData.swift in Sources */,
 				D94A4259283E809000A504BD /* ProtoSound.swift in Sources */,
 				D94A4257283E805900A504BD /* ProtoAuthor.swift in Sources */,
