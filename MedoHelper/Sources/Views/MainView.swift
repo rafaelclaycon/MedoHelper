@@ -7,45 +7,36 @@ struct MainView: View {
     @State var sound = ProtoSound(title: "", description: "", filename: "", dateAdded: Date(), isOffensive: false, successMessage: "...")
 
     var body: some View {
-        VStack {
-            HStack {
-                Text("Utilitário:")
-                
-                Picker("", selection: $currentTab) {
-                    Text("Gerador de JSONs").tag(0)
-                    Text("Interpretador de ranking de compartilhamento").tag(1)
+        NavigationView {
+            List {
+                NavigationLink {
+                    AuthorView(author: $author)
+                    SoundView(sound: $sound)
+                } label: {
+                    Text("Criação de autor e som")
                 }
-                .frame(width: 350)
+
+                NavigationLink {
+                    ParseSoundRankingCSVView()
+                } label: {
+                    Text("Parse de CSV")
+                }
             }
-            .padding()
+            .listStyle(.sidebar)
             
-            if currentTab == 0 {
-                HStack(spacing: 15) {
-                    Spacer()
-                    Button("Limpar Tudo") {
-                        author = ProtoAuthor(name: "", successMessage: "...")
-                        sound = ProtoSound(title: "", description: "", filename: "", dateAdded: Date(), isOffensive: false, successMessage: "...")
-                    }
-                    Button("Limpar Apenas Som") {
-                        sound = ProtoSound(title: "", description: "", filename: "", dateAdded: Date(), isOffensive: false, successMessage: "...")
-                    }
-                }
-                .padding(.trailing, 15)
-                
-                AuthorView(author: $author)
-
-                Divider()
-                
-                SoundView(sound: $sound)
-            } else {
-                ParseSoundRankingCSVView()
-                
-                Spacer()
-            }
+//                HStack(spacing: 15) {
+//                    Spacer()
+//                    Button("Limpar Tudo") {
+//                        author = ProtoAuthor(name: "", successMessage: "...")
+//                        sound = ProtoSound(title: "", description: "", filename: "", dateAdded: Date(), isOffensive: false, successMessage: "...")
+//                    }
+//                    Button("Limpar Apenas Som") {
+//                        sound = ProtoSound(title: "", description: "", filename: "", dateAdded: Date(), isOffensive: false, successMessage: "...")
+//                    }
+//                }
+//                .padding(.trailing, 15)
         }
-        .frame(minWidth: 500, minHeight: 680)
     }
-
 }
 
 struct ContentView_Previews: PreviewProvider {
