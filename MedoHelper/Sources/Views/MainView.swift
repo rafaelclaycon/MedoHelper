@@ -13,13 +13,19 @@ struct MainView: View {
                     AuthorView(author: $author)
                     SoundView(sound: $sound)
                 } label: {
-                    Text("Criação de autor e som")
+                    Text("Criação de Autor e Som")
                 }
 
                 NavigationLink {
                     ParseSoundRankingCSVView()
                 } label: {
                     Text("Parse de CSV")
+                }
+                
+                NavigationLink {
+                    ParseSoundRankingCSVView()
+                } label: {
+                    Text("Gerenciar Sons no Servidor")
                 }
             }
             .listStyle(.sidebar)
