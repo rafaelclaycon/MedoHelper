@@ -10,6 +10,8 @@ import SwiftUI
 struct CreateSoundOnServerView: View {
     
     @Binding var sound: ProtoSound
+    @State private var authors: [Author] = []
+    @State private var selectedAuthor: Author?
     
     var body: some View {
         VStack {
@@ -18,6 +20,28 @@ struct CreateSoundOnServerView: View {
             
             TextField("Descrição do Som", text: $sound.description)
                 .padding()
+            
+            if authors.isEmpty {
+                Text("Carregando...")
+            } else {
+                Picker("Autor", selection: $selectedAuthor) {
+                    ForEach(authors) { author in
+                        Text(author.name).tag(author)
+                    }
+                }
+                .padding()
+                .onChange(of: selectedAuthor) { author in
+                    if let author = author {
+                        print("Selected author: \(author.name)")
+                    }
+                }
+            }
+            
+            Text("Autor: \(selectedAuthor?.name ?? "")")
+            
+            Button("Update selected author") {
+                selectedAuthor = authors.randomElement()
+            }
             
             HStack {
                 Text("")
@@ -42,13 +66,7 @@ struct CreateSoundOnServerView: View {
                 Spacer()
                 
                 Button {
-                    post(content: MedoContent(title: "O aí ó", authorId: "abcd", description: "o ai o", contentFileId: "fdfdfdfdf.mp3", creationDate: "2023-04-27T00:00:00Z", duration: 2.24, isOffensive: true)) { result, error in
-                        if result {
-                            print("Sucesso")
-                        } else {
-                            print("Problema")
-                        }
-                    }
+                    sendContent()
                 } label: {
                     HStack(spacing: 10) {
                         Image(systemName: "paperplane")
@@ -62,36 +80,33 @@ struct CreateSoundOnServerView: View {
             Text(sound.successMessage)
                 .padding()
         }
+        .onAppear {
+            loadAuthors()
+        }
     }
     
-    func post(content: MedoContent, completion: @escaping (Bool, String) -> Void) {
-        let url = URL(string: "http://127.0.0.1:8080/api/v3/create-sound")!
-
-        var request = URLRequest(url: url)
-        request.httpMethod = "POST"
-        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        
-        let jsonEncoder = JSONEncoder()
-        let jsonData = try? jsonEncoder.encode(content)
-        request.httpBody = jsonData
-
-        let task = URLSession.shared.dataTask(with: request) { data, response, error in
-            guard let httpResponse = response as? HTTPURLResponse else {
-                return
+    func sendContent() {
+        Task {
+            let url = URL(string: "http://127.0.0.1:8080/api/v3/create-sound")!
+            let content = MedoContent(title: "O aí ó", authorId: "abcd", description: "o ai o", contentFileId: "fdfdfdfdf.mp3", creationDate: "2023-04-27T00:00:00Z", duration: 2.24, isOffensive: true)
+            do {
+                try await NetworkRabbit.post(data: content, to: url)
+            } catch {
+                print(error.localizedDescription)
             }
-             
-            guard httpResponse.statusCode == 200 else {
-                return completion(false, "Failed")
-            }
-            
-            guard error == nil else {
-                return completion(false, "HTTP Request Failed \(error!.localizedDescription)")
-            }
-            
-            completion(true, "")
         }
-
-        task.resume()
+    }
+    
+    func loadAuthors() {
+        Task {
+            let url = URL(string: "http://127.0.0.1:8080/api/v3/all-authors")!
+            do {
+                authors = try await NetworkRabbit.get(from: url)
+                selectedAuthor = authors[0]
+            } catch {
+                print(error.localizedDescription)
+            }
+        }
     }
 }
 

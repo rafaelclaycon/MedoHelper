@@ -9,6 +9,15 @@ import Foundation
 
 class NetworkRabbit {
     
+    static func `get`<T: Codable>(from url: URL) async throws -> T {
+        let (data, _) = try await URLSession.shared.data(from: url)
+        
+        let decoder = JSONDecoder()
+        decoder.keyDecodingStrategy = .convertFromSnakeCase
+        
+        return try decoder.decode(T.self, from: data)
+    }
+    
     static func post<T: Codable>(data: T, to url: URL) async throws {
         // Create the URL request
         var request = URLRequest(url: url)
@@ -38,14 +47,14 @@ class NetworkRabbit {
         print(String(data: data, encoding: .utf8) ?? "")
     }
     
-    static func test<T: Codable>(data: T) {
-        let encoder = JSONEncoder()
-        let jsonData = try! encoder.encode(data)
-        
-        let decoder = JSONDecoder()
-        let authors = try! decoder.decode([Author].self, from: jsonData)
-        print(authors)
-    }
+//    static func test<T: Codable>(data: T) {
+//        let encoder = JSONEncoder()
+//        let jsonData = try! encoder.encode(data)
+//
+//        let decoder = JSONDecoder()
+//        let authors = try! decoder.decode([Author].self, from: jsonData)
+//        print(authors)
+//    }
 }
 
 enum NetworkError: Error {
