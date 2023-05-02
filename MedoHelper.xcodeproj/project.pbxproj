@@ -7,6 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		D92693FA2A015048007872D9 /* MoveAuthorsToServerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D92693F92A015048007872D9 /* MoveAuthorsToServerView.swift */; };
+		D92693FC2A015608007872D9 /* author_data.json in Resources */ = {isa = PBXBuildFile; fileRef = D92693FB2A015608007872D9 /* author_data.json */; };
+		D92693FE2A015665007872D9 /* Bundle+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = D92693FD2A015665007872D9 /* Bundle+Extensions.swift */; };
+		D92694012A015C7E007872D9 /* NetworkRabbit.swift in Sources */ = {isa = PBXBuildFile; fileRef = D92694002A015C7E007872D9 /* NetworkRabbit.swift */; };
 		D94A4222283DC94B00A504BD /* MedoHelperApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = D94A4221283DC94B00A504BD /* MedoHelperApp.swift */; };
 		D94A4224283DC94B00A504BD /* MainView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D94A4223283DC94B00A504BD /* MainView.swift */; };
 		D94A4226283DC94D00A504BD /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D94A4225283DC94D00A504BD /* Assets.xcassets */; };
@@ -40,6 +44,10 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		D92693F92A015048007872D9 /* MoveAuthorsToServerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoveAuthorsToServerView.swift; sourceTree = "<group>"; };
+		D92693FB2A015608007872D9 /* author_data.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = author_data.json; sourceTree = "<group>"; };
+		D92693FD2A015665007872D9 /* Bundle+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Bundle+Extensions.swift"; sourceTree = "<group>"; };
+		D92694002A015C7E007872D9 /* NetworkRabbit.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkRabbit.swift; sourceTree = "<group>"; };
 		D94A421E283DC94B00A504BD /* MedoHelper.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MedoHelper.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D94A4221283DC94B00A504BD /* MedoHelperApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MedoHelperApp.swift; sourceTree = "<group>"; };
 		D94A4223283DC94B00A504BD /* MainView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainView.swift; sourceTree = "<group>"; };
@@ -83,6 +91,22 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		D92693F82A015032007872D9 /* MoveToServer */ = {
+			isa = PBXGroup;
+			children = (
+				D92693F92A015048007872D9 /* MoveAuthorsToServerView.swift */,
+			);
+			path = MoveToServer;
+			sourceTree = "<group>";
+		};
+		D92693FF2A015C67007872D9 /* Networking */ = {
+			isa = PBXGroup;
+			children = (
+				D92694002A015C7E007872D9 /* NetworkRabbit.swift */,
+			);
+			path = Networking;
+			sourceTree = "<group>";
+		};
 		D94A4215283DC94B00A504BD = {
 			isa = PBXGroup;
 			children = (
@@ -132,6 +156,7 @@
 				D94A4255283E804100A504BD /* Models */,
 				D94A424D283E703100A504BD /* Views */,
 				D9B8784928650F3E009CA7AD /* Helpers */,
+				D92693FF2A015C67007872D9 /* Networking */,
 				D94A4252283E7E3500A504BD /* Extensions */,
 				D9B8784D28651416009CA7AD /* AppSupport */,
 			);
@@ -145,6 +170,7 @@
 				D9FB1D9929FEEF0A00AE8744 /* Create */,
 				D9FB1D9A29FEEF1500AE8744 /* Parse */,
 				D9FB1D9B29FEEF1F00AE8744 /* Manage */,
+				D92693F82A015032007872D9 /* MoveToServer */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -153,6 +179,7 @@
 			isa = PBXGroup;
 			children = (
 				D94A4253283E7E5B00A504BD /* Date+GetComponents.swift */,
+				D92693FD2A015665007872D9 /* Bundle+Extensions.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -183,6 +210,7 @@
 		D9B8784C286513ED009CA7AD /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				D92693FB2A015608007872D9 /* author_data.json */,
 				D94A4225283DC94D00A504BD /* Assets.xcassets */,
 			);
 			path = Resources;
@@ -306,6 +334,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				D94A4229283DC94D00A504BD /* Preview Assets.xcassets in Resources */,
+				D92693FC2A015608007872D9 /* author_data.json in Resources */,
 				D94A4226283DC94D00A504BD /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -326,6 +355,7 @@
 			files = (
 				D9FB1D9D29FEEF3900AE8744 /* ManageFromServerView.swift in Sources */,
 				D9B87851286538C6009CA7AD /* JSONFileToData.swift in Sources */,
+				D92693FA2A015048007872D9 /* MoveAuthorsToServerView.swift in Sources */,
 				D94A4259283E809000A504BD /* ProtoSound.swift in Sources */,
 				D94A4257283E805900A504BD /* ProtoAuthor.swift in Sources */,
 				D95FCB7129FF009500952868 /* MedoContent.swift in Sources */,
@@ -334,6 +364,8 @@
 				D94A424F283E704300A504BD /* AuthorView.swift in Sources */,
 				D94B03FD2993346F00EB03CA /* DurationHelper.swift in Sources */,
 				D9B8784F2865324F009CA7AD /* RankItem.swift in Sources */,
+				D92693FE2A015665007872D9 /* Bundle+Extensions.swift in Sources */,
+				D92694012A015C7E007872D9 /* NetworkRabbit.swift in Sources */,
 				D94A4224283DC94B00A504BD /* MainView.swift in Sources */,
 				D9B87853286540E5009CA7AD /* Sound.swift in Sources */,
 				D94A4251283E705100A504BD /* SoundView.swift in Sources */,

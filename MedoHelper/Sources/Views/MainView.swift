@@ -30,6 +30,13 @@ struct MainView: View {
                     Text("Gerenciar Sons no Servidor")
                 }
                 .tag(2)
+                
+                NavigationLink {
+                    MoveAuthorsToServerView()
+                } label: {
+                    Text("Exportar Autores Para o Servidor")
+                }
+                .tag(2)
             }
             .listStyle(.sidebar)
             
