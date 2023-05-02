@@ -29,5 +29,4 @@ struct Sound: Hashable, Codable, Identifiable {
         self.isOffensive = isOffensive
         self.isNew = isNew
     }
-
 }

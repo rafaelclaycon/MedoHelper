@@ -18,6 +18,8 @@
 		D94A4257283E805900A504BD /* ProtoAuthor.swift in Sources */ = {isa = PBXBuildFile; fileRef = D94A4256283E805900A504BD /* ProtoAuthor.swift */; };
 		D94A4259283E809000A504BD /* ProtoSound.swift in Sources */ = {isa = PBXBuildFile; fileRef = D94A4258283E809000A504BD /* ProtoSound.swift */; };
 		D94B03FD2993346F00EB03CA /* DurationHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = D94B03FC2993346F00EB03CA /* DurationHelper.swift */; };
+		D95FCB6F29FEF75F00952868 /* CreateSoundOnServerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D95FCB6E29FEF75F00952868 /* CreateSoundOnServerView.swift */; };
+		D95FCB7129FF009500952868 /* MedoContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = D95FCB7029FF009500952868 /* MedoContent.swift */; };
 		D9B878482864FA73009CA7AD /* ParseSoundRankingCSVView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9B878472864FA73009CA7AD /* ParseSoundRankingCSVView.swift */; };
 		D9B8784B28650F4E009CA7AD /* CSVParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9B8784A28650F4E009CA7AD /* CSVParser.swift */; };
 		D9B8784F2865324F009CA7AD /* RankItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9B8784E2865324F009CA7AD /* RankItem.swift */; };
@@ -52,6 +54,8 @@
 		D94A4256283E805900A504BD /* ProtoAuthor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProtoAuthor.swift; sourceTree = "<group>"; };
 		D94A4258283E809000A504BD /* ProtoSound.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProtoSound.swift; sourceTree = "<group>"; };
 		D94B03FC2993346F00EB03CA /* DurationHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DurationHelper.swift; sourceTree = "<group>"; };
+		D95FCB6E29FEF75F00952868 /* CreateSoundOnServerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateSoundOnServerView.swift; sourceTree = "<group>"; };
+		D95FCB7029FF009500952868 /* MedoContent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MedoContent.swift; sourceTree = "<group>"; };
 		D9B878472864FA73009CA7AD /* ParseSoundRankingCSVView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ParseSoundRankingCSVView.swift; sourceTree = "<group>"; };
 		D9B8784A28650F4E009CA7AD /* CSVParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CSVParser.swift; sourceTree = "<group>"; };
 		D9B8784E2865324F009CA7AD /* RankItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RankItem.swift; sourceTree = "<group>"; };
@@ -161,6 +165,7 @@
 				D9B8784E2865324F009CA7AD /* RankItem.swift */,
 				D9B87852286540E5009CA7AD /* Sound.swift */,
 				D9FB487D286E435A00FF90D0 /* Author.swift */,
+				D95FCB7029FF009500952868 /* MedoContent.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -214,6 +219,7 @@
 			isa = PBXGroup;
 			children = (
 				D9FB1D9C29FEEF3900AE8744 /* ManageFromServerView.swift */,
+				D95FCB6E29FEF75F00952868 /* CreateSoundOnServerView.swift */,
 			);
 			path = Manage;
 			sourceTree = "<group>";
@@ -322,6 +328,8 @@
 				D9B87851286538C6009CA7AD /* JSONFileToData.swift in Sources */,
 				D94A4259283E809000A504BD /* ProtoSound.swift in Sources */,
 				D94A4257283E805900A504BD /* ProtoAuthor.swift in Sources */,
+				D95FCB7129FF009500952868 /* MedoContent.swift in Sources */,
+				D95FCB6F29FEF75F00952868 /* CreateSoundOnServerView.swift in Sources */,
 				D9B8784B28650F4E009CA7AD /* CSVParser.swift in Sources */,
 				D94A424F283E704300A504BD /* AuthorView.swift in Sources */,
 				D94B03FD2993346F00EB03CA /* DurationHelper.swift in Sources */,
