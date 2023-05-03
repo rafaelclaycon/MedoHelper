@@ -11,6 +11,7 @@
 		D92693FC2A015608007872D9 /* author_data.json in Resources */ = {isa = PBXBuildFile; fileRef = D92693FB2A015608007872D9 /* author_data.json */; };
 		D92693FE2A015665007872D9 /* Bundle+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = D92693FD2A015665007872D9 /* Bundle+Extensions.swift */; };
 		D92694012A015C7E007872D9 /* NetworkRabbit.swift in Sources */ = {isa = PBXBuildFile; fileRef = D92694002A015C7E007872D9 /* NetworkRabbit.swift */; };
+		D92694032A01A7F9007872D9 /* String+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = D92694022A01A7F9007872D9 /* String+Extensions.swift */; };
 		D94A4222283DC94B00A504BD /* MedoHelperApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = D94A4221283DC94B00A504BD /* MedoHelperApp.swift */; };
 		D94A4224283DC94B00A504BD /* MainView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D94A4223283DC94B00A504BD /* MainView.swift */; };
 		D94A4226283DC94D00A504BD /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D94A4225283DC94D00A504BD /* Assets.xcassets */; };
@@ -18,7 +19,7 @@
 		D94A4234283DC94D00A504BD /* MedoHelperTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D94A4233283DC94D00A504BD /* MedoHelperTests.swift */; };
 		D94A424F283E704300A504BD /* AuthorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D94A424E283E704300A504BD /* AuthorView.swift */; };
 		D94A4251283E705100A504BD /* SoundView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D94A4250283E705100A504BD /* SoundView.swift */; };
-		D94A4254283E7E5B00A504BD /* Date+GetComponents.swift in Sources */ = {isa = PBXBuildFile; fileRef = D94A4253283E7E5B00A504BD /* Date+GetComponents.swift */; };
+		D94A4254283E7E5B00A504BD /* Date+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = D94A4253283E7E5B00A504BD /* Date+Extensions.swift */; };
 		D94A4257283E805900A504BD /* ProtoAuthor.swift in Sources */ = {isa = PBXBuildFile; fileRef = D94A4256283E805900A504BD /* ProtoAuthor.swift */; };
 		D94A4259283E809000A504BD /* ProtoSound.swift in Sources */ = {isa = PBXBuildFile; fileRef = D94A4258283E809000A504BD /* ProtoSound.swift */; };
 		D94B03FD2993346F00EB03CA /* DurationHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = D94B03FC2993346F00EB03CA /* DurationHelper.swift */; };
@@ -48,6 +49,7 @@
 		D92693FB2A015608007872D9 /* author_data.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = author_data.json; sourceTree = "<group>"; };
 		D92693FD2A015665007872D9 /* Bundle+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Bundle+Extensions.swift"; sourceTree = "<group>"; };
 		D92694002A015C7E007872D9 /* NetworkRabbit.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkRabbit.swift; sourceTree = "<group>"; };
+		D92694022A01A7F9007872D9 /* String+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+Extensions.swift"; sourceTree = "<group>"; };
 		D94A421E283DC94B00A504BD /* MedoHelper.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MedoHelper.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D94A4221283DC94B00A504BD /* MedoHelperApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MedoHelperApp.swift; sourceTree = "<group>"; };
 		D94A4223283DC94B00A504BD /* MainView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainView.swift; sourceTree = "<group>"; };
@@ -58,7 +60,7 @@
 		D94A4233283DC94D00A504BD /* MedoHelperTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MedoHelperTests.swift; sourceTree = "<group>"; };
 		D94A424E283E704300A504BD /* AuthorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthorView.swift; sourceTree = "<group>"; };
 		D94A4250283E705100A504BD /* SoundView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SoundView.swift; sourceTree = "<group>"; };
-		D94A4253283E7E5B00A504BD /* Date+GetComponents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Date+GetComponents.swift"; sourceTree = "<group>"; };
+		D94A4253283E7E5B00A504BD /* Date+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Date+Extensions.swift"; sourceTree = "<group>"; };
 		D94A4256283E805900A504BD /* ProtoAuthor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProtoAuthor.swift; sourceTree = "<group>"; };
 		D94A4258283E809000A504BD /* ProtoSound.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProtoSound.swift; sourceTree = "<group>"; };
 		D94B03FC2993346F00EB03CA /* DurationHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DurationHelper.swift; sourceTree = "<group>"; };
@@ -178,8 +180,9 @@
 		D94A4252283E7E3500A504BD /* Extensions */ = {
 			isa = PBXGroup;
 			children = (
-				D94A4253283E7E5B00A504BD /* Date+GetComponents.swift */,
+				D94A4253283E7E5B00A504BD /* Date+Extensions.swift */,
 				D92693FD2A015665007872D9 /* Bundle+Extensions.swift */,
+				D92694022A01A7F9007872D9 /* String+Extensions.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -354,6 +357,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				D9FB1D9D29FEEF3900AE8744 /* ManageFromServerView.swift in Sources */,
+				D92694032A01A7F9007872D9 /* String+Extensions.swift in Sources */,
 				D9B87851286538C6009CA7AD /* JSONFileToData.swift in Sources */,
 				D92693FA2A015048007872D9 /* MoveAuthorsToServerView.swift in Sources */,
 				D94A4259283E809000A504BD /* ProtoSound.swift in Sources */,
@@ -370,7 +374,7 @@
 				D9B87853286540E5009CA7AD /* Sound.swift in Sources */,
 				D94A4251283E705100A504BD /* SoundView.swift in Sources */,
 				D9FB487E286E435A00FF90D0 /* Author.swift in Sources */,
-				D94A4254283E7E5B00A504BD /* Date+GetComponents.swift in Sources */,
+				D94A4254283E7E5B00A504BD /* Date+Extensions.swift in Sources */,
 				D9B878482864FA73009CA7AD /* ParseSoundRankingCSVView.swift in Sources */,
 				D94A4222283DC94B00A504BD /* MedoHelperApp.swift in Sources */,
 			);

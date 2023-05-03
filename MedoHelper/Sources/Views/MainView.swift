@@ -9,34 +9,38 @@ struct MainView: View {
     var body: some View {
         NavigationView {
             List(selection: $currentTab) {
-                NavigationLink {
-                    AuthorView(author: $author)
-                    SoundView(sound: $sound)
-                } label: {
-                    Text("Criação de Autor e Som")
+                Section("LOCAL") {
+                    NavigationLink {
+                        AuthorView(author: $author)
+                        SoundView(sound: $sound)
+                    } label: {
+                        Label("Criar Autor e Som", systemImage: "plus.circle")
+                    }
+                    .tag(0)
+                    
+                    NavigationLink {
+                        ParseSoundRankingCSVView()
+                    } label: {
+                        Label("Parsear CSV", systemImage: "text.justify.leading")
+                    }
+                    .tag(1)
                 }
-                .tag(0)
-
-                NavigationLink {
-                    ParseSoundRankingCSVView()
-                } label: {
-                    Text("Parse de CSV")
-                }
-                .tag(1)
                 
-                NavigationLink {
-                    ManageFromServerView()
-                } label: {
-                    Text("Gerenciar Sons no Servidor")
+                Section("REMOTO") {
+                    NavigationLink {
+                        ManageFromServerView()
+                    } label: {
+                        Label("Gerenciar Sons", systemImage: "speaker.wave.3")
+                    }
+                    .tag(2)
+                    
+                    NavigationLink {
+                        MoveAuthorsToServerView()
+                    } label: {
+                        Label("Cadastrar Autores", systemImage: "person.2")
+                    }
+                    .tag(3)
                 }
-                .tag(2)
-                
-                NavigationLink {
-                    MoveAuthorsToServerView()
-                } label: {
-                    Text("Exportar Autores Para o Servidor")
-                }
-                .tag(2)
             }
             .listStyle(.sidebar)
             
