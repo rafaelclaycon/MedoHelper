@@ -35,13 +35,13 @@ struct MedoContent: Codable {
         self.isOffensive = isOffensive
     }
     
-    init(sound: ProtoSound, authorId: String) {
+    init(sound: ProtoSound, authorId: String, duration: Double) {
         self.title = sound.title
         self.authorId = authorId
         self.description = sound.description
         self.fileId = sound.filename
         self.creationDate = Date.now.toISO8601String()
-        self.duration = 0.0
+        self.duration = duration
         self.isOffensive = sound.isOffensive
     }
 }

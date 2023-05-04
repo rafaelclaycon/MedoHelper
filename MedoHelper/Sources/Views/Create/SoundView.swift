@@ -35,7 +35,7 @@ struct SoundView: View {
             
             Button("Calcular duração") {
                 Task {
-                    await print(DurationHelper.getDuration(of: "\(sound.filename).mp3") ?? "")
+                    await print(FileHelper.getDuration(of: "\(sound.filename).mp3") ?? "")
                 }
             }
         }

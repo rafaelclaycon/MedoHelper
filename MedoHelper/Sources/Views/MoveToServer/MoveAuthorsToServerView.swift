@@ -54,7 +54,7 @@ struct MoveAuthorsToServerView: View {
     
     func sendAuthors() {
         Task {
-            let url = URL(string: "http://127.0.0.1:8080/api/v3/import-authors")!
+            let url = URL(string: serverPath + "v3/import-authors")!
             
             // The whole array is split into parts because Vapor cannot handle all 400+ items at once.
             let chunkSize = 100
@@ -66,9 +66,9 @@ struct MoveAuthorsToServerView: View {
             
             for chunk in chunks {
                 do {
-                    try await NetworkRabbit.post(data: chunk, to: url)
+                    _ = try await NetworkRabbit.post(data: chunk, to: url)
                     sendingResponse = successMessage
-                    sleep(2)
+                    sleep(1)
                 } catch {
                     sendingResponse = sendingResponse + " " + error.localizedDescription
                 }

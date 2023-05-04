@@ -18,7 +18,7 @@ class NetworkRabbit {
         return try decoder.decode(T.self, from: data)
     }
     
-    static func post<T: Codable>(data: T, to url: URL) async throws {
+    static func post<T: Codable>(data: T, to url: URL) async throws -> String? {
         // Create the URL request
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
@@ -44,7 +44,7 @@ class NetworkRabbit {
         }
         
         // Handle the response data (if needed)
-        print(String(data: data, encoding: .utf8) ?? "")
+        return String(data: data, encoding: .utf8)
     }
     
 //    static func test<T: Codable>(data: T) {
