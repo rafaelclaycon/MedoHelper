@@ -14,9 +14,16 @@ struct CreateSoundOnServerView: View {
     @State private var selectedAuthor: Author.ID?
     @State private var showFilePicker = false
     @State private var selectedFile: URL? = nil
+    
+    // Alert
     @State private var showingAlert = false
     @State private var alertTitle = ""
     @State private var alertMessage = ""
+    
+    // Progress View
+    @State private var showSendProgress = false
+    @State private var progressAmount = 0.0
+    @State private var modalMessage = ""
     
     private var filename: String {
         return selectedFile?.lastPathComponent ?? ""
@@ -64,10 +71,10 @@ struct CreateSoundOnServerView: View {
             .padding()
             
             HStack(spacing: 50) {
-//                DatePicker("Data de adição", selection: $sound.dateAdded, displayedComponents: .date)
-//                    .datePickerStyle(.compact)
-//                    .labelsHidden()
-//                    .frame(width: 110)
+                //                DatePicker("Data de adição", selection: $sound.dateAdded, displayedComponents: .date)
+                //                    .datePickerStyle(.compact)
+                //                    .labelsHidden()
+                //                    .frame(width: 110)
                 
                 Toggle("É ofensivo", isOn: $sound.isOffensive)
             }
@@ -88,17 +95,24 @@ struct CreateSoundOnServerView: View {
                 .disabled(!hasAllNecessaryData)
             }
             .padding(.horizontal)
-
+            
             Text(sound.successMessage)
                 .padding()
         }
         .onAppear {
             loadAuthors()
         }
+        .disabled(showSendProgress)
+        .sheet(isPresented: $showSendProgress) {
+            SendingProgressView(isBeingShown: $showSendProgress, message: $modalMessage, currentAmount: $progressAmount, totalAmount: 2)
+        }
     }
     
     func sendContent() {
         Task {
+            showSendProgress = true
+            modalMessage = "Enviando Dados..."
+            
             let url = URL(string: serverPath + "v3/create-sound")!
             guard let authorId = selectedAuthor else {
                 alertTitle = "Dados Incompletos"
@@ -120,6 +134,9 @@ struct CreateSoundOnServerView: View {
                     return showingAlert = true
                 }
                 
+                progressAmount = 1
+                modalMessage = "Renomeando Arquivo..."
+                
                 let destinationURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
                 let success = FileHelper.copyAndRenameFile(from: fileURL, to: destinationURL, with: "\(createdContentId).mp3")
                 if success {
@@ -128,6 +145,13 @@ struct CreateSoundOnServerView: View {
                     print("File copy and rename failed.")
                 }
                 
+                // TODO: - Implement file upload
+                
+                progressAmount = 2
+                
+                DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(600)) {
+                    showSendProgress = false
+                }
             } catch {
                 print(error.localizedDescription)
             }

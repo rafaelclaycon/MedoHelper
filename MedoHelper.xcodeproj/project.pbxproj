@@ -30,6 +30,7 @@
 		D9B8784F2865324F009CA7AD /* RankItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9B8784E2865324F009CA7AD /* RankItem.swift */; };
 		D9B87851286538C6009CA7AD /* JSONFileToData.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9B87850286538C6009CA7AD /* JSONFileToData.swift */; };
 		D9B87853286540E5009CA7AD /* Sound.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9B87852286540E5009CA7AD /* Sound.swift */; };
+		D9CA30202A0441A000F1F23D /* SendingProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9CA301F2A0441A000F1F23D /* SendingProgressView.swift */; };
 		D9FB1D9D29FEEF3900AE8744 /* ManageFromServerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9FB1D9C29FEEF3900AE8744 /* ManageFromServerView.swift */; };
 		D9FB487E286E435A00FF90D0 /* Author.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9FB487D286E435A00FF90D0 /* Author.swift */; };
 /* End PBXBuildFile section */
@@ -71,6 +72,7 @@
 		D9B8784E2865324F009CA7AD /* RankItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RankItem.swift; sourceTree = "<group>"; };
 		D9B87850286538C6009CA7AD /* JSONFileToData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSONFileToData.swift; sourceTree = "<group>"; };
 		D9B87852286540E5009CA7AD /* Sound.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sound.swift; sourceTree = "<group>"; };
+		D9CA301F2A0441A000F1F23D /* SendingProgressView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendingProgressView.swift; sourceTree = "<group>"; };
 		D9FB1D9C29FEEF3900AE8744 /* ManageFromServerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManageFromServerView.swift; sourceTree = "<group>"; };
 		D9FB487D286E435A00FF90D0 /* Author.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Author.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -97,6 +99,7 @@
 			isa = PBXGroup;
 			children = (
 				D92693F92A015048007872D9 /* MoveAuthorsToServerView.swift */,
+				D9CA301F2A0441A000F1F23D /* SendingProgressView.swift */,
 			);
 			path = MoveToServer;
 			sourceTree = "<group>";
@@ -376,6 +379,7 @@
 				D9FB487E286E435A00FF90D0 /* Author.swift in Sources */,
 				D94A4254283E7E5B00A504BD /* Date+Extensions.swift in Sources */,
 				D9B878482864FA73009CA7AD /* ParseSoundRankingCSVView.swift in Sources */,
+				D9CA30202A0441A000F1F23D /* SendingProgressView.swift in Sources */,
 				D94A4222283DC94B00A504BD /* MedoHelperApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
