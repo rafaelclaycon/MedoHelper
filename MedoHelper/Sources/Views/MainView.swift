@@ -28,18 +28,25 @@ struct MainView: View {
                 
                 Section("REMOTO") {
                     NavigationLink {
-                        ManageFromServerView()
+                        SoundsOuterView()
                     } label: {
-                        Label("Gerenciar Sons", systemImage: "speaker.wave.3")
+                        Label("Sons", systemImage: "speaker.wave.3")
                     }
                     .tag(2)
                     
                     NavigationLink {
-                        MoveAuthorsToServerView()
+                        AuthorsOuterView()
                     } label: {
-                        Label("Cadastrar Autores", systemImage: "person.2")
+                        Label("Autores", systemImage: "person.2")
                     }
                     .tag(3)
+                    
+                    NavigationLink {
+                        MoveAuthorsToServerView()
+                    } label: {
+                        Label("Músicas", systemImage: "music.quarternote.3")
+                    }
+                    .tag(4)
                 }
             }
             .listStyle(.sidebar)

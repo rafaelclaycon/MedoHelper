@@ -18,4 +18,12 @@ extension Date {
         formatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
         return formatter.string(from: self)
     }
+
+    internal func toScreenString() -> String {
+        let dateFormatter = DateFormatter()
+        dateFormatter.locale = Locale(identifier: "pt-BR")
+        dateFormatter.dateFormat = "dd/MM/yyyy"
+        dateFormatter.calendar = Calendar(identifier: .gregorian)
+        return dateFormatter.string(from: self)
+    }
 }

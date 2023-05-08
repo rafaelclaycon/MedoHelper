@@ -10,6 +10,8 @@ import SwiftUI
 struct CreateSoundOnServerView: View {
     
     @Binding var sound: ProtoSound
+    @Binding var isBeingShown: Bool
+    
     @State private var authors: [Author] = []
     @State private var selectedAuthor: Author.ID?
     @State private var showFilePicker = false
@@ -80,17 +82,21 @@ struct CreateSoundOnServerView: View {
             }
             .padding()
             
-            HStack {
+            HStack(spacing: 15) {
                 Spacer()
+                
+                Button {
+                    isBeingShown = false
+                } label: {
+                    Text("Cancelar")
+                        .padding(.horizontal, 5)
+                }
                 
                 Button {
                     sendContent()
                 } label: {
-                    HStack(spacing: 10) {
-                        Image(systemName: "paperplane")
-                        Text("Enviar")
-                    }
-                    .padding(.horizontal)
+                    Text("Enviar")
+                        .padding(.horizontal)
                 }
                 .disabled(!hasAllNecessaryData)
             }
@@ -174,6 +180,6 @@ struct CreateSoundOnServerView: View {
 struct CreateSoundOnServerView_Previews: PreviewProvider {
     
     static var previews: some View {
-        CreateSoundOnServerView(sound: .constant(ProtoSound(title: "", description: "", filename: "", dateAdded: Date(), isOffensive: false, successMessage: "...")))
+        CreateSoundOnServerView(sound: .constant(ProtoSound(title: "", description: "", filename: "", dateAdded: Date(), isOffensive: false, successMessage: "...")), isBeingShown: .constant(true))
     }
 }

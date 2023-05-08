@@ -26,6 +26,7 @@ class NetworkRabbit {
         
         // Encode the data as JSON
         let encoder = JSONEncoder()
+        encoder.dateEncodingStrategy = .iso8601
         let jsonData = try encoder.encode(data)
         print(jsonData)
         request.httpBody = jsonData
