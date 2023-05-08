@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		D914C7212A0986AF0011EC5B /* Int+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = D914C7202A0986AF0011EC5B /* Int+Extensions.swift */; };
 		D92693FA2A015048007872D9 /* MoveAuthorsToServerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D92693F92A015048007872D9 /* MoveAuthorsToServerView.swift */; };
 		D92693FC2A015608007872D9 /* author_data.json in Resources */ = {isa = PBXBuildFile; fileRef = D92693FB2A015608007872D9 /* author_data.json */; };
 		D92693FE2A015665007872D9 /* Bundle+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = D92693FD2A015665007872D9 /* Bundle+Extensions.swift */; };
@@ -50,6 +51,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		D914C7202A0986AF0011EC5B /* Int+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Int+Extensions.swift"; sourceTree = "<group>"; };
 		D92693F92A015048007872D9 /* MoveAuthorsToServerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoveAuthorsToServerView.swift; sourceTree = "<group>"; };
 		D92693FB2A015608007872D9 /* author_data.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = author_data.json; sourceTree = "<group>"; };
 		D92693FD2A015665007872D9 /* Bundle+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Bundle+Extensions.swift"; sourceTree = "<group>"; };
@@ -185,6 +187,7 @@
 				D92693FD2A015665007872D9 /* Bundle+Extensions.swift */,
 				D92694022A01A7F9007872D9 /* String+Extensions.swift */,
 				D9D798712A05D338002B2D77 /* Double+Extensions.swift */,
+				D914C7202A0986AF0011EC5B /* Int+Extensions.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -393,6 +396,7 @@
 				D9B87851286538C6009CA7AD /* JSONFileToData.swift in Sources */,
 				D92693FA2A015048007872D9 /* MoveAuthorsToServerView.swift in Sources */,
 				D94A4259283E809000A504BD /* ProtoSound.swift in Sources */,
+				D914C7212A0986AF0011EC5B /* Int+Extensions.swift in Sources */,
 				D94A4257283E805900A504BD /* ProtoAuthor.swift in Sources */,
 				D9CA30282A05921200F1F23D /* AuthorsOuterView.swift in Sources */,
 				D95FCB7129FF009500952868 /* MedoContent.swift in Sources */,

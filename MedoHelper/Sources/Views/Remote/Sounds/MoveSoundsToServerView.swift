@@ -14,11 +14,17 @@ struct MoveSoundsToServerView: View {
     @State private var sounds: [Sound] = []
     @State private var isSending: Bool = false
     @State private var sendingResponse: String = ""
+    @State private var chunks: Array<Array<Sound>> = Array<Array<Sound>>()
+    @State private var currentChunk: CGFloat = 1
     
     private let successMessage = "Sons enviados com sucesso!"
     
     private var soundCount: String {
-        "\(sounds.count) sons"
+        "\(sounds.count.formattedString) sons"
+    }
+    
+    private var progressViewText: String {
+        "Enviando sons (\(Int(currentChunk))/\(chunks.count))..."
     }
     
     var body: some View {
@@ -69,10 +75,13 @@ struct MoveSoundsToServerView: View {
                     sendSounds()
                 }
             }
+            .disabled(chunks.count > 0)
             
-            Text(sendingResponse)
-                .foregroundColor(sendingResponse == successMessage ? .green : .primary)
-                .padding()
+            if chunks.count > 0 {
+                ProgressView(progressViewText, value: currentChunk, total: CGFloat(chunks.count))
+                    //.frame(width: 300, height: 140)
+                    .padding()
+            }
         }
         .padding()
         .onAppear {
@@ -81,27 +90,29 @@ struct MoveSoundsToServerView: View {
         }
     }
     
-    func sendSounds() {
+    private func sendSounds() {
         Task {
             let url = URL(string: serverPath + "v3/import-sounds")!
             
-            // The whole array is split into parts because Vapor cannot handle all 400+ items at once.
+            // The whole array is split into parts because Vapor cannot handle all 1.000+ items at once.
             let chunkSize = 10
-            let chunks = stride(from: 0, to: sounds.count, by: chunkSize).map {
+            chunks = stride(from: 0, to: sounds.count, by: chunkSize).map {
                 Array(sounds[$0..<min($0 + chunkSize, sounds.count)])
             }
-            print(chunks.count)
-            print(chunks)
             
             for chunk in chunks {
                 do {
                     _ = try await NetworkRabbit.post(data: chunk, to: url)
-                    sendingResponse = sendingResponse + "\n" + successMessage
-                    sleep(2)
+                    if Int(currentChunk) < chunks.count {
+                        currentChunk += 1
+                    }
+                    sleep(1)
                 } catch {
-                    sendingResponse = sendingResponse + "\n" + error.localizedDescription
+                    print(error)
                 }
             }
+            
+            chunks = Array<Array<Sound>>()
         }
     }
 }
