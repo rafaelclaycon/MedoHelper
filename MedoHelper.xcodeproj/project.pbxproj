@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		D914C7212A0986AF0011EC5B /* Int+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = D914C7202A0986AF0011EC5B /* Int+Extensions.swift */; };
+		D914C7232A09AD6D0011EC5B /* MusicGenre.swift in Sources */ = {isa = PBXBuildFile; fileRef = D914C7222A09AD6D0011EC5B /* MusicGenre.swift */; };
+		D914C7252A09AD970011EC5B /* ContentType.swift in Sources */ = {isa = PBXBuildFile; fileRef = D914C7242A09AD970011EC5B /* ContentType.swift */; };
 		D92693FA2A015048007872D9 /* MoveAuthorsToServerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D92693F92A015048007872D9 /* MoveAuthorsToServerView.swift */; };
 		D92693FC2A015608007872D9 /* author_data.json in Resources */ = {isa = PBXBuildFile; fileRef = D92693FB2A015608007872D9 /* author_data.json */; };
 		D92693FE2A015665007872D9 /* Bundle+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = D92693FD2A015665007872D9 /* Bundle+Extensions.swift */; };
@@ -24,7 +26,7 @@
 		D94A4257283E805900A504BD /* ProtoAuthor.swift in Sources */ = {isa = PBXBuildFile; fileRef = D94A4256283E805900A504BD /* ProtoAuthor.swift */; };
 		D94A4259283E809000A504BD /* ProtoSound.swift in Sources */ = {isa = PBXBuildFile; fileRef = D94A4258283E809000A504BD /* ProtoSound.swift */; };
 		D94B03FD2993346F00EB03CA /* FileHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = D94B03FC2993346F00EB03CA /* FileHelper.swift */; };
-		D95FCB6F29FEF75F00952868 /* CreateSoundOnServerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D95FCB6E29FEF75F00952868 /* CreateSoundOnServerView.swift */; };
+		D95FCB6F29FEF75F00952868 /* EditSoundOnServerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D95FCB6E29FEF75F00952868 /* EditSoundOnServerView.swift */; };
 		D95FCB7129FF009500952868 /* MedoContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = D95FCB7029FF009500952868 /* MedoContent.swift */; };
 		D9B878482864FA73009CA7AD /* ParseSoundRankingCSVView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9B878472864FA73009CA7AD /* ParseSoundRankingCSVView.swift */; };
 		D9B8784B28650F4E009CA7AD /* CSVParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9B8784A28650F4E009CA7AD /* CSVParser.swift */; };
@@ -52,6 +54,8 @@
 
 /* Begin PBXFileReference section */
 		D914C7202A0986AF0011EC5B /* Int+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Int+Extensions.swift"; sourceTree = "<group>"; };
+		D914C7222A09AD6D0011EC5B /* MusicGenre.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MusicGenre.swift; sourceTree = "<group>"; };
+		D914C7242A09AD970011EC5B /* ContentType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentType.swift; sourceTree = "<group>"; };
 		D92693F92A015048007872D9 /* MoveAuthorsToServerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoveAuthorsToServerView.swift; sourceTree = "<group>"; };
 		D92693FB2A015608007872D9 /* author_data.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = author_data.json; sourceTree = "<group>"; };
 		D92693FD2A015665007872D9 /* Bundle+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Bundle+Extensions.swift"; sourceTree = "<group>"; };
@@ -71,7 +75,7 @@
 		D94A4256283E805900A504BD /* ProtoAuthor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProtoAuthor.swift; sourceTree = "<group>"; };
 		D94A4258283E809000A504BD /* ProtoSound.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProtoSound.swift; sourceTree = "<group>"; };
 		D94B03FC2993346F00EB03CA /* FileHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileHelper.swift; sourceTree = "<group>"; };
-		D95FCB6E29FEF75F00952868 /* CreateSoundOnServerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateSoundOnServerView.swift; sourceTree = "<group>"; };
+		D95FCB6E29FEF75F00952868 /* EditSoundOnServerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditSoundOnServerView.swift; sourceTree = "<group>"; };
 		D95FCB7029FF009500952868 /* MedoContent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MedoContent.swift; sourceTree = "<group>"; };
 		D9B878472864FA73009CA7AD /* ParseSoundRankingCSVView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ParseSoundRankingCSVView.swift; sourceTree = "<group>"; };
 		D9B8784A28650F4E009CA7AD /* CSVParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CSVParser.swift; sourceTree = "<group>"; };
@@ -201,6 +205,8 @@
 				D9B87852286540E5009CA7AD /* Sound.swift */,
 				D9FB487D286E435A00FF90D0 /* Author.swift */,
 				D95FCB7029FF009500952868 /* MedoContent.swift */,
+				D914C7222A09AD6D0011EC5B /* MusicGenre.swift */,
+				D914C7242A09AD970011EC5B /* ContentType.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -259,7 +265,7 @@
 			isa = PBXGroup;
 			children = (
 				D9FB1D9C29FEEF3900AE8744 /* SoundsOuterView.swift */,
-				D95FCB6E29FEF75F00952868 /* CreateSoundOnServerView.swift */,
+				D95FCB6E29FEF75F00952868 /* EditSoundOnServerView.swift */,
 				D9CA30292A05975900F1F23D /* MoveSoundsToServerView.swift */,
 			);
 			path = Sounds;
@@ -400,9 +406,10 @@
 				D94A4257283E805900A504BD /* ProtoAuthor.swift in Sources */,
 				D9CA30282A05921200F1F23D /* AuthorsOuterView.swift in Sources */,
 				D95FCB7129FF009500952868 /* MedoContent.swift in Sources */,
-				D95FCB6F29FEF75F00952868 /* CreateSoundOnServerView.swift in Sources */,
+				D95FCB6F29FEF75F00952868 /* EditSoundOnServerView.swift in Sources */,
 				D9B8784B28650F4E009CA7AD /* CSVParser.swift in Sources */,
 				D94A424F283E704300A504BD /* AuthorView.swift in Sources */,
+				D914C7232A09AD6D0011EC5B /* MusicGenre.swift in Sources */,
 				D94B03FD2993346F00EB03CA /* FileHelper.swift in Sources */,
 				D9B8784F2865324F009CA7AD /* RankItem.swift in Sources */,
 				D92693FE2A015665007872D9 /* Bundle+Extensions.swift in Sources */,
@@ -415,6 +422,7 @@
 				D94A4254283E7E5B00A504BD /* Date+Extensions.swift in Sources */,
 				D9B878482864FA73009CA7AD /* ParseSoundRankingCSVView.swift in Sources */,
 				D9CA30202A0441A000F1F23D /* SendingProgressView.swift in Sources */,
+				D914C7252A09AD970011EC5B /* ContentType.swift in Sources */,
 				D94A4222283DC94B00A504BD /* MedoHelperApp.swift in Sources */,
 				D9CA302A2A05975900F1F23D /* MoveSoundsToServerView.swift in Sources */,
 			);

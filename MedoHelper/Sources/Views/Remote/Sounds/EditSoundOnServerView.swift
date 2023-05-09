@@ -1,5 +1,5 @@
 //
-//  CreateSoundOnServerView.swift
+//  EditSoundOnServerView.swift
 //  MedoHelper
 //
 //  Created by Rafael Schmitt on 30/04/23.
@@ -7,10 +7,11 @@
 
 import SwiftUI
 
-struct CreateSoundOnServerView: View {
+struct EditSoundOnServerView: View {
     
-    @Binding var sound: ProtoSound
     @Binding var isBeingShown: Bool
+    @State var sound: Sound
+    @State var isEditing: Bool
     
     @State private var authors: [Author] = []
     @State private var selectedAuthor: Author.ID?
@@ -32,17 +33,41 @@ struct CreateSoundOnServerView: View {
     }
     
     private var hasAllNecessaryData: Bool {
-        return sound.title != "" && sound.description != "" && selectedAuthor != nil && selectedFile != nil
+        if isEditing {
+            return sound.title != "" && sound.description != "" && selectedAuthor != nil
+        } else {
+            return sound.title != "" && sound.description != "" && selectedAuthor != nil && selectedFile != nil
+        }
+    }
+    
+    private var idText: String {
+        var text = "ID: \(sound.id)"
+        if !isEditing {
+            text += " (recém criado)"
+        }
+        return text
     }
     
     var body: some View {
-        VStack {
+        VStack(spacing: 30) {
+            HStack {
+                Text(isEditing ? "Editando Som \"\(sound.title)\"" : "Criando Novo Som")
+                    .font(.title)
+                    .bold()
+                
+                Spacer()
+            }
+            
+            HStack {
+                Text(idText)
+                    .foregroundColor(isEditing ? .primary : .gray)
+                
+                Spacer()
+            }
+            
             TextField("Título do Som", text: $sound.title)
-                .padding()
             
             TextField("Descrição do Som", text: $sound.description)
-                .padding()
-            
             
             Picker("Autor: ", selection: $selectedAuthor) {
                 Text("<Nenhum Autor selecionado>").tag(nil as Author.ID?)
@@ -50,7 +75,6 @@ struct CreateSoundOnServerView: View {
                     Text(author.name).tag(Optional(author.id))
                 }
             }
-            .padding()
             
             HStack(spacing: 30) {
                 Button("Selecionar arquivo...") {
@@ -70,7 +94,6 @@ struct CreateSoundOnServerView: View {
                 
                 Text(filename)
             }
-            .padding()
             
             HStack(spacing: 50) {
                 //                DatePicker("Data de adição", selection: $sound.dateAdded, displayedComponents: .date)
@@ -80,7 +103,8 @@ struct CreateSoundOnServerView: View {
                 
                 Toggle("É ofensivo", isOn: $sound.isOffensive)
             }
-            .padding()
+            
+            Spacer()
             
             HStack(spacing: 15) {
                 Spacer()
@@ -89,22 +113,25 @@ struct CreateSoundOnServerView: View {
                     isBeingShown = false
                 } label: {
                     Text("Cancelar")
-                        .padding(.horizontal, 5)
-                }
-                
-                Button {
-                    sendContent()
-                } label: {
-                    Text("Enviar")
                         .padding(.horizontal)
                 }
+                .keyboardShortcut(.cancelAction)
+                
+                Button {
+                    if isEditing {
+                        updateContent()
+                    } else {
+                        createContent()
+                    }
+                } label: {
+                    Text(isEditing ? "Atualizar" : "Criar")
+                        .padding(.horizontal)
+                }
+                .keyboardShortcut(.defaultAction)
                 .disabled(!hasAllNecessaryData)
             }
-            .padding(.horizontal)
-            
-            Text(sound.successMessage)
-                .padding()
         }
+        .padding(.all, 26)
         .onAppear {
             loadAuthors()
         }
@@ -114,7 +141,7 @@ struct CreateSoundOnServerView: View {
         }
     }
     
-    func sendContent() {
+    func createContent() {
         Task {
             showSendProgress = true
             modalMessage = "Enviando Dados..."
@@ -164,12 +191,66 @@ struct CreateSoundOnServerView: View {
         }
     }
     
+    func updateContent() {
+        Task {
+            showSendProgress = true
+            modalMessage = "Enviando Dados..."
+            
+            let url = URL(string: serverPath + "v3/update-content")!
+            guard let authorId = selectedAuthor else {
+                alertTitle = "Dados Incompletos"
+                alertMessage = "Selecione um Autor."
+                return showingAlert = true
+            }
+            // File and duration here
+            let content = MedoContent(sound: sound, authorId: authorId, duration: sound.duration)
+            print(content)
+            do {
+                let response = try await NetworkRabbit.put(in: url, data: content)
+                
+                print(response as Any)
+                
+                guard response else {
+                    alertTitle = "Falha ao Atualizar o Som"
+                    alertMessage = "Houve uma falha."
+                    showSendProgress = false
+                    return showingAlert = true
+                }
+                
+                progressAmount = 1
+                //modalMessage = "Renomeando Arquivo..."
+                
+//                let destinationURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
+//                let success = FileHelper.copyAndRenameFile(from: fileURL, to: destinationURL, with: "\(createdContentId).mp3")
+//                if success {
+//                    print("File copied and renamed successfully.")
+//                } else {
+//                    print("File copy and rename failed.")
+//                }
+                
+                // TODO: - Implement file upload
+                
+                progressAmount = 2
+                
+                DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(600)) {
+                    showSendProgress = false
+                }
+            } catch {
+                print(error.localizedDescription)
+            }
+        }
+    }
+    
     func loadAuthors() {
         Task {
             let url = URL(string: serverPath + "v3/all-authors")!
             do {
                 authors = try await NetworkRabbit.get(from: url)
                 authors.sort(by: { $0.name.preparedForComparison() < $1.name.preparedForComparison() })
+                
+                if !sound.authorId.isEmpty {
+                    selectedAuthor = sound.authorId
+                }
             } catch {
                 print(error.localizedDescription)
             }
@@ -180,6 +261,6 @@ struct CreateSoundOnServerView: View {
 struct CreateSoundOnServerView_Previews: PreviewProvider {
     
     static var previews: some View {
-        CreateSoundOnServerView(sound: .constant(ProtoSound(title: "", description: "", filename: "", dateAdded: Date(), isOffensive: false, successMessage: "...")), isBeingShown: .constant(true))
+        EditSoundOnServerView(isBeingShown: .constant(true), sound: Sound(title: ""), isEditing: false)
     }
 }

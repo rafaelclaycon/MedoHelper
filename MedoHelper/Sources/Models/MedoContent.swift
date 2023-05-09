@@ -9,6 +9,7 @@ import Foundation
 
 struct MedoContent: Codable {
     
+    let id: UUID
     let title: String
     let authorId: String
     let description: String
@@ -16,16 +17,22 @@ struct MedoContent: Codable {
     let creationDate: String
     let duration: Double
     let isOffensive: Bool
+    let musicGenre: MusicGenre?
+    let contentType: ContentType
     
     init(
+        id: UUID,
         title: String,
         authorId: String,
         description: String,
         fileId: String,
         creationDate: String,
         duration: Double,
-        isOffensive: Bool
+        isOffensive: Bool,
+        musicGenre: MusicGenre?,
+        contentType: ContentType
     ) {
+        self.id = id
         self.title = title
         self.authorId = authorId
         self.description = description
@@ -33,9 +40,16 @@ struct MedoContent: Codable {
         self.creationDate = creationDate
         self.duration = duration
         self.isOffensive = isOffensive
+        self.musicGenre = musicGenre
+        self.contentType = contentType
     }
     
-    init(sound: ProtoSound, authorId: String, duration: Double) {
+    init(
+        sound: Sound,
+        authorId: String,
+        duration: Double
+    ) {
+        self.id = UUID(uuidString: sound.id)!
         self.title = sound.title
         self.authorId = authorId
         self.description = sound.description
@@ -43,5 +57,7 @@ struct MedoContent: Codable {
         self.creationDate = Date.now.toISO8601String()
         self.duration = duration
         self.isOffensive = sound.isOffensive
+        self.musicGenre = nil
+        self.contentType = .sound
     }
 }

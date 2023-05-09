@@ -17,14 +17,14 @@ struct Sound: Hashable, Codable, Identifiable {
     var filename: String
     var dateAdded: Date?
     let duration: Double
-    let isOffensive: Bool
+    var isOffensive: Bool
     let isNew: Bool?
     let isFromServer: Bool?
     
     init(
         id: String = UUID().uuidString,
         title: String,
-        authorId: String = UUID().uuidString,
+        authorId: String = "",
         description: String = "",
         filename: String = "",
         dateAdded: Date? = Date(),

@@ -8,5 +8,4 @@ struct ProtoSound {
     var dateAdded: Date
     var isOffensive: Bool
     var successMessage: String
-
 }
