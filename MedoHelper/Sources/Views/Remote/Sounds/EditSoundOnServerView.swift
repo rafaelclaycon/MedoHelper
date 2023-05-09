@@ -234,6 +234,7 @@ struct EditSoundOnServerView: View {
                 
                 DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(600)) {
                     showSendProgress = false
+                    isBeingShown = false
                 }
             } catch {
                 print(error.localizedDescription)
