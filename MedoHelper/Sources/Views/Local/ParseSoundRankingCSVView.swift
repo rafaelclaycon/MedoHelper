@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct ParseSoundRankingCSVView: View {
-
+    
     enum ImportType {
         case sounds, authors, currentRanking, rankToRemove
     }
@@ -159,6 +159,7 @@ struct ParseSoundRankingCSVView: View {
             }
             thingBeingImported = nil
         }
+        .padding()
     }
     
     private func printRank() {
@@ -171,13 +172,11 @@ struct ParseSoundRankingCSVView: View {
             self.resultString.append("\(i + 1). \(rank[i].authorName) - \(rank[i].title)    \(rank[i].shareCount)\n")
         }
     }
-
 }
 
 struct ParseSoundRankingCSVView_Previews: PreviewProvider {
-
+    
     static var previews: some View {
         ParseSoundRankingCSVView()
     }
-
 }

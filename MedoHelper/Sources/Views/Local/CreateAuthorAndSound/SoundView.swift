@@ -1,8 +1,8 @@
 import SwiftUI
 
 struct SoundView: View {
-
-    @Binding var sound: ProtoSound
+    
+    @State var sound = ProtoSound(title: "", description: "", filename: "", dateAdded: Date(), isOffensive: false, successMessage: "...")
     
     var body: some View {
         VStack {            
@@ -55,13 +55,11 @@ struct SoundView: View {
         
         return ",\n{\n\t\"id\": \"\(soundId)\",\n\t\"title\": \"\(sound.title)\",\n\t\"authorId\": \"\(authorId)\",\n\t\"description\": \"\(sound.description)\",\n\t\"filename\": \"\(sound.filename).mp3\",\n\t\"dateAdded\": \"\(dateString)T00:00:00Z\",\n\t\"duration\": 0.0,\n\t\"isOffensive\": \(sound.isOffensive ? "true": "false"),\n\t\"isNew\": true\n}"
     }
-
 }
 
 struct SoundView_Previews: PreviewProvider {
-
+    
     static var previews: some View {
-        SoundView(sound: .constant(ProtoSound(title: "", description: "", filename: "", dateAdded: Date(), isOffensive: false, successMessage: "...")))
+        SoundView()
     }
-
 }

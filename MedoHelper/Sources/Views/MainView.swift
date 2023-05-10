@@ -2,17 +2,14 @@ import SwiftUI
 
 struct MainView: View {
     
-    @State private var currentTab = 2
-    @State var author = ProtoAuthor(name: "", successMessage: "...")
-    @State var sound = ProtoSound(title: "", description: "", filename: "", dateAdded: Date(), isOffensive: false, successMessage: "...")
+    @State private var currentTab = 0
     
     var body: some View {
         NavigationView {
             List(selection: $currentTab) {
                 Section("LOCAL") {
                     NavigationLink {
-                        AuthorView(author: $author)
-                        SoundView(sound: $sound)
+                        CreateAuthorAndSoundView()
                     } label: {
                         Label("Criar Autor e Som", systemImage: "plus.circle")
                     }
@@ -67,9 +64,8 @@ struct MainView: View {
 }
 
 struct ContentView_Previews: PreviewProvider {
-
+    
     static var previews: some View {
         MainView()
     }
-
 }

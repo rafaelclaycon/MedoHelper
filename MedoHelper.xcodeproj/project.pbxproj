@@ -15,6 +15,7 @@
 		D92693FE2A015665007872D9 /* Bundle+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = D92693FD2A015665007872D9 /* Bundle+Extensions.swift */; };
 		D92694012A015C7E007872D9 /* NetworkRabbit.swift in Sources */ = {isa = PBXBuildFile; fileRef = D92694002A015C7E007872D9 /* NetworkRabbit.swift */; };
 		D92694032A01A7F9007872D9 /* String+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = D92694022A01A7F9007872D9 /* String+Extensions.swift */; };
+		D9310C292A0BDDDF006A3058 /* CreateAuthorAndSoundView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9310C282A0BDDDF006A3058 /* CreateAuthorAndSoundView.swift */; };
 		D94A4222283DC94B00A504BD /* MedoHelperApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = D94A4221283DC94B00A504BD /* MedoHelperApp.swift */; };
 		D94A4224283DC94B00A504BD /* MainView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D94A4223283DC94B00A504BD /* MainView.swift */; };
 		D94A4226283DC94D00A504BD /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D94A4225283DC94D00A504BD /* Assets.xcassets */; };
@@ -61,6 +62,7 @@
 		D92693FD2A015665007872D9 /* Bundle+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Bundle+Extensions.swift"; sourceTree = "<group>"; };
 		D92694002A015C7E007872D9 /* NetworkRabbit.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkRabbit.swift; sourceTree = "<group>"; };
 		D92694022A01A7F9007872D9 /* String+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+Extensions.swift"; sourceTree = "<group>"; };
+		D9310C282A0BDDDF006A3058 /* CreateAuthorAndSoundView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateAuthorAndSoundView.swift; sourceTree = "<group>"; };
 		D94A421E283DC94B00A504BD /* MedoHelper.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MedoHelper.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D94A4221283DC94B00A504BD /* MedoHelperApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MedoHelperApp.swift; sourceTree = "<group>"; };
 		D94A4223283DC94B00A504BD /* MainView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainView.swift; sourceTree = "<group>"; };
@@ -115,6 +117,16 @@
 				D92694002A015C7E007872D9 /* NetworkRabbit.swift */,
 			);
 			path = Networking;
+			sourceTree = "<group>";
+		};
+		D9310C272A0BDDC3006A3058 /* CreateAuthorAndSound */ = {
+			isa = PBXGroup;
+			children = (
+				D9310C282A0BDDDF006A3058 /* CreateAuthorAndSoundView.swift */,
+				D94A424E283E704300A504BD /* AuthorView.swift */,
+				D94A4250283E705100A504BD /* SoundView.swift */,
+			);
+			path = CreateAuthorAndSound;
 			sourceTree = "<group>";
 		};
 		D94A4215283DC94B00A504BD = {
@@ -244,8 +256,7 @@
 		D9CA30212A057A9100F1F23D /* Local */ = {
 			isa = PBXGroup;
 			children = (
-				D94A424E283E704300A504BD /* AuthorView.swift */,
-				D94A4250283E705100A504BD /* SoundView.swift */,
+				D9310C272A0BDDC3006A3058 /* CreateAuthorAndSound */,
 				D9B878472864FA73009CA7AD /* ParseSoundRankingCSVView.swift */,
 			);
 			path = Local;
@@ -424,6 +435,7 @@
 				D9CA30202A0441A000F1F23D /* SendingProgressView.swift in Sources */,
 				D914C7252A09AD970011EC5B /* ContentType.swift in Sources */,
 				D94A4222283DC94B00A504BD /* MedoHelperApp.swift in Sources */,
+				D9310C292A0BDDDF006A3058 /* CreateAuthorAndSoundView.swift in Sources */,
 				D9CA302A2A05975900F1F23D /* MoveSoundsToServerView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

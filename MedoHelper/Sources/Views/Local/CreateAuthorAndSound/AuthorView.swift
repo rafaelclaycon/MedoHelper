@@ -1,8 +1,8 @@
 import SwiftUI
 
 struct AuthorView: View {
-
-    @Binding var author: ProtoAuthor
+    
+    @State var author = ProtoAuthor(name: "", successMessage: "...")
     @State var createNewAuthor: Bool = false
     @State var existingAuthorUUID = ""
     
@@ -39,13 +39,11 @@ struct AuthorView: View {
         authorId = UUID().uuidString
         return ",\n{\n\t\"id\": \"\(authorId)\",\n\t\"name\": \"\(author.name)\"\n}"
     }
-
 }
 
 struct AuthorView_Previews: PreviewProvider {
-
+    
     static var previews: some View {
-        AuthorView(author: .constant(ProtoAuthor(name: "", successMessage: "...")))
+        AuthorView()
     }
-
 }
