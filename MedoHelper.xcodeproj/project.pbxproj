@@ -29,17 +29,18 @@
 		D94B03FD2993346F00EB03CA /* FileHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = D94B03FC2993346F00EB03CA /* FileHelper.swift */; };
 		D95FCB6F29FEF75F00952868 /* EditSoundOnServerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D95FCB6E29FEF75F00952868 /* EditSoundOnServerView.swift */; };
 		D95FCB7129FF009500952868 /* MedoContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = D95FCB7029FF009500952868 /* MedoContent.swift */; };
+		D992E8242A17FF8700137469 /* EditAuthorOnServerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D992E8232A17FF8700137469 /* EditAuthorOnServerView.swift */; };
 		D9B878482864FA73009CA7AD /* ParseSoundRankingCSVView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9B878472864FA73009CA7AD /* ParseSoundRankingCSVView.swift */; };
 		D9B8784B28650F4E009CA7AD /* CSVParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9B8784A28650F4E009CA7AD /* CSVParser.swift */; };
 		D9B8784F2865324F009CA7AD /* RankItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9B8784E2865324F009CA7AD /* RankItem.swift */; };
 		D9B87851286538C6009CA7AD /* JSONFileToData.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9B87850286538C6009CA7AD /* JSONFileToData.swift */; };
 		D9B87853286540E5009CA7AD /* Sound.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9B87852286540E5009CA7AD /* Sound.swift */; };
 		D9CA30202A0441A000F1F23D /* SendingProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9CA301F2A0441A000F1F23D /* SendingProgressView.swift */; };
-		D9CA30282A05921200F1F23D /* AuthorsOuterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9CA30272A05921200F1F23D /* AuthorsOuterView.swift */; };
+		D9CA30282A05921200F1F23D /* ServerAuthorsCRUDView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9CA30272A05921200F1F23D /* ServerAuthorsCRUDView.swift */; };
 		D9CA302A2A05975900F1F23D /* MoveSoundsToServerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9CA30292A05975900F1F23D /* MoveSoundsToServerView.swift */; };
 		D9CA302C2A0598C900F1F23D /* sound_data.json in Resources */ = {isa = PBXBuildFile; fileRef = D9CA302B2A0598C900F1F23D /* sound_data.json */; };
 		D9D798722A05D338002B2D77 /* Double+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9D798712A05D338002B2D77 /* Double+Extensions.swift */; };
-		D9FB1D9D29FEEF3900AE8744 /* SoundsOuterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9FB1D9C29FEEF3900AE8744 /* SoundsOuterView.swift */; };
+		D9FB1D9D29FEEF3900AE8744 /* ServerSoundsCRUDView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9FB1D9C29FEEF3900AE8744 /* ServerSoundsCRUDView.swift */; };
 		D9FB487E286E435A00FF90D0 /* Author.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9FB487D286E435A00FF90D0 /* Author.swift */; };
 /* End PBXBuildFile section */
 
@@ -79,17 +80,18 @@
 		D94B03FC2993346F00EB03CA /* FileHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileHelper.swift; sourceTree = "<group>"; };
 		D95FCB6E29FEF75F00952868 /* EditSoundOnServerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditSoundOnServerView.swift; sourceTree = "<group>"; };
 		D95FCB7029FF009500952868 /* MedoContent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MedoContent.swift; sourceTree = "<group>"; };
+		D992E8232A17FF8700137469 /* EditAuthorOnServerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditAuthorOnServerView.swift; sourceTree = "<group>"; };
 		D9B878472864FA73009CA7AD /* ParseSoundRankingCSVView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ParseSoundRankingCSVView.swift; sourceTree = "<group>"; };
 		D9B8784A28650F4E009CA7AD /* CSVParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CSVParser.swift; sourceTree = "<group>"; };
 		D9B8784E2865324F009CA7AD /* RankItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RankItem.swift; sourceTree = "<group>"; };
 		D9B87850286538C6009CA7AD /* JSONFileToData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSONFileToData.swift; sourceTree = "<group>"; };
 		D9B87852286540E5009CA7AD /* Sound.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sound.swift; sourceTree = "<group>"; };
 		D9CA301F2A0441A000F1F23D /* SendingProgressView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendingProgressView.swift; sourceTree = "<group>"; };
-		D9CA30272A05921200F1F23D /* AuthorsOuterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthorsOuterView.swift; sourceTree = "<group>"; };
+		D9CA30272A05921200F1F23D /* ServerAuthorsCRUDView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerAuthorsCRUDView.swift; sourceTree = "<group>"; };
 		D9CA30292A05975900F1F23D /* MoveSoundsToServerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoveSoundsToServerView.swift; sourceTree = "<group>"; };
 		D9CA302B2A0598C900F1F23D /* sound_data.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = sound_data.json; sourceTree = "<group>"; };
 		D9D798712A05D338002B2D77 /* Double+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Double+Extensions.swift"; sourceTree = "<group>"; };
-		D9FB1D9C29FEEF3900AE8744 /* SoundsOuterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SoundsOuterView.swift; sourceTree = "<group>"; };
+		D9FB1D9C29FEEF3900AE8744 /* ServerSoundsCRUDView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerSoundsCRUDView.swift; sourceTree = "<group>"; };
 		D9FB487D286E435A00FF90D0 /* Author.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Author.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -275,7 +277,7 @@
 		D9CA30232A057AB500F1F23D /* Sounds */ = {
 			isa = PBXGroup;
 			children = (
-				D9FB1D9C29FEEF3900AE8744 /* SoundsOuterView.swift */,
+				D9FB1D9C29FEEF3900AE8744 /* ServerSoundsCRUDView.swift */,
 				D95FCB6E29FEF75F00952868 /* EditSoundOnServerView.swift */,
 				D9CA30292A05975900F1F23D /* MoveSoundsToServerView.swift */,
 			);
@@ -285,8 +287,9 @@
 		D9CA30242A057ABC00F1F23D /* Authors */ = {
 			isa = PBXGroup;
 			children = (
-				D9CA30272A05921200F1F23D /* AuthorsOuterView.swift */,
+				D9CA30272A05921200F1F23D /* ServerAuthorsCRUDView.swift */,
 				D92693F92A015048007872D9 /* MoveAuthorsToServerView.swift */,
+				D992E8232A17FF8700137469 /* EditAuthorOnServerView.swift */,
 			);
 			path = Authors;
 			sourceTree = "<group>";
@@ -408,15 +411,16 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D9FB1D9D29FEEF3900AE8744 /* SoundsOuterView.swift in Sources */,
+				D9FB1D9D29FEEF3900AE8744 /* ServerSoundsCRUDView.swift in Sources */,
 				D92694032A01A7F9007872D9 /* String+Extensions.swift in Sources */,
 				D9B87851286538C6009CA7AD /* JSONFileToData.swift in Sources */,
 				D92693FA2A015048007872D9 /* MoveAuthorsToServerView.swift in Sources */,
 				D94A4259283E809000A504BD /* ProtoSound.swift in Sources */,
 				D914C7212A0986AF0011EC5B /* Int+Extensions.swift in Sources */,
 				D94A4257283E805900A504BD /* ProtoAuthor.swift in Sources */,
-				D9CA30282A05921200F1F23D /* AuthorsOuterView.swift in Sources */,
+				D9CA30282A05921200F1F23D /* ServerAuthorsCRUDView.swift in Sources */,
 				D95FCB7129FF009500952868 /* MedoContent.swift in Sources */,
+				D992E8242A17FF8700137469 /* EditAuthorOnServerView.swift in Sources */,
 				D95FCB6F29FEF75F00952868 /* EditSoundOnServerView.swift in Sources */,
 				D9B8784B28650F4E009CA7AD /* CSVParser.swift in Sources */,
 				D94A424F283E704300A504BD /* AuthorView.swift in Sources */,

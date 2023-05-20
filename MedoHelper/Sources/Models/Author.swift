@@ -2,19 +2,20 @@ import Foundation
 
 struct Author: Hashable, Codable, Identifiable {
 
-    let id: String
-    let name: String
-    let photo: String?
-    let description: String?
+    var id: String
+    var name: String
+    var photo: String?
+    var description: String?
     
-//    private enum CodingKeys: String, CodingKey {
-//        case authorId = "id"
-//        case name
-//        case photo
-//        case description
-//    }
-    
-//    var id: String {
-//        return authorId
-//    }
+    init(
+        id: String = UUID().uuidString,
+        name: String,
+        photo: String? = nil,
+        description: String? = nil
+    ) {
+        self.id = id
+        self.name = name
+        self.photo = photo
+        self.description = description
+    }
 }

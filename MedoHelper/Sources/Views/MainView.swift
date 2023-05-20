@@ -7,41 +7,41 @@ struct MainView: View {
     var body: some View {
         NavigationView {
             List(selection: $currentTab) {
+                Section("REMOTO") {
+                    NavigationLink {
+                        ServerSoundsCRUDView()
+                    } label: {
+                        Label("Sons", systemImage: "speaker.wave.3")
+                    }
+                    .tag(0)
+                    
+                    NavigationLink {
+                        ServerAuthorsCRUDView()
+                    } label: {
+                        Label("Autores", systemImage: "person.2")
+                    }
+                    .tag(1)
+                    
+                    NavigationLink {
+                        ServerSoundsCRUDView()
+                    } label: {
+                        Label("Músicas", systemImage: "music.quarternote.3")
+                    }
+                    .tag(2)
+                }
+                
                 Section("LOCAL") {
                     NavigationLink {
                         CreateAuthorAndSoundView()
                     } label: {
                         Label("Criar Autor e Som", systemImage: "plus.circle")
                     }
-                    .tag(0)
+                    .tag(3)
                     
                     NavigationLink {
                         ParseSoundRankingCSVView()
                     } label: {
                         Label("Parsear CSV", systemImage: "text.justify.leading")
-                    }
-                    .tag(1)
-                }
-                
-                Section("REMOTO") {
-                    NavigationLink {
-                        SoundsOuterView()
-                    } label: {
-                        Label("Sons", systemImage: "speaker.wave.3")
-                    }
-                    .tag(2)
-                    
-                    NavigationLink {
-                        AuthorsOuterView()
-                    } label: {
-                        Label("Autores", systemImage: "person.2")
-                    }
-                    .tag(3)
-                    
-                    NavigationLink {
-                        MoveAuthorsToServerView()
-                    } label: {
-                        Label("Músicas", systemImage: "music.quarternote.3")
                     }
                     .tag(4)
                 }

@@ -1,5 +1,5 @@
 //
-//  SoundsOuterView.swift
+//  ServerSoundsCRUDView.swift
 //  MedoHelper
 //
 //  Created by Rafael Claycon Schmitt on 30/04/23.
@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct SoundsOuterView: View {
+struct ServerSoundsCRUDView: View {
     
     @State private var currentTab = 0
     @State private var sound = Sound(title: "")
@@ -15,7 +15,7 @@ struct SoundsOuterView: View {
     @State private var showAddAlreadyOnAppSheet = false
     
     @State private var sounds: [Sound] = []
-    @State private var selectedSounds: Sound.ID?
+    @State private var selectedSound: Sound.ID?
     @State private var showAddSheet = false
     
     var body: some View {
@@ -36,7 +36,7 @@ struct SoundsOuterView: View {
                 }
             }
             
-            Table(sounds, selection: $selectedSounds) {
+            Table(sounds, selection: $selectedSound) {
                 TableColumn("ID") { sound in
                     Text("\(sound.id)")
                         .onTapGesture(count: 2) {
@@ -69,13 +69,13 @@ struct SoundsOuterView: View {
                         }
                 }
                 
-                TableColumn("Origem") { sound in
-                    Text(sound.isFromServer ?? false ? "Servidor" : "App")
-                        .onTapGesture(count: 2) {
-                            self.sound = sound
-                            showAddSheet = true
-                        }
-                }
+//                TableColumn("Origem") { sound in
+//                    Text(sound.isFromServer ?? false ? "Servidor" : "App")
+//                        .onTapGesture(count: 2) {
+//                            self.sound = sound
+//                            showAddSheet = true
+//                        }
+//                }
             }
             
             HStack(spacing: 10) {
@@ -97,6 +97,8 @@ struct SoundsOuterView: View {
                 }
                 
                 Spacer()
+                
+                Text("\(sounds.count.formattedString) sons")
             }
         }
         .padding()
@@ -110,28 +112,24 @@ struct SoundsOuterView: View {
             do {
                 let url = URL(string: serverPath + "v3/all-sounds")!
                 
-                do {
-                    var fetchedSounds: [Sound] = try await NetworkRabbit.getArray(from: url)
-//                    for i in 0...(allSounds.count - 1) {
-//                        allSounds[i].authorName = authorData.first(where: { $0.id == allSounds[i].authorId })?.name ?? Shared.unknownAuthor
-//                    }
-                    
-                    fetchedSounds.sort(by: { $0.dateAdded ?? Date() > $1.dateAdded ?? Date() })
-                    
-                    self.sounds = fetchedSounds
-                } catch {
-                    print(error)
-                }
+                var fetchedSounds: [Sound] = try await NetworkRabbit.getArray(from: url)
+//                for i in 0...(allSounds.count - 1) {
+//                    allSounds[i].authorName = authorData.first(where: { $0.id == allSounds[i].authorId })?.name ?? Shared.unknownAuthor
+//                }
+                
+                fetchedSounds.sort(by: { $0.dateAdded ?? Date() > $1.dateAdded ?? Date() })
+                
+                self.sounds = fetchedSounds
             } catch {
-                print(error.localizedDescription)
+                print(error)
             }
         }
     }
 }
 
-struct SoundsOuterView_Previews: PreviewProvider {
+struct ServerSoundsCRUDView_Previews: PreviewProvider {
     
     static var previews: some View {
-        SoundsOuterView()
+        ServerSoundsCRUDView()
     }
 }

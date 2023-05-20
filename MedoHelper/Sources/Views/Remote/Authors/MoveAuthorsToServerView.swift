@@ -9,6 +9,8 @@ import SwiftUI
 
 struct MoveAuthorsToServerView: View {
     
+    @Binding var isBeingShown: Bool
+    
     @State private var authors: [Author] = []
     @State private var isSending: Bool = false
     @State private var sendingResponse: String = ""
@@ -80,6 +82,6 @@ struct MoveAuthorsToServerView: View {
 struct MoveAuthorsToServerView_Previews: PreviewProvider {
     
     static var previews: some View {
-        MoveAuthorsToServerView()
+        MoveAuthorsToServerView(isBeingShown: .constant(true))
     }
 }

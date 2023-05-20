@@ -50,7 +50,7 @@ class NetworkRabbit {
             throw NetworkError.badResponse
         }
         guard (200...299).contains(httpResponse.statusCode) else {
-            print(httpResponse.statusCode)
+            print(url.absoluteString + " - Response: \(httpResponse.statusCode)")
             throw NetworkError.badResponse
         }
         
