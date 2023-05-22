@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import AppKit
 
 struct EditSoundOnServerView: View {
     
@@ -46,6 +47,10 @@ struct EditSoundOnServerView: View {
             text += " (recém criado)"
         }
         return text
+    }
+    
+    private var finderWarningAdjective: String {
+        isEditing ? "edição" : "criação"
     }
     
     var body: some View {
@@ -95,6 +100,12 @@ struct EditSoundOnServerView: View {
                 Text(filename)
             }
             
+            if filename != "" {
+                Text("Uma janela do Finder será aberta após a \(finderWarningAdjective) do som para que você tenha acesso ao arquivo renomeado para o servidor.")
+                    .foregroundColor(.orange)
+                    .fixedSize()
+            }
+            
             HStack(spacing: 50) {
                 //                DatePicker("Data de adição", selection: $sound.dateAdded, displayedComponents: .date)
                 //                    .datePickerStyle(.compact)
@@ -141,7 +152,7 @@ struct EditSoundOnServerView: View {
         }
     }
     
-    func createContent() {
+    private func createContent() {
         Task {
             showSendProgress = true
             modalMessage = "Enviando Dados..."
@@ -150,6 +161,7 @@ struct EditSoundOnServerView: View {
             guard let authorId = selectedAuthor else {
                 alertTitle = "Dados Incompletos"
                 alertMessage = "Selecione um Autor."
+                showSendProgress = false
                 return showingAlert = true
             }
             guard let fileURL = selectedFile else { return }
@@ -170,15 +182,21 @@ struct EditSoundOnServerView: View {
                 progressAmount = 1
                 modalMessage = "Renomeando Arquivo..."
                 
-                let destinationURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
-                let success = FileHelper.copyAndRenameFile(from: fileURL, to: destinationURL, with: "\(createdContentId).mp3")
-                if success {
-                    print("File copied and renamed successfully.")
-                } else {
-                    print("File copy and rename failed.")
+                let documentsFolder = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
+                do {
+                    try renameFile(from: fileURL, with: "\(createdContentId).mp3", saveTo: documentsFolder)
+                } catch let error as FileManipulationError {
+                    switch error {
+                    case .fileCopyAndRenameFailed(let message):
+                        alertMessage = message
+                    }
+                    alertTitle = "Falha Ao Renomear Arquivo"
+                    showSendProgress = false
+                    return showingAlert = true
                 }
                 
-                // TODO: - Implement file upload
+                // Show renamed file in Finder
+                openFolderInFinder(at: documentsFolder)
                 
                 progressAmount = 2
                 
@@ -191,7 +209,7 @@ struct EditSoundOnServerView: View {
         }
     }
     
-    func updateContent() {
+    private func updateContent() {
         Task {
             showSendProgress = true
             modalMessage = "Enviando Dados..."
@@ -218,17 +236,24 @@ struct EditSoundOnServerView: View {
                 }
                 
                 progressAmount = 1
-                //modalMessage = "Renomeando Arquivo..."
                 
-//                let destinationURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
-//                let success = FileHelper.copyAndRenameFile(from: fileURL, to: destinationURL, with: "\(createdContentId).mp3")
-//                if success {
-//                    print("File copied and renamed successfully.")
-//                } else {
-//                    print("File copy and rename failed.")
-//                }
-                
-                // TODO: - Implement file upload
+                if let fileURL = selectedFile {
+                    modalMessage = "Renomeando Arquivo..."
+                    let documentsFolder = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
+                    do {
+                        try renameFile(from: fileURL, with: "\(sound.id).mp3", saveTo: documentsFolder)
+                    } catch let error as FileManipulationError {
+                        switch error {
+                        case .fileCopyAndRenameFailed(let message):
+                            alertMessage = message
+                        }
+                        alertTitle = "Falha Ao Renomear Arquivo"
+                        showSendProgress = false
+                        return showingAlert = true
+                    }
+                    
+                    openFolderInFinder(at: documentsFolder)
+                }
                 
                 progressAmount = 2
                 
@@ -242,7 +267,7 @@ struct EditSoundOnServerView: View {
         }
     }
     
-    func loadAuthors() {
+    private func loadAuthors() {
         Task {
             let url = URL(string: serverPath + "v3/all-authors")!
             do {
@@ -257,6 +282,24 @@ struct EditSoundOnServerView: View {
             }
         }
     }
+    
+    private func openFolderInFinder(at folderURL: URL) {
+        let workspace = NSWorkspace.shared
+        workspace.selectFile(nil, inFileViewerRootedAtPath: folderURL.path)
+    }
+    
+    private func renameFile(from fileURL: URL, with filename: String, saveTo destinationURL: URL) throws {
+        let fileManager = FileManager.default
+        
+        if fileManager.fileExists(atPath: destinationURL.path()) {
+            try fileManager.removeItem(at: destinationURL)
+        }
+        
+        let success = FileHelper.copyAndRenameFile(from: fileURL, to: destinationURL, with: filename)
+        if !success {
+            throw FileManipulationError.fileCopyAndRenameFailed("A função FileHelper.copyAndRenameFile(from:,to:,with:) retornou erro.")
+        }
+    }
 }
 
 struct CreateSoundOnServerView_Previews: PreviewProvider {
@@ -264,4 +307,9 @@ struct CreateSoundOnServerView_Previews: PreviewProvider {
     static var previews: some View {
         EditSoundOnServerView(isBeingShown: .constant(true), sound: Sound(title: ""), isEditing: false)
     }
+}
+
+enum FileManipulationError: Error {
+    
+    case fileCopyAndRenameFailed(String)
 }
