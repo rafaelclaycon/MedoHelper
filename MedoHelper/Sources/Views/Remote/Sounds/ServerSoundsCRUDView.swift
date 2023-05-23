@@ -17,6 +17,13 @@ struct ServerSoundsCRUDView: View {
     @State private var sounds: [Sound] = []
     @State private var selectedSound: Sound.ID?
     @State private var showAddSheet = false
+    @State private var showDeleteAlert = false
+    
+    private var selectedSoundTitle: String {
+        guard let selectedSound = selectedSound else { return "" }
+        guard let sound = getSound(withID: selectedSound, from: sounds) else { return "" }
+        return sound.title
+    }
     
     var body: some View {
         VStack {
@@ -91,9 +98,16 @@ struct ServerSoundsCRUDView: View {
                 }
                 
                 Button {
-                    print("Remove")
+                    print((selectedSound ?? "") as String)
+                    showDeleteAlert = true
                 } label: {
                     Image(systemName: "minus")
+                }
+                .alert(isPresented: $showDeleteAlert) {
+                    Alert(title: Text("Remover \"\(selectedSoundTitle)\""), message: Text("Tem certeza de que deseja remover o som \"\(selectedSoundTitle)\"? A mudança será sincronizada com o servidor e propagada para todos os clientes na próxima sincronização."), primaryButton: .destructive(Text("Remover"), action: {
+                        guard let selectedSound = selectedSound else { return }
+                        removeSound(withId: selectedSound)
+                    }), secondaryButton: .cancel(Text("Cancelar")))
                 }
                 
                 Spacer()
@@ -120,6 +134,28 @@ struct ServerSoundsCRUDView: View {
                 fetchedSounds.sort(by: { $0.dateAdded ?? Date() > $1.dateAdded ?? Date() })
                 
                 self.sounds = fetchedSounds
+            } catch {
+                print(error)
+            }
+        }
+    }
+    
+    private func getSound(withID id: String, from sounds: [Sound]) -> Sound? {
+        for sound in sounds {
+            if sound.id == id {
+                return sound
+            }
+        }
+        return nil
+    }
+    
+    private func removeSound(withId soundId: String) {
+        Task {
+            do {
+                let url = URL(string: serverPath + "v3/remove-sound/\(soundId)")!
+                let response = try await NetworkRabbit.put(in: url, data: nil as String?)
+                
+                print(response as Any)
             } catch {
                 print(error)
             }

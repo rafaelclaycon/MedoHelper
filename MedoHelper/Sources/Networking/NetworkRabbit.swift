@@ -58,13 +58,16 @@ class NetworkRabbit {
         return String(data: data, encoding: .utf8)
     }
     
-    static func put<T: Encodable>(in url: URL, data: T) async throws -> Bool {
+    static func put<T: Encodable>(in url: URL, data: T?) async throws -> Bool {
         var request = URLRequest(url: url)
         request.httpMethod = "PUT"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        let encoder = JSONEncoder()
-        encoder.dateEncodingStrategy = .iso8601
-        request.httpBody = try encoder.encode(data)
+        
+        if let data = data {
+            let encoder = JSONEncoder()
+            encoder.dateEncodingStrategy = .iso8601
+            request.httpBody = try encoder.encode(data)
+        }
 
         let (_, response) = try await URLSession.shared.data(for: request)
 

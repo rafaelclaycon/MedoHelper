@@ -250,6 +250,11 @@ struct EditSoundOnServerView: View {
                         alertTitle = "Falha Ao Renomear Arquivo"
                         showSendProgress = false
                         return showingAlert = true
+                    } catch {
+                        alertTitle = "Falha Ao Renomear Arquivo"
+                        alertMessage = error.localizedDescription
+                        showSendProgress = false
+                        return showingAlert = true
                     }
                     
                     openFolderInFinder(at: documentsFolder)
@@ -291,7 +296,7 @@ struct EditSoundOnServerView: View {
     private func renameFile(from fileURL: URL, with filename: String, saveTo destinationURL: URL) throws {
         let fileManager = FileManager.default
         
-        if fileManager.fileExists(atPath: destinationURL.path()) {
+        if fileManager.fileExists(atPath: destinationURL.appending(path: filename).path()) {
             try fileManager.removeItem(at: destinationURL)
         }
         
