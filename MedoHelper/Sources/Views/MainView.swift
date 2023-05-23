@@ -3,11 +3,12 @@ import SwiftUI
 struct MainView: View {
     
     @State private var currentTab = 0
+    @State private var testVersionDotColor: Color = .red
     
     var body: some View {
         NavigationView {
             List(selection: $currentTab) {
-                Section("REMOTO") {
+                Section("DADOS NO SERVIDOR") {
                     NavigationLink {
                         ServerSoundsCRUDView()
                     } label: {
@@ -28,37 +29,69 @@ struct MainView: View {
                         Label("Músicas", systemImage: "music.quarternote.3")
                     }
                     .tag(2)
+                    
+                    NavigationLink {
+                        TestVersionView()
+                    } label: {
+                        HStack {
+                            Label("Versão de teste", systemImage: "hammer")
+                            Spacer()
+                            Circle()
+                                .fill(testVersionDotColor)
+                                .frame(width: 10, height: 10)
+                        }
+                    }
+                    .tag(3)
                 }
                 
-                Section("LOCAL") {
+                Section("FERRAMENTAS LOCAIS") {
                     NavigationLink {
                         CreateAuthorAndSoundView()
                     } label: {
                         Label("Criar Autor e Som", systemImage: "plus.circle")
                     }
-                    .tag(3)
+                    .tag(4)
                     
                     NavigationLink {
                         ParseSoundRankingCSVView()
                     } label: {
                         Label("Parsear CSV", systemImage: "text.justify.leading")
                     }
-                    .tag(4)
+                    .tag(5)
+                }
+                
+                Section("ANÁLISE") {
+                    NavigationLink {
+                        AnalyticsView()
+                    } label: {
+                        Label("Estatísticas", systemImage: "chart.line.uptrend.xyaxis")
+                    }
+                    .tag(6)
                 }
             }
             .listStyle(.sidebar)
-            
-//                HStack(spacing: 15) {
-//                    Spacer()
-//                    Button("Limpar Tudo") {
-//                        author = ProtoAuthor(name: "", successMessage: "...")
-//                        sound = ProtoSound(title: "", description: "", filename: "", dateAdded: Date(), isOffensive: false, successMessage: "...")
-//                    }
-//                    Button("Limpar Apenas Som") {
-//                        sound = ProtoSound(title: "", description: "", filename: "", dateAdded: Date(), isOffensive: false, successMessage: "...")
-//                    }
-//                }
-//                .padding(.trailing, 15)
+        }
+        .onAppear {
+            checkTestVersion()
+        }
+    }
+    
+    private func checkTestVersion() {
+        Task {
+            do {
+                let url = URL(string: "http://170.187.145.233:8080/api/v2/current-test-version/")!
+                
+                let statusCode: Int = try await NetworkRabbit.getStatusCode(from: url)
+                
+                if (200...299).contains(statusCode) {
+                    self.testVersionDotColor = .green
+                } else {
+                    self.testVersionDotColor = .red
+                }
+            } catch {
+                print(error)
+                self.testVersionDotColor = .red
+            }
         }
     }
 }

@@ -28,6 +28,14 @@ class NetworkRabbit {
         return try decoder.decode([T].self, from: data)
     }
     
+    static func getStatusCode(from url: URL) async throws -> Int {
+        let (_, response) = try await URLSession.shared.data(from: url)
+        guard let response = response as? HTTPURLResponse else {
+            throw NetworkError.badResponse
+        }
+        return response.statusCode
+    }
+    
     static func post<T: Codable>(data: T, to url: URL) async throws -> String? {
         // Create the URL request
         var request = URLRequest(url: url)
