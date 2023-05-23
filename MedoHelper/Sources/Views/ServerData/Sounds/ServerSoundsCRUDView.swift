@@ -112,7 +112,7 @@ struct ServerSoundsCRUDView: View {
                 
                 Spacer()
                 
-                Text("\(sounds.count.formattedString) sons")
+                Text("\(sounds.count.formattedString) itens")
             }
         }
         .padding()

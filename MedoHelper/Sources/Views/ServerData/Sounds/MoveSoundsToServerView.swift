@@ -15,7 +15,7 @@ struct MoveSoundsToServerView: View {
     @State private var isSending: Bool = false
     @State private var sendingResponse: String = ""
     @State private var chunks: Array<Array<Sound>> = Array<Array<Sound>>()
-    @State private var currentChunk: CGFloat = 1
+    @State private var currentChunk: CGFloat = 0
     
     private let successMessage = "Sons enviados com sucesso!"
     
@@ -79,7 +79,6 @@ struct MoveSoundsToServerView: View {
             
             if chunks.count > 0 {
                 ProgressView(progressViewText, value: currentChunk, total: CGFloat(chunks.count))
-                    //.frame(width: 300, height: 140)
                     .padding()
             }
         }

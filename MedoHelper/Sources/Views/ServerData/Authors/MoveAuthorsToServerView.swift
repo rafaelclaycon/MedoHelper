@@ -14,8 +14,18 @@ struct MoveAuthorsToServerView: View {
     @State private var authors: [Author] = []
     @State private var isSending: Bool = false
     @State private var sendingResponse: String = ""
+    @State private var chunks: Array<Array<Author>> = Array<Array<Author>>()
+    @State private var currentChunk: CGFloat = 0
     
     private let successMessage = "Autores enviados com sucesso!"
+    
+    private var authorCount: String {
+        "\(authors.count.formattedString) autores"
+    }
+    
+    private var progressViewText: String {
+        "Enviando autores (\(Int(currentChunk))/\(chunks.count))..."
+    }
     
     var body: some View {
         VStack(spacing: 20) {
@@ -40,17 +50,30 @@ struct MoveAuthorsToServerView: View {
                 }
             }
             
-            Button("Enviar") {
-                sendAuthors()
+            HStack {
+                Text(authorCount)
+                
+                Spacer()
+                
+                Button("Cancelar") {
+                    isBeingShown = false
+                }
+                
+                Button("Enviar") {
+                    sendAuthors()
+                }
             }
+            .disabled(chunks.count > 0)
             
-            Text(sendingResponse)
-                .foregroundColor(sendingResponse == successMessage ? .green : .primary)
-                .padding()
+            if chunks.count > 0 {
+                ProgressView(progressViewText, value: currentChunk, total: CGFloat(chunks.count))
+                    .padding()
+            }
         }
         .padding()
         .onAppear {
             authors = Bundle.main.decodeJSON("author_data.json")
+            authors.sort(by: { $0.name.preparedForComparison() < $1.name.preparedForComparison() })
         }
     }
     
@@ -60,21 +83,23 @@ struct MoveAuthorsToServerView: View {
             
             // The whole array is split into parts because Vapor cannot handle all 400+ items at once.
             let chunkSize = 100
-            let chunks = stride(from: 0, to: authors.count, by: chunkSize).map {
+            chunks = stride(from: 0, to: authors.count, by: chunkSize).map {
                 Array(authors[$0..<min($0 + chunkSize, authors.count)])
             }
-            print(chunks.count)
-            print(chunks)
             
             for chunk in chunks {
                 do {
                     _ = try await NetworkRabbit.post(data: chunk, to: url)
-                    sendingResponse = successMessage
+                    if Int(currentChunk) < chunks.count {
+                        currentChunk += 1
+                    }
                     sleep(1)
                 } catch {
-                    sendingResponse = sendingResponse + " " + error.localizedDescription
+                    print(error)
                 }
             }
+            
+            chunks = Array<Array<Author>>()
         }
     }
 }

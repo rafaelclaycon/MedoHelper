@@ -90,7 +90,7 @@ struct ServerAuthorsCRUDView: View {
                 
                 Spacer()
                 
-                Text("\(authors.count.formattedString) autores")
+                Text("\(authors.count.formattedString) itens")
             }
         }
         .padding()

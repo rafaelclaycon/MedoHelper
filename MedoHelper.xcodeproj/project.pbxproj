@@ -310,8 +310,8 @@
 			isa = PBXGroup;
 			children = (
 				D9CA30272A05921200F1F23D /* ServerAuthorsCRUDView.swift */,
-				D92693F92A015048007872D9 /* MoveAuthorsToServerView.swift */,
 				D992E8232A17FF8700137469 /* EditAuthorOnServerView.swift */,
+				D92693F92A015048007872D9 /* MoveAuthorsToServerView.swift */,
 			);
 			path = Authors;
 			sourceTree = "<group>";
