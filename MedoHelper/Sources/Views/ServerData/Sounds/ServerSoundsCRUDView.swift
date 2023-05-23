@@ -153,7 +153,7 @@ struct ServerSoundsCRUDView: View {
         Task {
             do {
                 let url = URL(string: serverPath + "v3/remove-sound/\(soundId)")!
-                let response = try await NetworkRabbit.put(in: url, data: nil as String?)
+                let response = try await NetworkRabbit.delete(in: url, data: nil as String?)
                 
                 print(response as Any)
             } catch {

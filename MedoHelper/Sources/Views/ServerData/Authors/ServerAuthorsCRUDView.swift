@@ -15,8 +15,15 @@ struct ServerAuthorsCRUDView: View {
     @State private var showAddAlreadyOnAppSheet = false
     
     @State private var authors: [Author] = []
-    @State private var selectedAuthor: Sound.ID?
+    @State private var selectedItem: Author.ID?
     @State private var showAddSheet = false
+    @State private var showDeleteAlert = false
+    
+    private var selectedAuthorName: String {
+        guard let selectedItem = selectedItem else { return "" }
+        guard let author = getAuthor(withID: selectedItem, from: authors) else { return "" }
+        return author.name
+    }
     
     var body: some View {
         VStack {
@@ -36,7 +43,7 @@ struct ServerAuthorsCRUDView: View {
                 }
             }
             
-            Table(authors, selection: $selectedAuthor) {
+            Table(authors, selection: $selectedItem) {
                 TableColumn("ID") { author in
                     Text("\(author.id)")
                         .onTapGesture(count: 2) {
@@ -83,9 +90,16 @@ struct ServerAuthorsCRUDView: View {
                 }
                 
                 Button {
-                    print("Remove")
+                    print((selectedItem ?? "") as String)
+                    showDeleteAlert = true
                 } label: {
                     Image(systemName: "minus")
+                }
+                .alert(isPresented: $showDeleteAlert) {
+                    Alert(title: Text("Remover \"\(selectedAuthorName)\""), message: Text("Tem certeza de que deseja remover o(a) autor(a) \"\(selectedAuthorName)\"? A mudança será sincronizada com o servidor e propagada para todos os clientes na próxima sincronização."), primaryButton: .destructive(Text("Remover"), action: {
+                        guard let selectedItem = selectedItem else { return }
+                        removeAuthor(withId: selectedItem)
+                    }), secondaryButton: .cancel(Text("Cancelar")))
                 }
                 
                 Spacer()
@@ -107,6 +121,28 @@ struct ServerAuthorsCRUDView: View {
                 var fetchedAuthors: [Author] = try await NetworkRabbit.getArray(from: url)
                 fetchedAuthors.sort(by: { $0.name.preparedForComparison() < $1.name.preparedForComparison() })
                 self.authors = fetchedAuthors
+            } catch {
+                print(error)
+            }
+        }
+    }
+    
+    private func getAuthor(withID id: String, from authors: [Author]) -> Author? {
+        for author in authors {
+            if author.id == id {
+                return author
+            }
+        }
+        return nil
+    }
+    
+    private func removeAuthor(withId authorId: String) {
+        Task {
+            do {
+                let url = URL(string: serverPath + "v3/remove-author/\(authorId)")!
+                let response = try await NetworkRabbit.delete(in: url, data: nil as String?)
+                
+                print(response as Any)
             } catch {
                 print(error)
             }

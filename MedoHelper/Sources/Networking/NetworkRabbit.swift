@@ -90,6 +90,30 @@ class NetworkRabbit {
         return true
     }
     
+    static func delete<T: Encodable>(in url: URL, data: T?) async throws -> Bool {
+        var request = URLRequest(url: url)
+        request.httpMethod = "DELETE"
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        
+        if let data = data {
+            let encoder = JSONEncoder()
+            encoder.dateEncodingStrategy = .iso8601
+            request.httpBody = try encoder.encode(data)
+        }
+
+        let (_, response) = try await URLSession.shared.data(for: request)
+
+        guard let httpResponse = response as? HTTPURLResponse else {
+            throw NetworkError.badResponse
+        }
+        guard (200...299).contains(httpResponse.statusCode) else {
+            print(httpResponse.statusCode)
+            throw NetworkError.badResponse
+        }
+
+        return true
+    }
+    
 //    static func test<T: Codable>(data: T) {
 //        let encoder = JSONEncoder()
 //        let jsonData = try! encoder.encode(data)
