@@ -128,3 +128,13 @@ enum NetworkError: Error {
     
     case badResponse
 }
+
+extension NetworkError: LocalizedError {
+    
+    public var errorDescription: String? {
+        switch self {
+        case .badResponse:
+            return NSLocalizedString("400 Bad Request", comment: "")
+        }
+    }
+}
