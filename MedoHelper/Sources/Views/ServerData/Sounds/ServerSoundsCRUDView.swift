@@ -9,7 +9,6 @@ import SwiftUI
 
 struct ServerSoundsCRUDView: View {
     
-    @State private var currentTab = 0
     @State private var sound = Sound(title: "")
     @State private var showLoadingView: Bool = false
     
@@ -167,7 +166,7 @@ struct ServerSoundsCRUDView: View {
     private func removeSound(withId soundId: String) {
         Task {
             do {
-                let url = URL(string: serverPath + "v3/remove-sound/\(soundId)")!
+                let url = URL(string: serverPath + "v3/sound/\(soundId)")!
                 let response = try await NetworkRabbit.delete(in: url, data: nil as String?)
                 
                 print(response as Any)

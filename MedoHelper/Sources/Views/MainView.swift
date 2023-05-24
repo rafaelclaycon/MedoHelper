@@ -24,7 +24,7 @@ struct MainView: View {
                     .tag(1)
                     
                     NavigationLink {
-                        ServerSoundsCRUDView()
+                        ServerSongsCRUDView()
                     } label: {
                         Label("Músicas", systemImage: "music.quarternote.3")
                     }

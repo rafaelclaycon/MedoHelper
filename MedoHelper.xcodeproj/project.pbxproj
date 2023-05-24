@@ -32,6 +32,8 @@
 		D960F2252A1D22E1007D12D7 /* AnalyticsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D960F2242A1D22E1007D12D7 /* AnalyticsView.swift */; };
 		D960F2282A1D27E7007D12D7 /* TestVersionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D960F2272A1D27E7007D12D7 /* TestVersionView.swift */; };
 		D960F22A2A1D577A007D12D7 /* LoadingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D960F2292A1D577A007D12D7 /* LoadingView.swift */; };
+		D960F22C2A1D5D6D007D12D7 /* ServerSongsCRUDView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D960F22B2A1D5D6D007D12D7 /* ServerSongsCRUDView.swift */; };
+		D960F22E2A1D5DBA007D12D7 /* Song.swift in Sources */ = {isa = PBXBuildFile; fileRef = D960F22D2A1D5DBA007D12D7 /* Song.swift */; };
 		D992E8242A17FF8700137469 /* EditAuthorOnServerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D992E8232A17FF8700137469 /* EditAuthorOnServerView.swift */; };
 		D9B878482864FA73009CA7AD /* ParseSoundRankingCSVView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9B878472864FA73009CA7AD /* ParseSoundRankingCSVView.swift */; };
 		D9B8784B28650F4E009CA7AD /* CSVParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9B8784A28650F4E009CA7AD /* CSVParser.swift */; };
@@ -86,6 +88,8 @@
 		D960F2242A1D22E1007D12D7 /* AnalyticsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsView.swift; sourceTree = "<group>"; };
 		D960F2272A1D27E7007D12D7 /* TestVersionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestVersionView.swift; sourceTree = "<group>"; };
 		D960F2292A1D577A007D12D7 /* LoadingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadingView.swift; sourceTree = "<group>"; };
+		D960F22B2A1D5D6D007D12D7 /* ServerSongsCRUDView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerSongsCRUDView.swift; sourceTree = "<group>"; };
+		D960F22D2A1D5DBA007D12D7 /* Song.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Song.swift; sourceTree = "<group>"; };
 		D992E8232A17FF8700137469 /* EditAuthorOnServerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditAuthorOnServerView.swift; sourceTree = "<group>"; };
 		D9B878472864FA73009CA7AD /* ParseSoundRankingCSVView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ParseSoundRankingCSVView.swift; sourceTree = "<group>"; };
 		D9B8784A28650F4E009CA7AD /* CSVParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CSVParser.swift; sourceTree = "<group>"; };
@@ -228,6 +232,7 @@
 				D95FCB7029FF009500952868 /* MedoContent.swift */,
 				D914C7222A09AD6D0011EC5B /* MusicGenre.swift */,
 				D914C7242A09AD970011EC5B /* ContentType.swift */,
+				D960F22D2A1D5DBA007D12D7 /* Song.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -321,6 +326,7 @@
 		D9CA30252A057AC200F1F23D /* Songs */ = {
 			isa = PBXGroup;
 			children = (
+				D960F22B2A1D5D6D007D12D7 /* ServerSongsCRUDView.swift */,
 			);
 			path = Songs;
 			sourceTree = "<group>";
@@ -450,6 +456,7 @@
 				D95FCB6F29FEF75F00952868 /* EditSoundOnServerView.swift in Sources */,
 				D9B8784B28650F4E009CA7AD /* CSVParser.swift in Sources */,
 				D94A424F283E704300A504BD /* AuthorView.swift in Sources */,
+				D960F22E2A1D5DBA007D12D7 /* Song.swift in Sources */,
 				D960F22A2A1D577A007D12D7 /* LoadingView.swift in Sources */,
 				D914C7232A09AD6D0011EC5B /* MusicGenre.swift in Sources */,
 				D94B03FD2993346F00EB03CA /* FileHelper.swift in Sources */,
@@ -468,6 +475,7 @@
 				D914C7252A09AD970011EC5B /* ContentType.swift in Sources */,
 				D94A4222283DC94B00A504BD /* MedoHelperApp.swift in Sources */,
 				D9310C292A0BDDDF006A3058 /* CreateAuthorAndSoundView.swift in Sources */,
+				D960F22C2A1D5D6D007D12D7 /* ServerSongsCRUDView.swift in Sources */,
 				D9CA302A2A05975900F1F23D /* MoveSoundsToServerView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

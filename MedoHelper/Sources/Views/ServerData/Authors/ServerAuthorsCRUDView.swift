@@ -139,7 +139,7 @@ struct ServerAuthorsCRUDView: View {
     private func removeAuthor(withId authorId: String) {
         Task {
             do {
-                let url = URL(string: serverPath + "v3/remove-author/\(authorId)")!
+                let url = URL(string: serverPath + "v3/author/\(authorId)")!
                 let response = try await NetworkRabbit.delete(in: url, data: nil as String?)
                 
                 print(response as Any)
