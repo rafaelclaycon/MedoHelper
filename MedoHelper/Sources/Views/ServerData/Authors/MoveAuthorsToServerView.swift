@@ -17,8 +17,6 @@ struct MoveAuthorsToServerView: View {
     @State private var chunks: Array<Array<Author>> = Array<Array<Author>>()
     @State private var currentChunk: CGFloat = 0
     
-    private let successMessage = "Autores enviados com sucesso!"
-    
     private var authorCount: String {
         "\(authors.count.formattedString) autores"
     }

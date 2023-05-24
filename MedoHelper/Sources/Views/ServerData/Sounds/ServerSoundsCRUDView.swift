@@ -16,7 +16,7 @@ struct ServerSoundsCRUDView: View {
     
     @State private var sounds: [Sound] = []
     @State private var selectedSound: Sound.ID?
-    @State private var showAddSheet = false
+    @State private var showEditSheet = false
     @State private var showDeleteAlert = false
     
     private var selectedSoundTitle: String {
@@ -45,56 +45,33 @@ struct ServerSoundsCRUDView: View {
                 }
                 
                 Table(sounds, selection: $selectedSound) {
-                    TableColumn("ID") { sound in
-                        Text("\(sound.id)")
-                            .onTapGesture(count: 2) {
-                                self.sound = sound
-                                showAddSheet = true
-                            }
-                    }
-                    
-                    TableColumn("Título") { sound in
-                        Text("\(sound.title)")
-                            .onTapGesture(count: 2) {
-                                self.sound = sound
-                                showAddSheet = true
-                            }
-                    }
-                    
+                    TableColumn("ID", value: \.id)
+                    TableColumn("Título", value: \.title)
                     TableColumn("Data de Criação") { sound in
                         Text(sound.dateAdded?.toScreenString() ?? "")
-                            .onTapGesture(count: 2) {
-                                self.sound = sound
-                                showAddSheet = true
-                            }
+                            
                     }
-                    
                     TableColumn("Duração") { sound in
                         Text("\(sound.duration.asString())")
-                            .onTapGesture(count: 2) {
-                                self.sound = sound
-                                showAddSheet = true
-                            }
                     }
-                    
-                    //                TableColumn("Origem") { sound in
-                    //                    Text(sound.isFromServer ?? false ? "Servidor" : "App")
-                    //                        .onTapGesture(count: 2) {
-                    //                            self.sound = sound
-                    //                            showAddSheet = true
-                    //                        }
-                    //                }
+                }.contextMenu(forSelectionType: Sound.ID.self) { items in
+                    EmptyView()
+                } primaryAction: { items in
+                    guard let selectedItemID = items.first else { return }
+                    guard let item = getSound(withID: selectedItemID, from: sounds) else { return }
+                    self.sound = item
+                    showEditSheet = true
                 }
                 
                 HStack(spacing: 10) {
                     Button {
                         self.sound = Sound(title: "")
-                        showAddSheet = true
+                        showEditSheet = true
                     } label: {
                         Image(systemName: "plus")
                     }
-                    .sheet(isPresented: $showAddSheet) {
-                        EditSoundOnServerView(isBeingShown: $showAddSheet, sound: sound, isEditing: sound.title != "")
+                    .sheet(isPresented: $showEditSheet) {
+                        EditSoundOnServerView(isBeingShown: $showEditSheet, sound: sound, isEditing: sound.title != "")
                             .frame(minWidth: 800, minHeight: 500)
                     }
                     

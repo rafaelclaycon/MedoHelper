@@ -39,7 +39,7 @@ struct ServerSongsCRUDView: View {
                         showAddAlreadyOnAppSheet = true
                     }
                     .sheet(isPresented: $showAddAlreadyOnAppSheet) {
-                        MoveSoundsToServerView(isBeingShown: $showAddAlreadyOnAppSheet)
+                        MoveSongsToServerView(isBeingShown: $showAddAlreadyOnAppSheet)
                             .frame(minWidth: 800, minHeight: 500)
                     }
                 }

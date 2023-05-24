@@ -1,42 +1,42 @@
 //
-//  MoveSoundsToServerView.swift
+//  MoveSongsToServerView.swift
 //  MedoHelper
 //
-//  Created by Rafael Schmitt on 05/05/23.
+//  Created by Rafael Schmitt on 24/05/23.
 //
 
 import SwiftUI
 
-struct MoveSoundsToServerView: View {
+struct MoveSongsToServerView: View {
     
     @Binding var isBeingShown: Bool
     
-    @State private var sounds: [Sound] = []
+    @State private var items: [Song] = []
     @State private var isSending: Bool = false
     @State private var sendingResponse: String = ""
-    @State private var chunks: Array<Array<Sound>> = Array<Array<Sound>>()
+    @State private var chunks: Array<Array<Song>> = Array<Array<Song>>()
     @State private var currentChunk: CGFloat = 0
     
-    private var soundCount: String {
-        "\(sounds.count.formattedString) sons"
+    private var itemCount: String {
+        "\(items.count.formattedString) itens"
     }
     
     private var progressViewText: String {
-        "Enviando sons (\(Int(currentChunk))/\(chunks.count))..."
+        "Enviando músicas (\(Int(currentChunk))/\(chunks.count))..."
     }
     
     var body: some View {
         VStack(spacing: 20) {
             ZStack {
-                if sounds.isEmpty {
+                if items.isEmpty {
                     HStack(spacing: 10) {
                         ProgressView()
                         
-                        Text("Carregando sons...")
+                        Text("Carregando...")
                             .foregroundColor(.gray)
                     }
                 } else {
-                    Table(sounds) {
+                    Table(items) {
                         TableColumn("ID", value: \.id)
                         TableColumn("Título", value: \.title)
                         TableColumn("Data de Criação") { sound in
@@ -61,7 +61,7 @@ struct MoveSoundsToServerView: View {
             }
             
             HStack {
-                Text(soundCount)
+                Text(itemCount)
                 
                 Spacer()
                 
@@ -70,7 +70,7 @@ struct MoveSoundsToServerView: View {
                 }
                 
                 Button("Enviar") {
-                    sendSounds()
+                    sendSongs()
                 }
             }
             .disabled(chunks.count > 0)
@@ -82,19 +82,19 @@ struct MoveSoundsToServerView: View {
         }
         .padding()
         .onAppear {
-            sounds = Bundle.main.decodeJSON("sound_data.json")
-            sounds.sort(by: { $0.dateAdded ?? Date() > $1.dateAdded ?? Date() })
+            items = Bundle.main.decodeJSON("song_data.json")
+            items.sort(by: { $0.dateAdded ?? Date() > $1.dateAdded ?? Date() })
         }
     }
     
-    private func sendSounds() {
+    private func sendSongs() {
         Task {
-            let url = URL(string: serverPath + "v3/import-sounds")!
+            let url = URL(string: serverPath + "v3/import-songs")!
             
-            // The whole array is split into parts because Vapor cannot handle all 1.000+ items at once.
+            // The whole array is split into parts because Vapor cannot handle all items at once.
             let chunkSize = 10
-            chunks = stride(from: 0, to: sounds.count, by: chunkSize).map {
-                Array(sounds[$0..<min($0 + chunkSize, sounds.count)])
+            chunks = stride(from: 0, to: items.count, by: chunkSize).map {
+                Array(items[$0..<min($0 + chunkSize, items.count)])
             }
             
             for chunk in chunks {
@@ -109,14 +109,14 @@ struct MoveSoundsToServerView: View {
                 }
             }
             
-            chunks = Array<Array<Sound>>()
+            chunks = Array<Array<Song>>()
         }
     }
 }
 
-struct MoveSoundsToServerView_Previews: PreviewProvider {
+struct MoveSongsToServerView_Previews: PreviewProvider {
     
     static var previews: some View {
-        MoveSoundsToServerView(isBeingShown: .constant(true))
+        MoveSongsToServerView(isBeingShown: .constant(true))
     }
 }

@@ -45,6 +45,8 @@
 		D9CA302A2A05975900F1F23D /* MoveSoundsToServerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9CA30292A05975900F1F23D /* MoveSoundsToServerView.swift */; };
 		D9CA302C2A0598C900F1F23D /* sound_data.json in Resources */ = {isa = PBXBuildFile; fileRef = D9CA302B2A0598C900F1F23D /* sound_data.json */; };
 		D9D798722A05D338002B2D77 /* Double+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9D798712A05D338002B2D77 /* Double+Extensions.swift */; };
+		D9E39DB32A1E4C5F0053A527 /* MoveSongsToServerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9E39DB22A1E4C5F0053A527 /* MoveSongsToServerView.swift */; };
+		D9E39DB52A1E4CF10053A527 /* song_data.json in Resources */ = {isa = PBXBuildFile; fileRef = D9E39DB42A1E4CF10053A527 /* song_data.json */; };
 		D9FB1D9D29FEEF3900AE8744 /* ServerSoundsCRUDView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9FB1D9C29FEEF3900AE8744 /* ServerSoundsCRUDView.swift */; };
 		D9FB487E286E435A00FF90D0 /* Author.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9FB487D286E435A00FF90D0 /* Author.swift */; };
 /* End PBXBuildFile section */
@@ -101,6 +103,8 @@
 		D9CA30292A05975900F1F23D /* MoveSoundsToServerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoveSoundsToServerView.swift; sourceTree = "<group>"; };
 		D9CA302B2A0598C900F1F23D /* sound_data.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = sound_data.json; sourceTree = "<group>"; };
 		D9D798712A05D338002B2D77 /* Double+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Double+Extensions.swift"; sourceTree = "<group>"; };
+		D9E39DB22A1E4C5F0053A527 /* MoveSongsToServerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoveSongsToServerView.swift; sourceTree = "<group>"; };
+		D9E39DB42A1E4CF10053A527 /* song_data.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = song_data.json; sourceTree = "<group>"; };
 		D9FB1D9C29FEEF3900AE8744 /* ServerSoundsCRUDView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerSoundsCRUDView.swift; sourceTree = "<group>"; };
 		D9FB487D286E435A00FF90D0 /* Author.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Author.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -266,6 +270,7 @@
 		D9B8784C286513ED009CA7AD /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				D9E39DB42A1E4CF10053A527 /* song_data.json */,
 				D9CA302B2A0598C900F1F23D /* sound_data.json */,
 				D92693FB2A015608007872D9 /* author_data.json */,
 				D94A4225283DC94D00A504BD /* Assets.xcassets */,
@@ -327,6 +332,7 @@
 			isa = PBXGroup;
 			children = (
 				D960F22B2A1D5D6D007D12D7 /* ServerSongsCRUDView.swift */,
+				D9E39DB22A1E4C5F0053A527 /* MoveSongsToServerView.swift */,
 			);
 			path = Songs;
 			sourceTree = "<group>";
@@ -425,6 +431,7 @@
 				D9CA302C2A0598C900F1F23D /* sound_data.json in Resources */,
 				D92693FC2A015608007872D9 /* author_data.json in Resources */,
 				D94A4226283DC94D00A504BD /* Assets.xcassets in Resources */,
+				D9E39DB52A1E4CF10053A527 /* song_data.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -458,6 +465,7 @@
 				D94A424F283E704300A504BD /* AuthorView.swift in Sources */,
 				D960F22E2A1D5DBA007D12D7 /* Song.swift in Sources */,
 				D960F22A2A1D577A007D12D7 /* LoadingView.swift in Sources */,
+				D9E39DB32A1E4C5F0053A527 /* MoveSongsToServerView.swift in Sources */,
 				D914C7232A09AD6D0011EC5B /* MusicGenre.swift in Sources */,
 				D94B03FD2993346F00EB03CA /* FileHelper.swift in Sources */,
 				D9B8784F2865324F009CA7AD /* RankItem.swift in Sources */,
