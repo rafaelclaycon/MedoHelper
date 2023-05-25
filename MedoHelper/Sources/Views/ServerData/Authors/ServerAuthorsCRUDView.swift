@@ -99,6 +99,11 @@ struct ServerAuthorsCRUDView: View {
         .onAppear {
             fetchAuthors()
         }
+        .onChange(of: showAddAlreadyOnAppSheet) { showAddAlreadyOnAppSheet in
+            if showAddAlreadyOnAppSheet == false {
+                fetchAuthors()
+            }
+        }
     }
     
     func fetchAuthors() {

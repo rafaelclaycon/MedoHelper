@@ -120,6 +120,11 @@ struct ServerSoundsCRUDView: View {
             .onAppear {
                 fetchSounds()
             }
+            .onChange(of: showAddAlreadyOnAppSheet) { showAddAlreadyOnAppSheet in
+                if showAddAlreadyOnAppSheet == false {
+                    fetchSounds()
+                }
+            }
             
             if showLoadingView {
                 LoadingView()

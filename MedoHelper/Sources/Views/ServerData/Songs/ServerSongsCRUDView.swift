@@ -103,6 +103,11 @@ struct ServerSongsCRUDView: View {
             .onAppear {
                 fetchItems()
             }
+            .onChange(of: showAddAlreadyOnAppSheet) { showAddAlreadyOnAppSheet in
+                if showAddAlreadyOnAppSheet == false {
+                    fetchItems()
+                }
+            }
             
             if showLoadingView {
                 LoadingView()
