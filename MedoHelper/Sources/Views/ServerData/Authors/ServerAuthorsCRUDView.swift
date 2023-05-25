@@ -9,14 +9,13 @@ import SwiftUI
 
 struct ServerAuthorsCRUDView: View {
     
-    @State private var currentTab = 0
     @State private var author = Author(name: "")
     
     @State private var showAddAlreadyOnAppSheet = false
     
     @State private var authors: [Author] = []
     @State private var selectedItem: Author.ID?
-    @State private var showAddSheet = false
+    @State private var showEditSheet = false
     @State private var showDeleteAlert = false
     
     private var selectedAuthorName: String {
@@ -44,48 +43,37 @@ struct ServerAuthorsCRUDView: View {
             }
             
             Table(authors, selection: $selectedItem) {
-                TableColumn("ID") { author in
-                    Text("\(author.id)")
-                        .onTapGesture(count: 2) {
-                            self.author = author
-                            showAddSheet = true
-                        }
+                TableColumn("Nome", value: \.name)
+            }.contextMenu(forSelectionType: Author.ID.self) { items in
+                Section {
+                    Button("Editar Som") {
+                        guard let selectedItemId = items.first else { return }
+                        editAuthor(withId: selectedItemId)
+                    }
                 }
                 
-                TableColumn("Nome") { author in
-                    Text("\(author.name)")
-                        .onTapGesture(count: 2) {
-                            self.author = author
-                            showAddSheet = true
-                        }
+                Section {
+                    Button("Remover Som") {
+//                        guard let selectedItemId = items.first else { return }
+//                        selectedSound = selectedItemId
+//                        alertType = .twoOptionsOneDelete
+//                        showAlert = true
+                    }
                 }
-
-                TableColumn("Foto") { author in
-                    Text(author.photo ?? "")
-                        .onTapGesture(count: 2) {
-                            self.author = author
-                            showAddSheet = true
-                        }
-                }
-                
-                TableColumn("Descrição") { author in
-                    Text(author.description ?? "")
-                        .onTapGesture(count: 2) {
-                            self.author = author
-                            showAddSheet = true
-                        }
-                }
+            } primaryAction: { items in
+                guard let selectedItemId = items.first else { return }
+                editAuthor(withId: selectedItemId)
             }
             
             HStack(spacing: 10) {
                 Button {
                     self.author = Author(name: "")
-                    showAddSheet = true
+                    showEditSheet = true
                 } label: {
                     Image(systemName: "plus")
                 }
-                .sheet(isPresented: $showAddSheet) {
-                    EditAuthorOnServerView(isBeingShown: $showAddSheet, author: author, isEditing: author.name != "")
+                .sheet(isPresented: $showEditSheet) {
+                    EditAuthorOnServerView(isBeingShown: $showEditSheet, author: author, isEditing: author.name != "")
                         .frame(minWidth: 800, minHeight: 500)
                 }
                 
@@ -134,6 +122,12 @@ struct ServerAuthorsCRUDView: View {
             }
         }
         return nil
+    }
+    
+    private func editAuthor(withId itemId: String) {
+        guard let item = getAuthor(withID: itemId, from: authors) else { return }
+        self.author = item
+        showEditSheet = true
     }
     
     private func removeAuthor(withId authorId: String) {

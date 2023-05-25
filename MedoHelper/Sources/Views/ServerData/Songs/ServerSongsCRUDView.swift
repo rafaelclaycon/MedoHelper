@@ -15,8 +15,10 @@ struct ServerSongsCRUDView: View {
     
     @State private var showLoadingView = false
     @State private var showAddAlreadyOnAppSheet = false
-    @State private var showAddSheet = false
-    @State private var showDeleteAlert = false
+    @State private var showEditSheet = false
+    @State private var showAlert = false
+    @State private var alertType: AlertType = .singleOptionInformative
+    @State private var alertErrorMessage: String = ""
     
     private var selectedSongTitle: String {
 //        guard let selectedSound = selectedSound else { return "" }
@@ -45,56 +47,50 @@ struct ServerSongsCRUDView: View {
                 }
                 
                 Table(items, selection: $selectedItem) {
-                    TableColumn("ID") { song in
-                        Text("\(song.id)")
-                            .onTapGesture(count: 2) {
-                                self.song = song
-                                showAddSheet = true
-                            }
-                    }
+                    TableColumn("Título", value: \.title)
                     
-                    TableColumn("Título") { song in
-                        Text("\(song.title)")
-                            .onTapGesture(count: 2) {
-                                self.song = song
-                                showAddSheet = true
-                            }
-                    }
+                    TableColumn("Gênero", value: \.genre.name)
+                        .width(min: 50, max: 100)
                     
-                    TableColumn("Gênero") { song in
-                        Text(song.genre.name)
-                            .onTapGesture(count: 2) {
-                                self.song = song
-                                showAddSheet = true
-                            }
+                    TableColumn("Adicionado em") { song in
+                        Text(song.dateAdded?.toScreenString() ?? "")
                     }
+                    .width(min: 50, max: 100)
                     
                     TableColumn("Duração") { song in
                         Text("\(song.duration.asString())")
-                            .onTapGesture(count: 2) {
-                                self.song = song
-                                showAddSheet = true
-                            }
+                    }
+                    .width(min: 50, max: 100)
+                }.contextMenu(forSelectionType: Song.ID.self) { items in
+                    Section {
+                        Button("Editar Som") {
+                            guard let selectedItemId = items.first else { return }
+                            editSong(withId: selectedItemId)
+                        }
                     }
                     
-                    TableColumn("Data de Adição") { song in
-                        Text(song.dateAdded?.toScreenString() ?? "")
-                            .onTapGesture(count: 2) {
-                                self.song = song
-                                showAddSheet = true
-                            }
+                    Section {
+                        Button("Remover Som") {
+                            guard let selectedItemId = items.first else { return }
+                            selectedItem = selectedItemId
+                            alertType = .twoOptionsOneDelete
+                            showAlert = true
+                        }
                     }
+                } primaryAction: { items in
+                    guard let selectedItemId = items.first else { return }
+                    editSong(withId: selectedItemId)
                 }
                 
                 HStack(spacing: 10) {
                     Button {
                         self.song = Song(title: "")
-                        showAddSheet = true
+                        showEditSheet = true
                     } label: {
                         Image(systemName: "plus")
                     }
-//                    .sheet(isPresented: $showAddSheet) {
-//                        EditSoundOnServerView(isBeingShown: $showAddSheet, sound: sound, isEditing: sound.title != "")
+//                    .sheet(isPresented: $showEditSheet) {
+//                        EditSongOnServerView(isBeingShown: $showEditSheet, sound: sound, isEditing: sound.title != "")
 //                            .frame(minWidth: 800, minHeight: 500)
 //                    }
                     
@@ -136,6 +132,21 @@ struct ServerSongsCRUDView: View {
                 showLoadingView = false
             }
         }
+    }
+    
+    private func getSong(withID id: String, from items: [Song]) -> Song? {
+        for item in items {
+            if item.id == id {
+                return item
+            }
+        }
+        return nil
+    }
+    
+    private func editSong(withId itemId: String) {
+        guard let item = getSong(withID: itemId, from: items) else { return }
+        self.song = item
+        showEditSheet = true
     }
 }
 

@@ -10,12 +10,11 @@ import SwiftUI
 struct ServerSoundsCRUDView: View {
     
     @State private var sound = Sound(title: "")
-    @State private var showLoadingView: Bool = false
-    
-    @State private var showAddAlreadyOnAppSheet = false
-    
     @State private var sounds: [Sound] = []
     @State private var selectedSound: Sound.ID?
+    
+    @State private var showLoadingView: Bool = false
+    @State private var showAddAlreadyOnAppSheet = false
     @State private var showEditSheet = false
     @State private var showAlert = false
     @State private var alertType: AlertType = .singleOptionInformative
@@ -47,14 +46,15 @@ struct ServerSoundsCRUDView: View {
                 }
                 
                 Table(sounds, selection: $selectedSound) {
-                    TableColumn("ID", value: \.id)
                     TableColumn("Título", value: \.title)
-                    TableColumn("Data de Criação") { sound in
+                    TableColumn("Adicionado em") { sound in
                         Text(sound.dateAdded?.toScreenString() ?? "")
                     }
+                    .width(min: 50, max: 100)
                     TableColumn("Duração") { sound in
                         Text("\(sound.duration.asString())")
                     }
+                    .width(min: 50, max: 100)
                 }.contextMenu(forSelectionType: Sound.ID.self) { items in
                     Section {
                         Button("Editar Som") {
