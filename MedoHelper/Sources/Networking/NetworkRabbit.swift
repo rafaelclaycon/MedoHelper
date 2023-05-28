@@ -36,18 +36,19 @@ class NetworkRabbit {
         return response.statusCode
     }
     
-    static func post<T: Codable>(data: T, to url: URL) async throws -> String? {
+    static func post<T: Codable>(data: T?, to url: URL) async throws -> String? {
         // Create the URL request
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
         request.addValue("application/json", forHTTPHeaderField: "Content-Type")
         
-        // Encode the data as JSON
-        let encoder = JSONEncoder()
-        encoder.dateEncodingStrategy = .iso8601
-        let jsonData = try encoder.encode(data)
-        print(jsonData)
-        request.httpBody = jsonData
+        if let data = data {
+            let encoder = JSONEncoder()
+            encoder.dateEncodingStrategy = .iso8601
+            let jsonData = try encoder.encode(data)
+            print(jsonData)
+            request.httpBody = jsonData
+        }
         
         // Send the request using URLSession
         let session = URLSession.shared

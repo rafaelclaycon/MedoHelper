@@ -6,6 +6,7 @@
 //
 
 import AVFoundation
+import AppKit
 
 class FileHelper {
     
@@ -35,15 +36,48 @@ class FileHelper {
         }
     }
     
-    static func copyAndRenameFile(from sourceURL: URL, to destinationURL: URL, with newName: String) -> Bool {
+    static func copyAndRenameFile(from sourceURL: URL, to destinationURL: URL, with newName: String) throws {
         let fileManager = FileManager.default
         let destinationFileURL = destinationURL.appendingPathComponent(newName)
-        do {
-            try fileManager.copyItem(at: sourceURL, to: destinationFileURL)
-            return true
-        } catch {
-            print("Error copying file: \(error)")
-            return false
+        guard fileManager.fileExists(atPath: sourceURL.path(percentEncoded: false)) else { throw FileError.sourceFileDoesNotExist }
+        guard fileManager.isReadableFile(atPath: sourceURL.path(percentEncoded: false)) else { throw FileError.noPermissionToRead }
+        
+        var isDirectory: ObjCBool = false
+        guard fileManager.fileExists(atPath: destinationURL.path, isDirectory: &isDirectory) else { throw FileError.destinationDirDoesNotExist }
+        print(isDirectory)
+        
+        guard fileManager.fileExists(atPath: destinationURL.path) else { throw FileError.destinationDirDoesNotExist }
+        guard fileManager.isWritableFile(atPath: destinationURL.path) else { throw FileError.destinationIsNotWritable }
+        
+        print("Source: \(sourceURL.path(percentEncoded: false))")
+        print("Destination: \(destinationFileURL.path(percentEncoded: false))")
+        
+        try fileManager.copyItem(atPath: sourceURL.path(percentEncoded: false), toPath: destinationFileURL.path(percentEncoded: false))
+    }
+    
+    static func openFolderInFinder(_ folderURL: URL) {
+        let workspace = NSWorkspace.shared
+        workspace.selectFile(nil, inFileViewerRootedAtPath: folderURL.path)
+    }
+}
+
+enum FileError: Error {
+    
+    case sourceFileDoesNotExist, noPermissionToRead, destinationDirDoesNotExist, destinationIsNotWritable
+}
+
+extension FileError: LocalizedError {
+    
+    public var errorDescription: String? {
+        switch self {
+        case .sourceFileDoesNotExist:
+            return NSLocalizedString("O arquivo de origem não existe.", comment: "")
+        case .noPermissionToRead:
+            return NSLocalizedString("Sem permissão para ler o arquivo de origem.", comment: "")
+        case .destinationDirDoesNotExist:
+            return NSLocalizedString("A URL de destino não existe.", comment: "")
+        case .destinationIsNotWritable:
+            return NSLocalizedString("Sem permissão para escrever no destino.", comment: "")
         }
     }
 }

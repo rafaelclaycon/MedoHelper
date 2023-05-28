@@ -81,23 +81,25 @@ struct EditSoundOnServerView: View {
                 }
             }
             
-            HStack(spacing: 30) {
-                Button("Selecionar arquivo...") {
-                    showFilePicker = true
-                }
-                .fileImporter(isPresented: $showFilePicker, allowedContentTypes: [.mp3]) { result in
-                    do {
-                        selectedFile = try result.get()
-                        print(selectedFile as Any)
-                    } catch {
-                        print("Error selecting file: \(error.localizedDescription)")
+            if !isEditing {
+                HStack(spacing: 30) {
+                    Button("Selecionar arquivo...") {
+                        showFilePicker = true
                     }
+                    .fileImporter(isPresented: $showFilePicker, allowedContentTypes: [.mp3]) { result in
+                        do {
+                            selectedFile = try result.get()
+                            print(selectedFile as Any)
+                        } catch {
+                            print("Error selecting file: \(error.localizedDescription)")
+                        }
+                    }
+                    .alert(isPresented: $showingAlert) {
+                        Alert(title: Text(alertTitle), message: Text(alertMessage), dismissButton: .default(Text("OK")))
+                    }
+                    
+                    Text(filename)
                 }
-                .alert(isPresented: $showingAlert) {
-                    Alert(title: Text(alertTitle), message: Text(alertMessage), dismissButton: .default(Text("OK")))
-                }
-                
-                Text(filename)
             }
             
             if filename != "" {
@@ -185,18 +187,15 @@ struct EditSoundOnServerView: View {
                 let documentsFolder = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
                 do {
                     try renameFile(from: fileURL, with: "\(createdContentId).mp3", saveTo: documentsFolder)
-                } catch let error as FileManipulationError {
-                    switch error {
-                    case .fileCopyAndRenameFailed(let message):
-                        alertMessage = message
-                    }
+                } catch {
+                    print(error)
                     alertTitle = "Falha Ao Renomear Arquivo"
+                    alertMessage = error.localizedDescription
                     showSendProgress = false
                     return showingAlert = true
                 }
                 
-                // Show renamed file in Finder
-                openFolderInFinder(at: documentsFolder)
+                FileHelper.openFolderInFinder(documentsFolder)
                 
                 progressAmount = 2
                 
@@ -204,7 +203,11 @@ struct EditSoundOnServerView: View {
                     showSendProgress = false
                 }
             } catch {
-                print(error.localizedDescription)
+                print(error)
+                alertTitle = "Falha ao Criar o Som"
+                alertMessage = error.localizedDescription
+                showSendProgress = false
+                return showingAlert = true
             }
         }
     }
@@ -242,14 +245,6 @@ struct EditSoundOnServerView: View {
                     let documentsFolder = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
                     do {
                         try renameFile(from: fileURL, with: "\(sound.id).mp3", saveTo: documentsFolder)
-                    } catch let error as FileManipulationError {
-                        switch error {
-                        case .fileCopyAndRenameFailed(let message):
-                            alertMessage = message
-                        }
-                        alertTitle = "Falha Ao Renomear Arquivo"
-                        showSendProgress = false
-                        return showingAlert = true
                     } catch {
                         alertTitle = "Falha Ao Renomear Arquivo"
                         alertMessage = error.localizedDescription
@@ -257,7 +252,7 @@ struct EditSoundOnServerView: View {
                         return showingAlert = true
                     }
                     
-                    openFolderInFinder(at: documentsFolder)
+                    FileHelper.openFolderInFinder(documentsFolder)
                 }
                 
                 progressAmount = 2
@@ -267,7 +262,10 @@ struct EditSoundOnServerView: View {
                     isBeingShown = false
                 }
             } catch {
-                print(error.localizedDescription)
+                alertTitle = "Falha ao Atualizar o Som"
+                alertMessage = error.localizedDescription
+                showSendProgress = false
+                return showingAlert = true
             }
         }
     }
@@ -288,22 +286,14 @@ struct EditSoundOnServerView: View {
         }
     }
     
-    private func openFolderInFinder(at folderURL: URL) {
-        let workspace = NSWorkspace.shared
-        workspace.selectFile(nil, inFileViewerRootedAtPath: folderURL.path)
-    }
-    
     private func renameFile(from fileURL: URL, with filename: String, saveTo destinationURL: URL) throws {
         let fileManager = FileManager.default
         
-        if fileManager.fileExists(atPath: destinationURL.appending(path: filename).path()) {
+        if fileManager.fileExists(atPath: destinationURL.appending(path: filename).path(percentEncoded: false)) {
             try fileManager.removeItem(at: destinationURL)
         }
         
-        let success = FileHelper.copyAndRenameFile(from: fileURL, to: destinationURL, with: filename)
-        if !success {
-            throw FileManipulationError.fileCopyAndRenameFailed("A função FileHelper.copyAndRenameFile(from:,to:,with:) retornou erro.")
-        }
+        try FileHelper.copyAndRenameFile(from: fileURL, to: destinationURL, with: filename)
     }
 }
 
@@ -312,9 +302,4 @@ struct CreateSoundOnServerView_Previews: PreviewProvider {
     static var previews: some View {
         EditSoundOnServerView(isBeingShown: .constant(true), sound: Sound(title: ""), isEditing: false)
     }
-}
-
-enum FileManipulationError: Error {
-    
-    case fileCopyAndRenameFailed(String)
 }

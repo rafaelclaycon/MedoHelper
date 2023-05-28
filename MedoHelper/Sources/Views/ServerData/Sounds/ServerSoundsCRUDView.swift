@@ -16,6 +16,7 @@ struct ServerSoundsCRUDView: View {
     @State private var showLoadingView: Bool = false
     @State private var showAddAlreadyOnAppSheet = false
     @State private var showEditSheet = false
+    @State private var showReplaceSheet = false
     @State private var showAlert = false
     @State private var alertType: AlertType = .singleOptionInformative
     @State private var alertErrorMessage: String = ""
@@ -57,9 +58,14 @@ struct ServerSoundsCRUDView: View {
                     .width(min: 50, max: 100)
                 }.contextMenu(forSelectionType: Sound.ID.self) { items in
                     Section {
-                        Button("Editar Som") {
+                        Button("Editar Metadados do Som") {
                             guard let selectedItemId = items.first else { return }
                             editSound(withId: selectedItemId)
+                        }
+                        
+                        Button("Substituir Arquivo do Som") {
+                            guard let selectedItemId = items.first else { return }
+                            replaceSoundFile(withId: selectedItemId)
                         }
                     }
                     
@@ -87,6 +93,10 @@ struct ServerSoundsCRUDView: View {
                         EditSoundOnServerView(isBeingShown: $showEditSheet, sound: sound, isEditing: sound.title != "")
                             .frame(minWidth: 800, minHeight: 500)
                     }
+                    .sheet(isPresented: $showReplaceSheet) {
+                        ReplaceSoundFileOnServerView(isBeingShown: $showReplaceSheet, sound: sound)
+                            .frame(minWidth: 800, minHeight: 300)
+                    }
                     
                     Button {
                         print((selectedSound ?? "") as String)
@@ -100,14 +110,14 @@ struct ServerSoundsCRUDView: View {
                         case .singleOptionInformative:
                             return Alert(title: Text("Som Removido Com Sucesso"), message: Text("O som \"\(selectedSoundTitle)\" foi marcado como removido no servidor e a mudança será propagada para todos os clientes na próxima sincronização."), dismissButton: .cancel(Text("OK")))
                             
-                        case .singleOptionError:
-                            return Alert(title: Text("Houve um Problema Ao Tentar Marcar o Som como Removido"), message: Text(alertErrorMessage), dismissButton: .cancel(Text("OK")))
-                            
                         case .twoOptionsOneDelete:
                             return Alert(title: Text("Remover \"\(selectedSoundTitle)\""), message: Text("Tem certeza de que deseja remover o som \"\(selectedSoundTitle)\"? A mudança será sincronizada com o servidor e propagada para todos os clientes na próxima sincronização."), primaryButton: .destructive(Text("Remover"), action: {
                                 guard let selectedSound = selectedSound else { return }
                                 removeSound(withId: selectedSound)
                             }), secondaryButton: .cancel(Text("Cancelar")))
+                            
+                        default:
+                            return Alert(title: Text("Houve um Problema Ao Tentar Marcar o Som como Removido"), message: Text(alertErrorMessage), dismissButton: .cancel(Text("OK")))
                         }
                     }
                     
@@ -172,6 +182,15 @@ struct ServerSoundsCRUDView: View {
         guard let item = getSound(withID: itemId, from: sounds) else { return }
         self.sound = item
         showEditSheet = true
+    }
+    
+    private func replaceSoundFile(withId itemId: String) {
+        guard let item = getSound(withID: itemId, from: sounds) else { return }
+        self.sound = item
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(600)) {
+            showReplaceSheet = true
+        }
     }
     
     private func removeSound(withId soundId: String) {

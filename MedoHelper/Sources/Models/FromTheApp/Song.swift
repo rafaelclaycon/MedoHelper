@@ -17,17 +17,17 @@ struct Song: Hashable, Codable, Identifiable {
     let filename: String
     var dateAdded: Date?
     let isOffensive: Bool
-    let isNew: Bool?
     
-    init(id: String = UUID().uuidString,
-         title: String,
-         description: String = "",
-         genre: MusicGenre = .undefined,
-         duration: Double = 0,
-         filename: String = "",
-         dateAdded: Date = Date(),
-         isOffensive: Bool = false,
-         isNew: Bool? = nil) {
+    init(
+        id: String = UUID().uuidString,
+        title: String,
+        description: String = "",
+        genre: MusicGenre = .undefined,
+        duration: Double = 0,
+        filename: String = "",
+        dateAdded: Date = Date(),
+        isOffensive: Bool = false
+    ) {
         self.id = id
         self.title = title
         self.description = description
@@ -36,6 +36,5 @@ struct Song: Hashable, Codable, Identifiable {
         self.filename = filename
         self.dateAdded = dateAdded
         self.isOffensive = isOffensive
-        self.isNew = isNew
     }
 }
