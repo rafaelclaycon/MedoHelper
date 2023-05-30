@@ -90,6 +90,11 @@ struct ReplaceSoundFileOnServerView: View {
                     createUpdateEvents()
                 }), secondaryButton: .cancel(Text("Cancelar")))
                 
+            case .singleOptionInformative:
+                return Alert(title: Text(alertTitle), message: Text(alertMessage), dismissButton: .default(Text("OK"), action: {
+                    isBeingShown = false
+                }))
+                
             default:
                 return Alert(title: Text(alertTitle), message: Text(alertMessage), dismissButton: .default(Text("OK")))
             }
