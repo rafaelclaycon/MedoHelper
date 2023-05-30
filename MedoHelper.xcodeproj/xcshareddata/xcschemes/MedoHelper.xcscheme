@@ -63,7 +63,7 @@
       </BuildableProductRunnable>
       <CommandLineArguments>
          <CommandLineArgument
-            argument = "-UNDER_DEVELOPMENT"
+            argument = "-USE_LOCAL_SERVER"
             isEnabled = "YES">
          </CommandLineArgument>
       </CommandLineArguments>
