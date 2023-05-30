@@ -14,17 +14,12 @@ struct EditAuthorOnServerView: View {
     @State var isEditing: Bool
     
     @State private var description: String = ""
-    @State private var showFilePicker = false
-    @State private var selectedPhoto: URL? = nil
+    @State private var photoURL: String = ""
     
     // Progress View
     @State private var showSendProgress = false
     @State private var progressAmount = 0.0
     @State private var modalMessage = ""
-    
-    private var filename: String {
-        return selectedPhoto?.lastPathComponent ?? ""
-    }
     
     private var idText: String {
         var text = "ID: \(author.id)"
@@ -55,24 +50,7 @@ struct EditAuthorOnServerView: View {
             
             TextField("Descrição do Autor", text: $description)
             
-            HStack(spacing: 30) {
-                Button("Selecionar arquivo...") {
-                    showFilePicker = true
-                }
-                .fileImporter(isPresented: $showFilePicker, allowedContentTypes: [.mp3]) { result in
-                    do {
-                        selectedPhoto = try result.get()
-                        print(selectedPhoto as Any)
-                    } catch {
-                        print("Error selecting file: \(error.localizedDescription)")
-                    }
-                }
-//                .alert(isPresented: $showingAlert) {
-//                    Alert(title: Text(alertTitle), message: Text(alertMessage), dismissButton: .default(Text("OK")))
-//                }
-                
-                Text(filename)
-            }
+            TextField("URL para Foto", text: $photoURL)
             
             Spacer()
             
@@ -104,7 +82,7 @@ struct EditAuthorOnServerView: View {
         .padding(.all, 26)
         .disabled(showSendProgress)
         .sheet(isPresented: $showSendProgress) {
-            SendingProgressView(isBeingShown: $showSendProgress, message: $modalMessage, currentAmount: $progressAmount, totalAmount: 2)
+            SendingProgressView(isBeingShown: $showSendProgress, message: $modalMessage, currentAmount: $progressAmount, totalAmount: 1)
         }
     }
     
@@ -113,10 +91,13 @@ struct EditAuthorOnServerView: View {
             showSendProgress = true
             modalMessage = "Enviando Dados..."
             
-            let url = URL(string: serverPath + "v3/create-author/total-real-password-3")!
+            let url = URL(string: serverPath + "v3/create-author/\(assetOperationPassword)")!
             
             if description != "" {
                 author.description = description
+            }
+            if photoURL != "" {
+                author.photo = photoURL
             }
             dump(author)
             do {
@@ -128,6 +109,7 @@ struct EditAuthorOnServerView: View {
                 
                 DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(600)) {
                     showSendProgress = false
+                    isBeingShown = false
                 }
             } catch {
                 print(error)

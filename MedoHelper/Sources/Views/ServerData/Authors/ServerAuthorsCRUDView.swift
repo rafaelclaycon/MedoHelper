@@ -17,6 +17,7 @@ struct ServerAuthorsCRUDView: View {
     @State private var selectedItem: Author.ID?
     @State private var showEditSheet = false
     @State private var showDeleteAlert = false
+    @State private var searchText = ""
     
     private var selectedAuthorName: String {
         guard let selectedItem = selectedItem else { return "" }
@@ -24,25 +25,20 @@ struct ServerAuthorsCRUDView: View {
         return author.name
     }
     
+    private var searchResults: [Author] {
+        if searchText.isEmpty {
+            return authors
+        } else {
+            return authors.filter { author in
+                let normalizedAuthorName = author.name.preparedForComparison()
+                return normalizedAuthorName.contains(searchText.preparedForComparison())
+            }
+        }
+    }
+    
     var body: some View {
         VStack {
-            HStack {
-                Text("Autores no Servidor")
-                    .font(.title)
-                    .bold()
-                
-                Spacer()
-                
-                Button("Enviar Autores Já no App") {
-                    showAddAlreadyOnAppSheet = true
-                }
-                .sheet(isPresented: $showAddAlreadyOnAppSheet) {
-                    MoveAuthorsToServerView(isBeingShown: $showAddAlreadyOnAppSheet)
-                        .frame(minWidth: 800, minHeight: 500)
-                }
-            }
-            
-            Table(authors, selection: $selectedItem) {
+            Table(searchResults, selection: $selectedItem) {
                 TableColumn("Nome", value: \.name)
             }.contextMenu(forSelectionType: Author.ID.self) { items in
                 Section {
@@ -64,6 +60,7 @@ struct ServerAuthorsCRUDView: View {
                 guard let selectedItemId = items.first else { return }
                 editAuthor(withId: selectedItemId)
             }
+            .searchable(text: $searchText)
             
             HStack(spacing: 10) {
                 Button {
@@ -92,15 +89,30 @@ struct ServerAuthorsCRUDView: View {
                 
                 Spacer()
                 
+                Button("Enviar Autores Já no App") {
+                    showAddAlreadyOnAppSheet = true
+                }
+                .sheet(isPresented: $showAddAlreadyOnAppSheet) {
+                    MoveAuthorsToServerView(isBeingShown: $showAddAlreadyOnAppSheet)
+                        .frame(minWidth: 800, minHeight: 500)
+                }
+                .padding(.trailing, 10)
+                
                 Text("\(authors.count.formattedString) itens")
             }
         }
+        .navigationTitle("Autores no Servidor")
         .padding()
         .onAppear {
             fetchAuthors()
         }
         .onChange(of: showAddAlreadyOnAppSheet) { showAddAlreadyOnAppSheet in
             if showAddAlreadyOnAppSheet == false {
+                fetchAuthors()
+            }
+        }
+        .onChange(of: showEditSheet) { showEditSheet in
+            if !showEditSheet {
                 fetchAuthors()
             }
         }
@@ -142,6 +154,10 @@ struct ServerAuthorsCRUDView: View {
                 let response = try await NetworkRabbit.delete(in: url, data: nil as String?)
                 
                 print(response as Any)
+                
+                sleep(1)
+                
+                fetchAuthors()
             } catch {
                 print(error)
             }
