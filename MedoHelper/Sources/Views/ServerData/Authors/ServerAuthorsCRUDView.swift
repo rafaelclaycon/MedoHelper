@@ -9,7 +9,7 @@ import SwiftUI
 
 struct ServerAuthorsCRUDView: View {
     
-    @State private var author = Author(name: "")
+    @State private var author: Author? = nil
     
     @State private var showAddAlreadyOnAppSheet = false
     
@@ -64,15 +64,16 @@ struct ServerAuthorsCRUDView: View {
             
             HStack(spacing: 10) {
                 Button {
-                    self.author = Author(name: "")
+                    self.author = nil
                     showEditSheet = true
                 } label: {
                     Image(systemName: "plus")
                 }
                 .sheet(isPresented: $showEditSheet) {
-                    EditAuthorOnServerView(isBeingShown: $showEditSheet, author: author, isEditing: author.name != "")
+                    EditAuthorOnServerView(isBeingShown: $showEditSheet, author: author)
                         .frame(minWidth: 800, minHeight: 500)
                 }
+                .disabled(authors.count == 0)
                 
                 Button {
                     print((selectedItem ?? "") as String)
@@ -86,6 +87,7 @@ struct ServerAuthorsCRUDView: View {
                         removeAuthor(withId: selectedItem)
                     }), secondaryButton: .cancel(Text("Cancelar")))
                 }
+                .disabled(authors.count == 0)
                 
                 Spacer()
                 
@@ -97,6 +99,7 @@ struct ServerAuthorsCRUDView: View {
                         .frame(minWidth: 800, minHeight: 500)
                 }
                 .padding(.trailing, 10)
+                .disabled(authors.count > 0)
                 
                 Text("\(authors.count.formattedString) itens")
             }

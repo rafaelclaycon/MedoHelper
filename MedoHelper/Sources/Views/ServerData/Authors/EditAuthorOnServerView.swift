@@ -11,7 +11,7 @@ struct EditAuthorOnServerView: View {
     
     @Binding var isBeingShown: Bool
     @State var author: Author
-    @State var isEditing: Bool
+    private let isEditing: Bool
     
     @State private var description: String = ""
     @State private var photoURL: String = ""
@@ -27,6 +27,15 @@ struct EditAuthorOnServerView: View {
             text += " (recém criado)"
         }
         return text
+    }
+    
+    init(
+        isBeingShown: Binding<Bool>,
+        author: Author? = nil
+    ) {
+        _isBeingShown = isBeingShown
+        self.isEditing = author != nil
+        self.author = author ?? Author(name: "")
     }
     
     var body: some View {
@@ -125,6 +134,6 @@ struct EditAuthorOnServerView: View {
 struct EditAuthorOnServerView_Previews: PreviewProvider {
     
     static var previews: some View {
-        EditAuthorOnServerView(isBeingShown: .constant(true), author: Author(name: ""), isEditing: false)
+        EditAuthorOnServerView(isBeingShown: .constant(true), author: Author(name: ""))
     }
 }
