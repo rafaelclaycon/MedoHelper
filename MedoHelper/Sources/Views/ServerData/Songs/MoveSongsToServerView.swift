@@ -17,6 +17,11 @@ struct MoveSongsToServerView: View {
     @State private var chunks: Array<Array<Song>> = Array<Array<Song>>()
     @State private var currentChunk: CGFloat = 0
     
+    // Alert
+    @State private var showAlert = false
+    @State private var alertTitle = ""
+    @State private var alertMessage = ""
+    
     private var itemCount: String {
         "\(items.count.formattedString) itens"
     }
@@ -85,6 +90,9 @@ struct MoveSongsToServerView: View {
             items = Bundle.main.decodeJSON("song_data.json")
             items.sort(by: { $0.dateAdded ?? Date() > $1.dateAdded ?? Date() })
         }
+        .alert(isPresented: $showAlert) {
+            Alert(title: Text(alertTitle), message: Text(alertMessage), dismissButton: .cancel(Text("OK")))
+        }
     }
     
     private func sendSongs() {
@@ -97,20 +105,33 @@ struct MoveSongsToServerView: View {
                 Array(items[$0..<min($0 + chunkSize, items.count)])
             }
             
+            var errors: [String] = []
+            
             for chunk in chunks {
                 do {
                     _ = try await NetworkRabbit.post(data: chunk, to: url)
-                    if Int(currentChunk) < chunks.count {
-                        currentChunk += 1
-                    }
                     sleep(1)
                 } catch {
-                    print(error)
+                    errors.append("De \"\(chunk.first?.title ?? "")\" a \"\(chunk.last?.title ?? "")\": \(error.localizedDescription)")
+                }
+                
+                if Int(currentChunk) < chunks.count {
+                    currentChunk += 1
                 }
             }
             
             chunks = Array<Array<Song>>()
+            
+            if errors.count > 0 {
+                showAlert("Ocorreram Erros Durante o Envio", errors.joined(separator: "\n"))
+            }
         }
+    }
+    
+    private func showAlert(_ title: String, _ message: String) {
+        alertTitle = title
+        alertMessage = message
+        showAlert = true
     }
 }
 
