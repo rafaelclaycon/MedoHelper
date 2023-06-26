@@ -17,3 +17,14 @@ extension String {
         return self.lowercased().removingDiacritics()
     }
 }
+
+extension String {
+    
+    func lengthLimit(_ maxLength: Int) -> String {
+        if self.count > maxLength {
+            let endIndex = self.index(self.startIndex, offsetBy: maxLength)
+            return String(self[..<endIndex])
+        }
+        return self
+    }
+}

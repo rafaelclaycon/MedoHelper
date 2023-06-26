@@ -15,6 +15,7 @@ struct ServerSoundsCRUDView: View {
     
     @State private var showLoadingView: Bool = false
     @State private var showAddAlreadyOnAppSheet = false
+    @State private var fixedData: [Sound]? = nil
     @State private var showEditSheet = false
     @State private var showReplaceSheet = false
     @State private var showAlert = false
@@ -38,10 +39,13 @@ struct ServerSoundsCRUDView: View {
                     Spacer()
                     
                     Button("Enviar Sons Já no App") {
-                        showAddAlreadyOnAppSheet = true
+                        showMoveDataSheet()
                     }
                     .sheet(isPresented: $showAddAlreadyOnAppSheet) {
-                        MoveSoundsToServerView(isBeingShown: $showAddAlreadyOnAppSheet)
+                        MoveDataToServerView(isBeingShown: $showAddAlreadyOnAppSheet,
+                                             data: fixedData!,
+                                             chunkSize: 10,
+                                             endpointEnding: "v3/import-sounds")
                             .frame(minWidth: 800, minHeight: 500)
                     }
                 }
@@ -205,6 +209,14 @@ struct ServerSoundsCRUDView: View {
                 alertErrorMessage = error.localizedDescription
                 showAlert = true
             }
+        }
+    }
+    
+    private func showMoveDataSheet() {
+        Task {
+            fixedData = Bundle.main.decodeJSON("sound_data.json")
+            fixedData?.sort(by: { $0.dateAdded ?? Date() > $1.dateAdded ?? Date() })
+            showAddAlreadyOnAppSheet = true
         }
     }
 }

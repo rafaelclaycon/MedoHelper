@@ -12,6 +12,7 @@ struct ServerAuthorsCRUDView: View {
     @State private var author: Author? = nil
     
     @State private var showAddAlreadyOnAppSheet = false
+    @State private var fixedData: [Author]? = nil
     
     @State private var authors: [Author] = []
     @State private var selectedItem: Author.ID?
@@ -92,10 +93,13 @@ struct ServerAuthorsCRUDView: View {
                 Spacer()
                 
                 Button("Enviar Autores Já no App") {
-                    showAddAlreadyOnAppSheet = true
+                    showMoveDataSheet()
                 }
                 .sheet(isPresented: $showAddAlreadyOnAppSheet) {
-                    MoveAuthorsToServerView(isBeingShown: $showAddAlreadyOnAppSheet)
+                    MoveDataToServerView(isBeingShown: $showAddAlreadyOnAppSheet,
+                                         data: fixedData!,
+                                         chunkSize: 100,
+                                         endpointEnding: "v3/import-authors")
                         .frame(minWidth: 800, minHeight: 500)
                 }
                 .padding(.trailing, 10)
@@ -164,6 +168,14 @@ struct ServerAuthorsCRUDView: View {
             } catch {
                 print(error)
             }
+        }
+    }
+    
+    private func showMoveDataSheet() {
+        Task {
+            fixedData = Bundle.main.decodeJSON("author_data.json")
+            fixedData?.sort(by: { $0.name.preparedForComparison() < $1.name.preparedForComparison() })
+            showAddAlreadyOnAppSheet = true
         }
     }
 }

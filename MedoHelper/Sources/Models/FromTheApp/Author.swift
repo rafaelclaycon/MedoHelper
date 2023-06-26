@@ -1,6 +1,6 @@
 import Foundation
 
-struct Author: Hashable, Codable, Identifiable {
+struct Author: Hashable, Codable, Identifiable, CustomDebugStringConvertible {
 
     var id: String
     var name: String
@@ -17,5 +17,9 @@ struct Author: Hashable, Codable, Identifiable {
         self.name = name
         self.photo = photo
         self.description = description
+    }
+    
+    var debugDescription: String {
+        return self.name
     }
 }

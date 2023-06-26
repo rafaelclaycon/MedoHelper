@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct Song: Hashable, Codable, Identifiable {
+struct Song: Hashable, Codable, Identifiable, CustomDebugStringConvertible {
 
     let id: String
     let title: String
@@ -36,5 +36,9 @@ struct Song: Hashable, Codable, Identifiable {
         self.filename = filename
         self.dateAdded = dateAdded
         self.isOffensive = isOffensive
+    }
+    
+    var debugDescription: String {
+        return self.title
     }
 }

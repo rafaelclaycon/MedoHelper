@@ -36,6 +36,7 @@
 		D960F22E2A1D5DBA007D12D7 /* Song.swift in Sources */ = {isa = PBXBuildFile; fileRef = D960F22D2A1D5DBA007D12D7 /* Song.swift */; };
 		D982218E2A20E76A0076042D /* ReplaceSoundFileOnServerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D982218D2A20E76A0076042D /* ReplaceSoundFileOnServerView.swift */; };
 		D992E8242A17FF8700137469 /* EditAuthorOnServerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D992E8232A17FF8700137469 /* EditAuthorOnServerView.swift */; };
+		D9ABF0CD2A41E7D5009872DB /* MoveDataToServerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9ABF0CC2A41E7D5009872DB /* MoveDataToServerView.swift */; };
 		D9B878482864FA73009CA7AD /* ParseSoundRankingCSVView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9B878472864FA73009CA7AD /* ParseSoundRankingCSVView.swift */; };
 		D9B8784B28650F4E009CA7AD /* CSVParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9B8784A28650F4E009CA7AD /* CSVParser.swift */; };
 		D9B8784F2865324F009CA7AD /* RankItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9B8784E2865324F009CA7AD /* RankItem.swift */; };
@@ -96,6 +97,7 @@
 		D960F22D2A1D5DBA007D12D7 /* Song.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Song.swift; sourceTree = "<group>"; };
 		D982218D2A20E76A0076042D /* ReplaceSoundFileOnServerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReplaceSoundFileOnServerView.swift; sourceTree = "<group>"; };
 		D992E8232A17FF8700137469 /* EditAuthorOnServerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditAuthorOnServerView.swift; sourceTree = "<group>"; };
+		D9ABF0CC2A41E7D5009872DB /* MoveDataToServerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoveDataToServerView.swift; sourceTree = "<group>"; };
 		D9B878472864FA73009CA7AD /* ParseSoundRankingCSVView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ParseSoundRankingCSVView.swift; sourceTree = "<group>"; };
 		D9B8784A28650F4E009CA7AD /* CSVParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CSVParser.swift; sourceTree = "<group>"; };
 		D9B8784E2865324F009CA7AD /* RankItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RankItem.swift; sourceTree = "<group>"; };
@@ -356,6 +358,7 @@
 			children = (
 				D9CA301F2A0441A000F1F23D /* SendingProgressView.swift */,
 				D960F2292A1D577A007D12D7 /* LoadingView.swift */,
+				D9ABF0CC2A41E7D5009872DB /* MoveDataToServerView.swift */,
 			);
 			path = Shared;
 			sourceTree = "<group>";
@@ -489,6 +492,7 @@
 				D92694012A015C7E007872D9 /* NetworkRabbit.swift in Sources */,
 				D94A4224283DC94B00A504BD /* MainView.swift in Sources */,
 				D9B87853286540E5009CA7AD /* Sound.swift in Sources */,
+				D9ABF0CD2A41E7D5009872DB /* MoveDataToServerView.swift in Sources */,
 				D94A4251283E705100A504BD /* SoundView.swift in Sources */,
 				D9FB487E286E435A00FF90D0 /* Author.swift in Sources */,
 				D9D798722A05D338002B2D77 /* Double+Extensions.swift in Sources */,

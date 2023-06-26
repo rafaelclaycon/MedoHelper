@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct Sound: Hashable, Codable, Identifiable {
+struct Sound: Hashable, Codable, Identifiable, CustomDebugStringConvertible {
     
     var id: String
     var title: String
@@ -40,5 +40,9 @@ struct Sound: Hashable, Codable, Identifiable {
         self.duration = duration
         self.isOffensive = isOffensive
         self.isFromServer = isFromServer
+    }
+    
+    var debugDescription: String {
+        return self.title
     }
 }
