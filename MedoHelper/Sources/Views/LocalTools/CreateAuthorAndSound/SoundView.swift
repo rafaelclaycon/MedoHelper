@@ -1,6 +1,15 @@
+//
+//  SoundView.swift
+//  MedoHelper
+//
+//  Created by Rafael Schmitt on 25/05/22.
+//
+
 import SwiftUI
 
 struct SoundView: View {
+
+    @Binding var authorId: String
     
     @State var sound = ProtoSound(title: "", description: "", filename: "", dateAdded: Date(), isOffensive: false, successMessage: "...")
     @State private var showFilePicker = false
@@ -21,9 +30,17 @@ struct SoundView: View {
     
     var body: some View {
         VStack(spacing: 30) {
-            TextField("Título do Som", text: $sound.title)
+            HStack {
+                Text("Novo Som")
+                    .font(.title)
+                    .bold()
+
+                Spacer()
+            }
+
+            TextField("Título", text: $sound.title)
             
-            TextField("Descrição do Som", text: $sound.description)
+            TextField("Descrição", text: $sound.description)
             
             HStack(spacing: 30) {
                 Button("Selecionar arquivo...") {
@@ -67,7 +84,6 @@ struct SoundView: View {
             }
             .disabled(!hasAllNecessaryData)
         }
-        .padding()
     }
     
     private func createSoundJSON() async -> String? {
@@ -94,6 +110,6 @@ struct SoundView: View {
 struct SoundView_Previews: PreviewProvider {
     
     static var previews: some View {
-        SoundView()
+        SoundView(authorId: .constant(""))
     }
 }

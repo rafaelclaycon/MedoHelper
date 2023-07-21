@@ -1,49 +1,61 @@
 import SwiftUI
 
 struct AuthorView: View {
+
+    @Binding var authorId: String
     
-    @State var author = ProtoAuthor(name: "", successMessage: "...")
+    @State var author = ProtoAuthor()
     @State var createNewAuthor: Bool = false
     @State var existingAuthorUUID = ""
     
     var body: some View {
-        VStack {
-            Toggle("Criar novo autor", isOn: $createNewAuthor)
-            
-            TextField("Nome do Novo Autor", text: $author.name)
-                .disabled(createNewAuthor == false)
-                .padding()
-            
-            TextField("UUID de um autor que já existe", text: $existingAuthorUUID)
-                .disabled(createNewAuthor == true)
-                .padding()
+        TabView {
+            VStack(spacing: 15) {
+                TextField("UUID de um autor que já existe", text: $existingAuthorUUID)
 
-            Button(createNewAuthor ? "Copiar JSON Autor" : "Colocar UUID na var autor") {
-                if createNewAuthor {
-                    let pasteboard = NSPasteboard.general
-                    pasteboard.clearContents()
-                    pasteboard.setString(generateJSONForNewAuthor(), forType: .string)
-                    author.successMessage = "JSON de '\(author.name)' copiado!"
-                } else {
+                Button("Colocar UUID no som") {
                     authorId = existingAuthorUUID
-                    author.successMessage = "UUID '\(authorId)' colocado na var autor!"
                 }
             }
+            .padding()
+            .tabItem {
+                Text("Autor Existente")
+            }
 
-            Text(author.successMessage)
-                .padding()
+            VStack(spacing: 15) {
+                TextField("Nome", text: $author.name)
+
+                TextField("Descrição", text: $author.description)
+
+                Button("Copiar JSON do Autor") {
+                    authorId = UUID().uuidString
+
+                    let pasteboard = NSPasteboard.general
+                    pasteboard.clearContents()
+                    pasteboard.setString(generateJSONForNewAuthor(withId: authorId), forType: .string)
+                    author.successMessage = "JSON de '\(author.name)' copiado!"
+                }
+            }
+            .padding()
+            .tabItem {
+                Text("Novo Autor")
+            }
         }
     }
     
-    func generateJSONForNewAuthor() -> String {
-        authorId = UUID().uuidString
-        return ",\n{\n\t\"id\": \"\(authorId)\",\n\t\"name\": \"\(author.name)\"\n}"
+    func generateJSONForNewAuthor(withId authorId: String) -> String {
+        var authorDescription = ""
+        if !author.description.isEmpty {
+            authorDescription = ",\n\t\"description\": \"\(author.description)\""
+        }
+
+        return ",\n{\n\t\"id\": \"\(authorId)\",\n\t\"name\": \"\(author.name)\"\(authorDescription)\n}"
     }
 }
 
 struct AuthorView_Previews: PreviewProvider {
     
     static var previews: some View {
-        AuthorView()
+        AuthorView(authorId: .constant(""))
     }
 }

@@ -8,13 +8,17 @@
 import SwiftUI
 
 struct CreateAuthorAndSoundView: View {
-    
+
+    @State private var authorId: String = ""
+
     var body: some View {
         ScrollView {
-            AuthorView()
-            SoundView()
+            VStack(spacing: 20) {
+                AuthorView(authorId: $authorId)
+                SoundView(authorId: $authorId)
+            }
         }
-        .padding()
+        .padding(.all, 26)
     }
 }
 

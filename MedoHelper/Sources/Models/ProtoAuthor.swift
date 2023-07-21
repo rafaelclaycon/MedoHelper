@@ -2,7 +2,7 @@ import Foundation
 
 struct ProtoAuthor {
 
-    var name: String
-    var successMessage: String
-
+    var name: String = ""
+    var description: String = ""
+    var successMessage: String = "..."
 }
