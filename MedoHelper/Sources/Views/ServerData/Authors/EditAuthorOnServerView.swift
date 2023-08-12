@@ -91,7 +91,7 @@ struct EditAuthorOnServerView: View {
         .padding(.all, 26)
         .disabled(showSendProgress)
         .sheet(isPresented: $showSendProgress) {
-            SendingProgressView(isBeingShown: $showSendProgress, message: $modalMessage, currentAmount: $progressAmount, totalAmount: 1)
+            SendingProgressView(isBeingShown: $showSendProgress, message: $modalMessage, currentAmount: $progressAmount, totalAmount: .constant(1))
         }
     }
     

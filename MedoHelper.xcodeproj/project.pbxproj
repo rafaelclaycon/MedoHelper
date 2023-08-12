@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		D91338A12A87F43D00C0502A /* CreateSoundResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = D91338A02A87F43D00C0502A /* CreateSoundResponse.swift */; };
 		D914C7212A0986AF0011EC5B /* Int+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = D914C7202A0986AF0011EC5B /* Int+Extensions.swift */; };
 		D914C7232A09AD6D0011EC5B /* MusicGenre.swift in Sources */ = {isa = PBXBuildFile; fileRef = D914C7222A09AD6D0011EC5B /* MusicGenre.swift */; };
 		D914C7252A09AD970011EC5B /* ContentType.swift in Sources */ = {isa = PBXBuildFile; fileRef = D914C7242A09AD970011EC5B /* ContentType.swift */; };
@@ -65,6 +66,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		D91338A02A87F43D00C0502A /* CreateSoundResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateSoundResponse.swift; sourceTree = "<group>"; };
 		D914C7202A0986AF0011EC5B /* Int+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Int+Extensions.swift"; sourceTree = "<group>"; };
 		D914C7222A09AD6D0011EC5B /* MusicGenre.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MusicGenre.swift; sourceTree = "<group>"; };
 		D914C7242A09AD970011EC5B /* ContentType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentType.swift; sourceTree = "<group>"; };
@@ -241,6 +243,7 @@
 				D95FCB7029FF009500952868 /* MedoContent.swift */,
 				D914C7242A09AD970011EC5B /* ContentType.swift */,
 				D9E39DB62A1E59BF0053A527 /* AlertType.swift */,
+				D91338A02A87F43D00C0502A /* CreateSoundResponse.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -466,6 +469,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D91338A12A87F43D00C0502A /* CreateSoundResponse.swift in Sources */,
 				D960F2252A1D22E1007D12D7 /* AnalyticsView.swift in Sources */,
 				D9FB1D9D29FEEF3900AE8744 /* ServerSoundsCRUDView.swift in Sources */,
 				D92694032A01A7F9007872D9 /* String+Extensions.swift in Sources */,

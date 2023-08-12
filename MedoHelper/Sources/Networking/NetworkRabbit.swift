@@ -8,7 +8,6 @@
 import Foundation
 
 class NetworkRabbit {
-    
     static func `get`<T: Codable>(from url: URL) async throws -> T {
         let (data, _) = try await URLSession.shared.data(from: url)
         
@@ -66,12 +65,46 @@ class NetworkRabbit {
         // Handle the response data (if needed)
         return String(data: data, encoding: .utf8)
     }
-    
-    static func put<T: Encodable>(in url: URL, data: T?) async throws -> Bool {
+
+    static func post<T: Encodable, U: Decodable>(data: T?, to url: URL) async throws -> U? {
+        // Create the URLRequest
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+
+        if let data = data {
+            let encoder = JSONEncoder()
+            encoder.dateEncodingStrategy = .iso8601
+            let jsonData = try encoder.encode(data)
+            request.httpBody = jsonData
+        }
+
+        // Send the request using URLSession
+        let session = URLSession.shared
+        let (data, response) = try await session.data(for: request)
+
+        // Check for a successful response
+        guard let httpResponse = response as? HTTPURLResponse else {
+            throw NetworkError.badResponse
+        }
+        guard (200...299).contains(httpResponse.statusCode) else {
+            print(url.absoluteString + " - Response: \(httpResponse.statusCode)")
+            throw NetworkError.badResponse
+        }
+
+        // Decode the response data
+        let decoder = JSONDecoder()
+        decoder.dateDecodingStrategy = .iso8601
+        let decodedData = try decoder.decode(U.self, from: data)
+
+        return decodedData
+    }
+
+    static func put<T: Encodable>(in url: URL, data: T? = nil) async throws -> Bool {
         var request = URLRequest(url: url)
         request.httpMethod = "PUT"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        
+
         if let data = data {
             let encoder = JSONEncoder()
             encoder.dateEncodingStrategy = .iso8601
@@ -90,7 +123,7 @@ class NetworkRabbit {
 
         return true
     }
-    
+
     static func delete<T: Encodable>(in url: URL, data: T?) async throws -> Bool {
         var request = URLRequest(url: url)
         request.httpMethod = "DELETE"
@@ -114,24 +147,13 @@ class NetworkRabbit {
 
         return true
     }
-    
-//    static func test<T: Codable>(data: T) {
-//        let encoder = JSONEncoder()
-//        let jsonData = try! encoder.encode(data)
-//
-//        let decoder = JSONDecoder()
-//        let authors = try! decoder.decode([Author].self, from: jsonData)
-//        print(authors)
-//    }
 }
 
 enum NetworkError: Error {
-    
     case badResponse
 }
 
 extension NetworkError: LocalizedError {
-    
     public var errorDescription: String? {
         switch self {
         case .badResponse:

@@ -81,7 +81,7 @@ struct ReplaceSoundFileOnServerView: View {
         }
         .padding(.all, 26)
         .sheet(isPresented: $showSendProgress) {
-            SendingProgressView(isBeingShown: $showSendProgress, message: $modalMessage, currentAmount: $progressAmount, totalAmount: 1)
+            SendingProgressView(isBeingShown: $showSendProgress, message: $modalMessage, currentAmount: $progressAmount, totalAmount: .constant(1))
         }
         .alert(isPresented: $showingAlert) {
             switch alertType {

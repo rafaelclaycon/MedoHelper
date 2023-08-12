@@ -8,11 +8,10 @@
 import SwiftUI
 
 struct SendingProgressView: View {
-    
     @Binding var isBeingShown: Bool
     @Binding var message: String
     @Binding var currentAmount: Double
-    @State var totalAmount: Double
+    @Binding var totalAmount: Double
     
     var body: some View {
         VStack {
@@ -24,8 +23,7 @@ struct SendingProgressView: View {
 }
 
 struct SendingProgressView_Previews: PreviewProvider {
-    
     static var previews: some View {
-        SendingProgressView(isBeingShown: .constant(true), message: .constant("Enviando Som..."), currentAmount: .constant(1), totalAmount: 2)
+        SendingProgressView(isBeingShown: .constant(true), message: .constant("Enviando Som..."), currentAmount: .constant(1), totalAmount: .constant(2))
     }
 }

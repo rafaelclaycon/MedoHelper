@@ -8,6 +8,5 @@
 import Foundation
 
 enum AlertType {
-
     case singleOptionInformative, singleOptionError, twoOptionsOneDelete, twoOptionsOneContinue
 }
