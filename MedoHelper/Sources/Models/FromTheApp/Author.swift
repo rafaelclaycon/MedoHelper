@@ -1,12 +1,18 @@
+//
+//  Author.swift
+//  MedoHelper
+//
+//  Created by Rafael Schmitt on 25/05/22.
+//
+
 import Foundation
 
 struct Author: Hashable, Codable, Identifiable, CustomDebugStringConvertible {
-
     var id: String
     var name: String
     var photo: String?
     var description: String?
-    
+
     init(
         id: String = UUID().uuidString,
         name: String,
@@ -18,7 +24,7 @@ struct Author: Hashable, Codable, Identifiable, CustomDebugStringConvertible {
         self.photo = photo
         self.description = description
     }
-    
+
     var debugDescription: String {
         return self.name
     }

@@ -8,49 +8,44 @@
 import SwiftUI
 
 struct ServerSoundsCRUDView: View {
-    
-    @State private var sound = Sound(title: "")
-    @State private var sounds: [Sound] = []
-    @State private var selectedSound: Sound.ID?
-    
-    @State private var showLoadingView: Bool = false
+    @State private var sound: Sound? = nil
+
     @State private var showAddAlreadyOnAppSheet = false
     @State private var fixedData: [Sound]? = nil
+
+    @State private var sounds: [Sound] = []
+    @State private var selectedItem: Sound.ID?
+    @State private var showLoadingView: Bool = false
     @State private var showEditSheet = false
     @State private var showReplaceSheet = false
+    @State private var searchText = ""
+
+    // Alert
     @State private var showAlert = false
     @State private var alertType: AlertType = .singleOptionInformative
     @State private var alertErrorMessage: String = ""
     
     private var selectedSoundTitle: String {
-        guard let selectedSound = selectedSound else { return "" }
+        guard let selectedSound = selectedItem else { return "" }
         guard let sound = getSound(withID: selectedSound, from: sounds) else { return "" }
         return sound.title
+    }
+
+    private var searchResults: [Sound] {
+        if searchText.isEmpty {
+            return sounds
+        } else {
+            return sounds.filter { sound in
+                let normalizedAuthorName = sound.title.preparedForComparison()
+                return normalizedAuthorName.contains(searchText.preparedForComparison())
+            }
+        }
     }
     
     var body: some View {
         ZStack {
             VStack {
-                HStack {
-                    Text("Sons no Servidor")
-                        .font(.title)
-                        .bold()
-                    
-                    Spacer()
-                    
-                    Button("Enviar Sons Já no App") {
-                        showMoveDataSheet()
-                    }
-                    .sheet(isPresented: $showAddAlreadyOnAppSheet) {
-                        MoveDataToServerView(isBeingShown: $showAddAlreadyOnAppSheet,
-                                             data: fixedData!,
-                                             chunkSize: 10,
-                                             endpointEnding: "v3/import-sounds")
-                            .frame(minWidth: 800, minHeight: 500)
-                    }
-                }
-                
-                Table(sounds, selection: $selectedSound) {
+                Table(searchResults, selection: $selectedItem) {
                     TableColumn("Título", value: \.title)
                     TableColumn("Adicionado em") { sound in
                         Text(sound.dateAdded?.toScreenString() ?? "")
@@ -66,17 +61,17 @@ struct ServerSoundsCRUDView: View {
                             guard let selectedItemId = items.first else { return }
                             editSound(withId: selectedItemId)
                         }
-                        
+
                         Button("Substituir Arquivo do Som") {
                             guard let selectedItemId = items.first else { return }
                             replaceSoundFile(withId: selectedItemId)
                         }
                     }
-                    
+
                     Section {
                         Button("Remover Som") {
                             guard let selectedItemId = items.first else { return }
-                            selectedSound = selectedItemId
+                            selectedItem = selectedItemId
                             alertType = .twoOptionsOneDelete
                             showAlert = true
                         }
@@ -85,6 +80,7 @@ struct ServerSoundsCRUDView: View {
                     guard let selectedItemId = items.first else { return }
                     editSound(withId: selectedItemId)
                 }
+                .searchable(text: $searchText)
                 
                 HStack(spacing: 10) {
                     Button {
@@ -94,7 +90,7 @@ struct ServerSoundsCRUDView: View {
                         Image(systemName: "plus")
                     }
                     .sheet(isPresented: $showEditSheet) {
-                        EditSoundOnServerView(isBeingShown: $showEditSheet, sound: sound, isEditing: sound.title != "")
+                        EditSoundOnServerView(isBeingShown: $showEditSheet, sound: sound)
                             .frame(minWidth: 800, minHeight: 500)
                     }
                     .sheet(isPresented: $showReplaceSheet) {
@@ -103,7 +99,7 @@ struct ServerSoundsCRUDView: View {
                     }
                     
                     Button {
-                        print((selectedSound ?? "") as String)
+                        print((selectedItem ?? "") as String)
                         alertType = .twoOptionsOneDelete
                         showAlert = true
                     } label: {
@@ -116,8 +112,8 @@ struct ServerSoundsCRUDView: View {
                             
                         case .twoOptionsOneDelete:
                             return Alert(title: Text("Remover \"\(selectedSoundTitle)\""), message: Text("Tem certeza de que deseja remover o som \"\(selectedSoundTitle)\"? A mudança será sincronizada com o servidor e propagada para todos os clientes na próxima sincronização."), primaryButton: .destructive(Text("Remover"), action: {
-                                guard let selectedSound = selectedSound else { return }
-                                removeSound(withId: selectedSound)
+                                guard let selectedItem else { return }
+                                removeSound(withId: selectedItem)
                             }), secondaryButton: .cancel(Text("Cancelar")))
                             
                         default:
@@ -126,16 +122,33 @@ struct ServerSoundsCRUDView: View {
                     }
                     
                     Spacer()
+
+                    Button("Enviar Sons Já no App") {
+                        showMoveDataSheet()
+                    }
+                    .sheet(isPresented: $showAddAlreadyOnAppSheet) {
+                        MoveDataToServerView(isBeingShown: $showAddAlreadyOnAppSheet,
+                                             data: fixedData!,
+                                             chunkSize: 10,
+                                             endpointEnding: "v3/import-sounds")
+                            .frame(minWidth: 800, minHeight: 500)
+                    }
                     
                     Text("\(sounds.count.formattedString) itens")
                 }
             }
+            .navigationTitle("Sons no Servidor")
             .padding()
             .onAppear {
                 fetchSounds()
             }
             .onChange(of: showAddAlreadyOnAppSheet) { showAddAlreadyOnAppSheet in
                 if showAddAlreadyOnAppSheet == false {
+                    fetchSounds()
+                }
+            }
+            .onChange(of: showEditSheet) { showEditSheet in
+                if !showEditSheet {
                     fetchSounds()
                 }
             }

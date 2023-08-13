@@ -8,7 +8,6 @@
 import SwiftUI
 
 struct ServerAuthorsCRUDView: View {
-    
     @State private var author: Author? = nil
     
     @State private var showAddAlreadyOnAppSheet = false
@@ -125,7 +124,7 @@ struct ServerAuthorsCRUDView: View {
         }
     }
     
-    func fetchAuthors() {
+    private func fetchAuthors() {
         Task {
             let url = URL(string: serverPath + "v3/all-authors")!
             
@@ -181,7 +180,6 @@ struct ServerAuthorsCRUDView: View {
 }
 
 struct ServerAuthorsCRUDView_Previews: PreviewProvider {
-    
     static var previews: some View {
         ServerAuthorsCRUDView()
     }

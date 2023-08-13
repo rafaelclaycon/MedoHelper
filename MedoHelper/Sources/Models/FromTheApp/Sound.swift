@@ -8,7 +8,6 @@
 import Foundation
 
 struct Sound: Hashable, Codable, Identifiable, CustomDebugStringConvertible {
-    
     var id: String
     var title: String
     var authorId: String
@@ -19,7 +18,7 @@ struct Sound: Hashable, Codable, Identifiable, CustomDebugStringConvertible {
     let duration: Double
     var isOffensive: Bool
     let isFromServer: Bool?
-    
+
     init(
         id: String = UUID().uuidString,
         title: String,
@@ -41,7 +40,7 @@ struct Sound: Hashable, Codable, Identifiable, CustomDebugStringConvertible {
         self.isOffensive = isOffensive
         self.isFromServer = isFromServer
     }
-    
+
     var debugDescription: String {
         return self.title
     }

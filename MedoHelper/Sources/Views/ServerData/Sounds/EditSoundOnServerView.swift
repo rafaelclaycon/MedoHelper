@@ -9,10 +9,9 @@ import SwiftUI
 import AppKit
 
 struct EditSoundOnServerView: View {
-    
     @Binding var isBeingShown: Bool
     @State var sound: Sound
-    @State var isEditing: Bool
+    private let isEditing: Bool
     
     @State private var authors: [Author] = []
     @State private var selectedAuthor: Author.ID?
@@ -57,7 +56,16 @@ struct EditSoundOnServerView: View {
     private var finderWarningAdjective: String {
         isEditing ? "edição" : "criação"
     }
-    
+
+    init(
+        isBeingShown: Binding<Bool>,
+        sound: Sound? = nil
+    ) {
+        _isBeingShown = isBeingShown
+        self.isEditing = sound != nil
+        self._sound = State(initialValue: sound ?? Sound(title: ""))
+    }
+
     var body: some View {
         VStack(spacing: 30) {
             HStack {
@@ -378,8 +386,7 @@ struct EditSoundOnServerView: View {
 }
 
 struct CreateSoundOnServerView_Previews: PreviewProvider {
-    
     static var previews: some View {
-        EditSoundOnServerView(isBeingShown: .constant(true), sound: Sound(title: ""), isEditing: false)
+        EditSoundOnServerView(isBeingShown: .constant(true), sound: Sound(title: ""))
     }
 }

@@ -8,9 +8,8 @@
 import SwiftUI
 
 struct ReplaceSoundFileOnServerView: View {
-    
     @Binding var isBeingShown: Bool
-    @State var sound: Sound
+    private var sound: Sound
     
     @State private var showFilePicker = false
     @State private var selectedFile: URL? = nil
@@ -28,6 +27,14 @@ struct ReplaceSoundFileOnServerView: View {
     
     private var filename: String {
         return selectedFile?.lastPathComponent ?? ""
+    }
+
+    init(
+        isBeingShown: Binding<Bool>,
+        sound: Sound? = nil
+    ) {
+        _isBeingShown = isBeingShown
+        self.sound = sound ?? Sound(title: "")
     }
     
     var body: some View {
