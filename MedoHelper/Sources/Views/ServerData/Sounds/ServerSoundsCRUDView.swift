@@ -84,7 +84,7 @@ struct ServerSoundsCRUDView: View {
                 
                 HStack(spacing: 10) {
                     Button {
-                        self.sound = Sound(title: "")
+                        self.sound = nil
                         showEditSheet = true
                     } label: {
                         Image(systemName: "plus")
