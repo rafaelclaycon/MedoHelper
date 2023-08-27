@@ -2,59 +2,28 @@
 //  MusicGenre.swift
 //  MedoHelper
 //
-//  Created by Rafael Schmitt on 08/05/23.
+//  Created by Rafael Schmitt on 26/08/23.
 //
 
 import Foundation
 
-enum MusicGenre: String, CaseIterable, Identifiable, Codable {
-    case all, arrocha, electronic, funk, undefined, house, jingle, lambada, marchinha, metal, mpb, pagode, pisero, pop, reggae, rock, samba, sertanejo, tecno, variousGenres, tvIntro
+struct MusicGenre: Hashable, Codable, Identifiable, CustomDebugStringConvertible {
 
-    var id: String { String(self.rawValue) }
-    var name: String {
-        switch self {
-        case .all:
-            return "Todos os gêneros"
-        case .arrocha:
-            return "Arrocha"
-        case .electronic:
-            return "Eletrônica"
-        case .funk:
-            return "Funk"
-        case .undefined:
-            return "Gênero indefinido"
-        case .house:
-            return "House"
-        case .jingle:
-            return "Jingle"
-        case .lambada:
-            return "Lambada"
-        case .marchinha:
-            return "Marchinha"
-        case .metal:
-            return "Metal"
-        case .mpb:
-            return "MPB"
-        case .pagode:
-            return "Pagode"
-        case .pisero:
-            return "Pisero"
-        case .pop:
-            return "Pop"
-        case .reggae:
-            return "Reggae"
-        case .rock:
-            return "Rock"
-        case .samba:
-            return "Samba"
-        case .sertanejo:
-            return "Sertanejo"
-        case .tecno:
-            return "Tecno"
-        case .variousGenres:
-            return "Vários gêneros"
-        case .tvIntro:
-            return "Vinheta"
-        }
+    let id: String
+    let name: String
+    let isHidden: Bool
+
+    init(
+        id: String,
+        name: String,
+        isHidden: Bool
+    ) {
+        self.id = id
+        self.name = name
+        self.isHidden = isHidden
+    }
+
+    var debugDescription: String {
+        return self.name
     }
 }

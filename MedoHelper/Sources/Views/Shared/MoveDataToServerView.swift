@@ -37,12 +37,9 @@ struct MoveDataToServerView<T: Codable & CustomDebugStringConvertible & Identifi
         VStack(spacing: 20) {
             ZStack {
                 if data.isEmpty {
-                    HStack(spacing: 10) {
-                        ProgressView()
-                        
-                        Text("Carregando...")
-                            .foregroundColor(.gray)
-                    }
+                    Text("Sem dados.")
+                        .foregroundColor(.gray)
+                        .padding(200)
                 } else {
                     Table(data) {
                         TableColumn("Título") { item in

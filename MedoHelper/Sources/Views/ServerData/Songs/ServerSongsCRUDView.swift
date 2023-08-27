@@ -9,16 +9,18 @@ import SwiftUI
 
 struct ServerSongsCRUDView: View {
     
-    @State private var song = Song(title: "")
+    @State private var song: Song? = nil
     @State private var items: [Song] = []
     @State private var selectedItem: Sound.ID?
     
     @State private var showLoadingView = false
     @State private var showAddAlreadyOnAppSheet = false
+    @State private var fixedData: [Song]? = nil
     @State private var showEditSheet = false
     @State private var showAlert = false
     @State private var alertType: AlertType = .singleOptionInformative
     @State private var alertErrorMessage: String = ""
+    @State private var searchText = ""
     
     private var selectedSongTitle: String {
 //        guard let selectedSound = selectedSound else { return "" }
@@ -26,30 +28,25 @@ struct ServerSongsCRUDView: View {
 //        return sound.title
         return ""
     }
-    
+
+    private var searchResults: [Song] {
+        if searchText.isEmpty {
+            return items
+        } else {
+            return items.filter { item in
+                let normalizedSongTitle = item.title.preparedForComparison()
+                return normalizedSongTitle.contains(searchText.preparedForComparison())
+            }
+        }
+    }
+
     var body: some View {
         ZStack {
             VStack {
-                HStack {
-                    Text("Músicas no Servidor")
-                        .font(.title)
-                        .bold()
-                    
-                    Spacer()
-                    
-                    Button("Enviar Músicas Já no App") {
-                        showAddAlreadyOnAppSheet = true
-                    }
-                    .sheet(isPresented: $showAddAlreadyOnAppSheet) {
-                        MoveSongsToServerView(isBeingShown: $showAddAlreadyOnAppSheet)
-                            .frame(minWidth: 800, minHeight: 500)
-                    }
-                }
-                
-                Table(items, selection: $selectedItem) {
+                Table(searchResults, selection: $selectedItem) {
                     TableColumn("Título", value: \.title)
                     
-                    TableColumn("Gênero", value: \.genre.name)
+                    TableColumn("Gênero", value: \.genre)
                         .width(min: 50, max: 100)
                     
                     TableColumn("Adicionado em") { song in
@@ -81,10 +78,11 @@ struct ServerSongsCRUDView: View {
                     guard let selectedItemId = items.first else { return }
                     editSong(withId: selectedItemId)
                 }
+                .searchable(text: $searchText)
                 
                 HStack(spacing: 10) {
                     Button {
-                        self.song = Song(title: "")
+                        self.song = nil
                         showEditSheet = true
                     } label: {
                         Image(systemName: "plus")
@@ -95,16 +93,33 @@ struct ServerSongsCRUDView: View {
 //                    }
                     
                     Spacer()
-                    
+
+                    Button("Enviar Músicas Já no App") {
+                        showMoveDataSheet()
+                    }
+                    .sheet(isPresented: $showAddAlreadyOnAppSheet) {
+                        MoveDataToServerView(isBeingShown: $showAddAlreadyOnAppSheet,
+                                             data: fixedData!,
+                                             chunkSize: 10,
+                                             endpointEnding: "v3/import-sounds")
+                            .frame(minWidth: 800, minHeight: 500)
+                    }
+
                     Text("\(items.count.formattedString) itens")
                 }
             }
+            .navigationTitle("Músicas no Servidor")
             .padding()
             .onAppear {
                 fetchItems()
             }
             .onChange(of: showAddAlreadyOnAppSheet) { showAddAlreadyOnAppSheet in
                 if showAddAlreadyOnAppSheet == false {
+                    fetchItems()
+                }
+            }
+            .onChange(of: showEditSheet) { showEditSheet in
+                if !showEditSheet {
                     fetchItems()
                 }
             }
@@ -152,6 +167,14 @@ struct ServerSongsCRUDView: View {
         guard let item = getSong(withID: itemId, from: items) else { return }
         self.song = item
         showEditSheet = true
+    }
+
+    private func showMoveDataSheet() {
+        Task {
+            fixedData = Bundle.main.decodeJSON("sound_data.json")
+            fixedData?.sort(by: { $0.dateAdded ?? Date() > $1.dateAdded ?? Date() })
+            showAddAlreadyOnAppSheet = true
+        }
     }
 }
 

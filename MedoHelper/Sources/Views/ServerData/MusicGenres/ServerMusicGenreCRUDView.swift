@@ -1,0 +1,131 @@
+//
+//  ServerMusicGenreCRUDView.swift
+//  MedoHelper
+//
+//  Created by Rafael Schmitt on 26/08/23.
+//
+
+import SwiftUI
+
+struct ServerMusicGenreCRUDView: View {
+
+    @State private var genre: MusicGenre? = nil
+
+    @State private var showAddAlreadyOnAppSheet = false
+    @State private var fixedData: [MusicGenre] = Bundle.main.decodeJSON("musicGenre_data.json")
+
+    @State private var genres: [MusicGenre] = []
+    @State private var selectedItem: MusicGenre.ID?
+    @State private var showEditSheet = false
+    @State private var showDeleteAlert = false
+    @State private var searchText = ""
+
+    private var selectedAuthorName: String {
+        guard let selectedItem else { return "" }
+        guard let genre = getMusicGenre(withID: selectedItem, from: genres) else { return "" }
+        return genre.name
+    }
+
+    private var searchResults: [MusicGenre] {
+        if searchText.isEmpty {
+            return genres
+        } else {
+            return genres.filter { genre in
+                let normalizedGenreName = genre.name.preparedForComparison()
+                return normalizedGenreName.contains(searchText.preparedForComparison())
+            }
+        }
+    }
+
+    var body: some View {
+        VStack {
+            Table(searchResults, selection: $selectedItem) {
+                TableColumn("Nome", value: \.name)
+            }.contextMenu(forSelectionType: MusicGenre.ID.self) { items in
+                Section {
+                    Button("Editar Som") {
+//                        guard let selectedItemId = items.first else { return }
+//                        editAuthor(withId: selectedItemId)
+                    }
+                }
+
+                Section {
+                    Button("Remover Som") {
+//                        guard let selectedItemId = items.first else { return }
+//                        selectedSound = selectedItemId
+//                        alertType = .twoOptionsOneDelete
+//                        showAlert = true
+                    }
+                }
+            } primaryAction: { items in
+                guard let selectedItemId = items.first else { return }
+                //editAuthor(withId: selectedItemId)
+            }
+            .searchable(text: $searchText)
+
+            HStack(spacing: 10) {
+                Button {
+                    //self.author = nil
+                    //showEditSheet = true
+                } label: {
+                    Image(systemName: "plus")
+                }
+//                .sheet(isPresented: $showEditSheet) {
+//                    EditAuthorOnServerView(isBeingShown: $showEditSheet, author: author)
+//                        .frame(minWidth: 800, minHeight: 500)
+//                }
+                .disabled(genres.count == 0)
+
+                Button {
+                    print((selectedItem ?? "") as String)
+                    //showDeleteAlert = true
+                } label: {
+                    Image(systemName: "minus")
+                }
+//                .alert(isPresented: $showDeleteAlert) {
+//                    Alert(title: Text("Remover \"\(selectedAuthorName)\""), message: Text("Tem certeza de que deseja remover o(a) autor(a) \"\(selectedAuthorName)\"? A mudança será sincronizada com o servidor e propagada para todos os clientes na próxima sincronização."), primaryButton: .destructive(Text("Remover"), action: {
+//                        guard let selectedItem = selectedItem else { return }
+//                        removeAuthor(withId: selectedItem)
+//                    }), secondaryButton: .cancel(Text("Cancelar")))
+//                }
+                .disabled(genres.count == 0)
+
+                Spacer()
+
+                Button("Enviar Gêneros Musicais Já no App") {
+                    fixedData.sort(by: { $0.name.preparedForComparison() < $1.name.preparedForComparison() })
+                    showAddAlreadyOnAppSheet = true
+                }
+                .sheet(isPresented: $showAddAlreadyOnAppSheet) {
+                    MoveDataToServerView(isBeingShown: $showAddAlreadyOnAppSheet,
+                                         data: fixedData,
+                                         chunkSize: 100,
+                                         endpointEnding: "v3/import-music-genres")
+                        .frame(minWidth: 800, minHeight: 500)
+                }
+                .padding(.trailing, 10)
+                .disabled(genres.count > 0)
+
+                Text("\(genres.count.formattedString) itens")
+            }
+        }
+        .navigationTitle("Gêneros Musicais no Servidor")
+        .padding()
+    }
+
+    private func getMusicGenre(withID id: String, from genres: [MusicGenre]) -> MusicGenre? {
+        for genre in genres {
+            if genre.id == id {
+                return genre
+            }
+        }
+        return nil
+    }
+}
+
+struct ServerMusicGenreCRUDView_Previews: PreviewProvider {
+
+    static var previews: some View {
+        ServerMusicGenreCRUDView()
+    }
+}

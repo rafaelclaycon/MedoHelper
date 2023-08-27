@@ -28,6 +28,8 @@
 		D94A4257283E805900A504BD /* ProtoAuthor.swift in Sources */ = {isa = PBXBuildFile; fileRef = D94A4256283E805900A504BD /* ProtoAuthor.swift */; };
 		D94A4259283E809000A504BD /* ProtoSound.swift in Sources */ = {isa = PBXBuildFile; fileRef = D94A4258283E809000A504BD /* ProtoSound.swift */; };
 		D94B03FD2993346F00EB03CA /* FileHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = D94B03FC2993346F00EB03CA /* FileHelper.swift */; };
+		D95315AC2A9AD100003DA40E /* ServerMusicGenreCRUDView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D95315AB2A9AD100003DA40E /* ServerMusicGenreCRUDView.swift */; };
+		D95315AE2A9AD87F003DA40E /* musicGenre_data.json in Resources */ = {isa = PBXBuildFile; fileRef = D95315AD2A9AD87F003DA40E /* musicGenre_data.json */; };
 		D95FCB6F29FEF75F00952868 /* EditSoundOnServerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D95FCB6E29FEF75F00952868 /* EditSoundOnServerView.swift */; };
 		D95FCB7129FF009500952868 /* MedoContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = D95FCB7029FF009500952868 /* MedoContent.swift */; };
 		D960F2252A1D22E1007D12D7 /* AnalyticsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D960F2242A1D22E1007D12D7 /* AnalyticsView.swift */; };
@@ -90,6 +92,8 @@
 		D94A4256283E805900A504BD /* ProtoAuthor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProtoAuthor.swift; sourceTree = "<group>"; };
 		D94A4258283E809000A504BD /* ProtoSound.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProtoSound.swift; sourceTree = "<group>"; };
 		D94B03FC2993346F00EB03CA /* FileHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileHelper.swift; sourceTree = "<group>"; };
+		D95315AB2A9AD100003DA40E /* ServerMusicGenreCRUDView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerMusicGenreCRUDView.swift; sourceTree = "<group>"; };
+		D95315AD2A9AD87F003DA40E /* musicGenre_data.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = musicGenre_data.json; sourceTree = "<group>"; };
 		D95FCB6E29FEF75F00952868 /* EditSoundOnServerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditSoundOnServerView.swift; sourceTree = "<group>"; };
 		D95FCB7029FF009500952868 /* MedoContent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MedoContent.swift; sourceTree = "<group>"; };
 		D960F2242A1D22E1007D12D7 /* AnalyticsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsView.swift; sourceTree = "<group>"; };
@@ -248,6 +252,14 @@
 			path = Models;
 			sourceTree = "<group>";
 		};
+		D95315AA2A9AD031003DA40E /* MusicGenres */ = {
+			isa = PBXGroup;
+			children = (
+				D95315AB2A9AD100003DA40E /* ServerMusicGenreCRUDView.swift */,
+			);
+			path = MusicGenres;
+			sourceTree = "<group>";
+		};
 		D960F2232A1D22D1007D12D7 /* Analytics */ = {
 			isa = PBXGroup;
 			children = (
@@ -288,6 +300,7 @@
 		D9B8784C286513ED009CA7AD /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				D95315AD2A9AD87F003DA40E /* musicGenre_data.json */,
 				D9E39DB42A1E4CF10053A527 /* song_data.json */,
 				D9CA302B2A0598C900F1F23D /* sound_data.json */,
 				D92693FB2A015608007872D9 /* author_data.json */,
@@ -321,6 +334,7 @@
 				D9CA30232A057AB500F1F23D /* Sounds */,
 				D9CA30242A057ABC00F1F23D /* Authors */,
 				D9CA30252A057AC200F1F23D /* Songs */,
+				D95315AA2A9AD031003DA40E /* MusicGenres */,
 				D960F2262A1D27D4007D12D7 /* TestVersion */,
 			);
 			path = ServerData;
@@ -452,6 +466,7 @@
 				D92693FC2A015608007872D9 /* author_data.json in Resources */,
 				D94A4226283DC94D00A504BD /* Assets.xcassets in Resources */,
 				D9E39DB52A1E4CF10053A527 /* song_data.json in Resources */,
+				D95315AE2A9AD87F003DA40E /* musicGenre_data.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -478,6 +493,7 @@
 				D94A4259283E809000A504BD /* ProtoSound.swift in Sources */,
 				D914C7212A0986AF0011EC5B /* Int+Extensions.swift in Sources */,
 				D94A4257283E805900A504BD /* ProtoAuthor.swift in Sources */,
+				D95315AC2A9AD100003DA40E /* ServerMusicGenreCRUDView.swift in Sources */,
 				D9CA30282A05921200F1F23D /* ServerAuthorsCRUDView.swift in Sources */,
 				D982218E2A20E76A0076042D /* ReplaceSoundFileOnServerView.swift in Sources */,
 				D95FCB7129FF009500952868 /* MedoContent.swift in Sources */,

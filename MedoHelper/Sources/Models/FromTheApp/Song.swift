@@ -12,17 +12,19 @@ struct Song: Hashable, Codable, Identifiable, CustomDebugStringConvertible {
     let id: String
     let title: String
     let description: String
-    let genre: MusicGenre
+    let genre: String
     let duration: Double
     let filename: String
     var dateAdded: Date?
     let isOffensive: Bool
-    
+
+    static let undefinedGenreId: String = "16B61F20-5D24-429F-8751-55F62DBB8DA8"
+
     init(
         id: String = UUID().uuidString,
         title: String,
         description: String = "",
-        genre: MusicGenre = .undefined,
+        genre: String = Song.undefinedGenreId,
         duration: Double = 0,
         filename: String = "",
         dateAdded: Date = Date(),
