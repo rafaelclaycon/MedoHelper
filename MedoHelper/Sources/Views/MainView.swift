@@ -36,6 +36,13 @@ struct MainView: View {
                         Label("Gêneros Musicais", systemImage: "guitars")
                     }
                     .tag(3)
+
+                    NavigationLink {
+                        UpdateEventListView()
+                    } label: {
+                        Label("Eventos de Atualização", systemImage: "clock.arrow.2.circlepath")
+                    }
+                    .tag(4)
                     
                     NavigationLink {
                         TestVersionView()
@@ -48,7 +55,7 @@ struct MainView: View {
                                 .frame(width: 10, height: 10)
                         }
                     }
-                    .tag(4)
+                    .tag(5)
                 }
                 
                 Section("FERRAMENTAS LOCAIS") {
@@ -57,14 +64,14 @@ struct MainView: View {
                     } label: {
                         Label("Criar Autor e Som", systemImage: "plus.circle")
                     }
-                    .tag(5)
+                    .tag(6)
                     
                     NavigationLink {
                         ParseSoundRankingCSVView()
                     } label: {
                         Label("Parsear CSV", systemImage: "text.justify.leading")
                     }
-                    .tag(6)
+                    .tag(7)
                 }
                 
                 Section("ANÁLISE") {
@@ -73,7 +80,7 @@ struct MainView: View {
                     } label: {
                         Label("Estatísticas", systemImage: "chart.line.uptrend.xyaxis")
                     }
-                    .tag(7)
+                    .tag(8)
                 }
             }
             .listStyle(.sidebar)
