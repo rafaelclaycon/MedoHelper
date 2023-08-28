@@ -19,7 +19,12 @@ struct ServerAuthorsCRUDView: View {
     @State private var showEditSheet = false
     @State private var showDeleteAlert = false
     @State private var searchText = ""
-    
+
+    // Alert
+    @State private var showAlert = false
+    @State private var alertType: AlertType = .singleOptionInformative
+    @State private var alertErrorMessage: String = ""
+
     private var selectedAuthorName: String {
         guard let selectedItem = selectedItem else { return "" }
         guard let author = getAuthor(withID: selectedItem, from: authors) else { return "" }
@@ -43,18 +48,15 @@ struct ServerAuthorsCRUDView: View {
                 TableColumn("Nome", value: \.name)
             }.contextMenu(forSelectionType: Author.ID.self) { items in
                 Section {
-                    Button("Editar Som") {
+                    Button("Editar Autor") {
                         guard let selectedItemId = items.first else { return }
                         editAuthor(withId: selectedItemId)
                     }
                 }
                 
                 Section {
-                    Button("Remover Som") {
-//                        guard let selectedItemId = items.first else { return }
-//                        selectedSound = selectedItemId
-//                        alertType = .twoOptionsOneDelete
-//                        showAlert = true
+                    Button("Ocultar Autor") {
+                        showDeleteAlert = true
                     }
                 }
             } primaryAction: { items in
@@ -77,15 +79,14 @@ struct ServerAuthorsCRUDView: View {
                 .disabled(authors.count == 0)
                 
                 Button {
-                    print((selectedItem ?? "") as String)
                     showDeleteAlert = true
                 } label: {
                     Image(systemName: "minus")
                 }
                 .alert(isPresented: $showDeleteAlert) {
-                    Alert(title: Text("Remover \"\(selectedAuthorName)\""), message: Text("Tem certeza de que deseja remover o(a) autor(a) \"\(selectedAuthorName)\"? A mudança será sincronizada com o servidor e propagada para todos os clientes na próxima sincronização."), primaryButton: .destructive(Text("Remover"), action: {
-                        guard let selectedItem = selectedItem else { return }
-                        removeAuthor(withId: selectedItem)
+                    Alert(title: Text("Ocultar \"\(selectedAuthorName)\""), message: Text("Tem certeza de que deseja ocultar o(a) autor(a) \"\(selectedAuthorName)\"? A mudança será sincronizada com o servidor e propagada para todos os clientes na próxima sincronização."), primaryButton: .destructive(Text("Ocultar"), action: {
+                        guard let selectedItem else { return }
+                        hideAuthor(withId: selectedItem)
                     }), secondaryButton: .cancel(Text("Cancelar")))
                 }
                 .disabled(authors.count == 0)
@@ -154,7 +155,7 @@ struct ServerAuthorsCRUDView: View {
         showEditSheet = true
     }
     
-    private func removeAuthor(withId authorId: String) {
+    private func hideAuthor(withId authorId: String) {
         Task {
             do {
                 let url = URL(string: serverPath + "v3/author/\(authorId)")!
