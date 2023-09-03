@@ -62,7 +62,7 @@ struct ServerMusicGenreCRUDView: View {
                         }
                     }
                 } primaryAction: { items in
-                    guard let selectedItemId = items.first else { return }
+                    //guard let selectedItemId = items.first else { return }
                     //editAuthor(withId: selectedItemId)
                 }
                 .searchable(text: $searchText)

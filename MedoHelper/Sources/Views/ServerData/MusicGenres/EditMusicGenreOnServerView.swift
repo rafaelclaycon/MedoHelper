@@ -74,11 +74,7 @@ struct EditMusicGenreOnServerView: View {
                 .keyboardShortcut(.cancelAction)
                 
                 Button {
-//                    if isEditing {
-//                        updateContent()
-//                    } else {
-//                        createContent()
-//                    }
+                    createMusicGenre()
                 } label: {
                     Text(isEditing ? "Atualizar" : "Criar")
                         .padding(.horizontal)
@@ -88,16 +84,10 @@ struct EditMusicGenreOnServerView: View {
             }
         }
         .padding(.all, 26)
-        .onAppear {
-            //loadAuthors()
-        }
         .disabled(showSendProgress)
-//        .sheet(isPresented: $showSendProgress) {
-//            SendingProgressView(isBeingShown: $showSendProgress, message: $modalMessage, currentAmount: $progressAmount, totalAmount: $totalAmount)
-//        }
-//        .alert(isPresented: $showingAlert) {
-//            Alert(title: Text(alertTitle), message: Text(alertMessage), dismissButton: .default(Text("OK")))
-//        }
+        .sheet(isPresented: $showSendProgress) {
+            SendingProgressView(isBeingShown: $showSendProgress, message: $modalMessage, currentAmount: $progressAmount, totalAmount: .constant(1))
+        }
     }
 
     func createMusicGenre() {
