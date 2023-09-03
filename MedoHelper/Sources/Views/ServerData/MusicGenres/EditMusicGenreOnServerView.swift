@@ -99,6 +99,32 @@ struct EditMusicGenreOnServerView: View {
 //            Alert(title: Text(alertTitle), message: Text(alertMessage), dismissButton: .default(Text("OK")))
 //        }
     }
+
+    func createMusicGenre() {
+        Task {
+            showSendProgress = true
+            modalMessage = "Enviando Dados..."
+
+            let url = URL(string: serverPath + "v3/create-music-genre/\(assetOperationPassword)")!
+
+            dump(genre)
+
+            do {
+                let response = try await NetworkRabbit.post(data: genre, to: url)
+
+                print(response as Any)
+
+                progressAmount = 1
+
+                DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(600)) {
+                    showSendProgress = false
+                    isBeingShown = false
+                }
+            } catch {
+                print(error)
+            }
+        }
+    }
 }
 
 struct EditMusicGenreOnServerView_Previews: PreviewProvider {
