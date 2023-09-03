@@ -69,15 +69,15 @@ struct ServerMusicGenreCRUDView: View {
 
                 HStack(spacing: 10) {
                     Button {
-                        //self.author = nil
-                        //showEditSheet = true
+                        self.genre = nil
+                        showEditSheet = true
                     } label: {
                         Image(systemName: "plus")
                     }
-                    //                .sheet(isPresented: $showEditSheet) {
-                    //                    EditAuthorOnServerView(isBeingShown: $showEditSheet, author: author)
-                    //                        .frame(minWidth: 800, minHeight: 500)
-                    //                }
+                    .sheet(isPresented: $showEditSheet) {
+                        EditMusicGenreOnServerView(isBeingShown: $showEditSheet, genre: genre)
+                            .frame(minWidth: 800, minHeight: 500)
+                    }
                     .disabled(genres.count == 0)
 
                     Button {

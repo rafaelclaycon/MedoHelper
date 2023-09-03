@@ -17,6 +17,7 @@ struct Song: Hashable, Codable, Identifiable, CustomDebugStringConvertible {
     let filename: String
     var dateAdded: Date?
     let isOffensive: Bool
+    var isFromServer: Bool?
 
     static let undefinedGenreId: String = "16B61F20-5D24-429F-8751-55F62DBB8DA8"
 
@@ -28,7 +29,8 @@ struct Song: Hashable, Codable, Identifiable, CustomDebugStringConvertible {
         duration: Double = 0,
         filename: String = "",
         dateAdded: Date = Date(),
-        isOffensive: Bool = false
+        isOffensive: Bool = false,
+        isFromServer: Bool? = false
     ) {
         self.id = id
         self.title = title
@@ -38,6 +40,7 @@ struct Song: Hashable, Codable, Identifiable, CustomDebugStringConvertible {
         self.filename = filename
         self.dateAdded = dateAdded
         self.isOffensive = isOffensive
+        self.isFromServer = isFromServer
     }
     
     var debugDescription: String {

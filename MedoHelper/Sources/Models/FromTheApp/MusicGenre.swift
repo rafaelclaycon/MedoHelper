@@ -10,15 +10,15 @@ import Foundation
 struct MusicGenre: Hashable, Codable, Identifiable, CustomDebugStringConvertible {
 
     let id: String
-    let symbol: String
-    let name: String
+    var symbol: String
+    var name: String
     let isHidden: Bool
 
     init(
-        id: String,
+        id: String = UUID().uuidString,
         symbol: String,
         name: String,
-        isHidden: Bool
+        isHidden: Bool = false
     ) {
         self.id = id
         self.symbol = symbol

@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct EditAuthorOnServerView: View {
+
     @Binding var isBeingShown: Bool
     @State var author: Author
     private let isEditing: Bool
@@ -27,7 +28,7 @@ struct EditAuthorOnServerView: View {
         }
         return text
     }
-    
+
     init(
         isBeingShown: Binding<Bool>,
         author: Author? = nil
@@ -36,7 +37,7 @@ struct EditAuthorOnServerView: View {
         self.isEditing = author != nil
         self.author = author ?? Author(name: "")
     }
-    
+
     var body: some View {
         VStack(spacing: 30) {
             HStack {
