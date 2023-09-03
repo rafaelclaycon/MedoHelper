@@ -87,11 +87,11 @@ struct ServerSongsCRUDView: View {
                     } label: {
                         Image(systemName: "plus")
                     }
-//                    .sheet(isPresented: $showEditSheet) {
-//                        EditSongOnServerView(isBeingShown: $showEditSheet, sound: sound, isEditing: sound.title != "")
-//                            .frame(minWidth: 800, minHeight: 500)
-//                    }
-                    
+                    .sheet(isPresented: $showEditSheet) {
+                        EditSongOnServerView(isBeingShown: $showEditSheet, song: song)
+                            .frame(minWidth: 800, minHeight: 500)
+                    }
+
                     Spacer()
 
                     Button("Enviar Músicas Já no App") {

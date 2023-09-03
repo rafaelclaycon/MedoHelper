@@ -1,31 +1,30 @@
 //
-//  EditSoundOnServerView.swift
+//  EditSongOnServerView.swift
 //  MedoHelper
 //
-//  Created by Rafael Schmitt on 30/04/23.
+//  Created by Rafael Schmitt on 03/09/23.
 //
 
 import SwiftUI
-import AppKit
 
-struct EditSoundOnServerView: View {
+struct EditSongOnServerView: View {
 
     @Binding var isBeingShown: Bool
-    @State var sound: Sound
+    @State var song: Song
     private let isEditing: Bool
-    
-    @State private var authors: [Author] = []
-    @State private var selectedAuthor: Author.ID?
+
+    @State private var genres: [MusicGenre] = []
+    @State private var selectedGenre: MusicGenre.ID?
     @State private var showFilePicker = false
     @State private var selectedFile: URL? = nil
-    @State private var soundUpdateEventId: String = ""
-    
+    @State private var songUpdateEventId: String = ""
+
     // Alert
     @State private var showingAlert = false
     @State private var alertTitle = ""
     @State private var alertMessage = ""
     @State private var alertType: AlertType = .singleOptionInformative
-    
+
     // Progress View
     @State private var showSendProgress = false
     @State private var progressAmount = 0.0
@@ -40,14 +39,14 @@ struct EditSoundOnServerView: View {
     
     private var hasAllNecessaryData: Bool {
         if isEditing {
-            return sound.title != "" && sound.description != "" && selectedAuthor != nil
+            return song.title != "" && selectedGenre != nil
         } else {
-            return sound.title != "" && sound.description != "" && selectedAuthor != nil && selectedFile != nil
+            return song.title != "" && selectedGenre != nil && selectedFile != nil
         }
     }
     
     private var idText: String {
-        var text = "ID: \(sound.id)"
+        var text = "ID: \(song.id)"
         if !isEditing {
             text += " (recém criado)"
         }
@@ -60,17 +59,17 @@ struct EditSoundOnServerView: View {
 
     init(
         isBeingShown: Binding<Bool>,
-        sound: Sound? = nil
+        song: Song? = nil
     ) {
         _isBeingShown = isBeingShown
-        self.isEditing = sound != nil
-        self._sound = State(initialValue: sound ?? Sound(title: ""))
+        self.isEditing = song != nil
+        self._song = State(initialValue: song ?? Song(title: ""))
     }
 
     var body: some View {
         VStack(spacing: 30) {
             HStack {
-                Text(isEditing ? "Editando Som \"\(sound.title)\"" : "Criando Novo Som")
+                Text(isEditing ? "Editando Som \"\(song.title)\"" : "Criando Novo Som")
                     .font(.title)
                     .bold()
                 
@@ -84,14 +83,14 @@ struct EditSoundOnServerView: View {
                 Spacer()
             }
             
-            TextField("Título do Som", text: $sound.title)
+            TextField("Título do Som", text: $song.title)
             
-            TextField("Descrição do Som", text: $sound.description)
+            TextField("Descrição do Som", text: $song.description)
             
-            Picker("Autor: ", selection: $selectedAuthor) {
-                Text("<Nenhum Autor selecionado>").tag(nil as Author.ID?)
-                ForEach(authors) { author in
-                    Text(author.name).tag(Optional(author.id))
+            Picker("Gênero: ", selection: $selectedGenre) {
+                Text("<Nenhum Gênero Musical selecionado>").tag(nil as MusicGenre.ID?)
+                ForEach(genres) { genre in
+                    Text(genre.name).tag(Optional(genre.id))
                 }
             }
             
@@ -114,7 +113,7 @@ struct EditSoundOnServerView: View {
             }
             
             if filename != "" {
-                Text("Uma janela do Finder será aberta após a \(finderWarningAdjective) do som para que você tenha acesso ao arquivo renomeado para o servidor.")
+                Text("Uma janela do Finder será aberta após a \(finderWarningAdjective) da música para que você tenha acesso ao arquivo renomeado para o servidor.")
                     .foregroundColor(.orange)
                     .fixedSize()
             }
@@ -125,7 +124,7 @@ struct EditSoundOnServerView: View {
                 //                    .labelsHidden()
                 //                    .frame(width: 110)
                 
-                Toggle("É ofensivo", isOn: $sound.isOffensive)
+                Toggle("É ofensivo", isOn: $song.isOffensive)
             }
             
             Spacer()
@@ -167,7 +166,7 @@ struct EditSoundOnServerView: View {
             switch alertType {
             case .twoOptionsOneContinue:
                 return Alert(title: Text(alertTitle), message: Text(alertMessage), primaryButton: .default(Text("Continuar"), action: {
-                    setVisibility(ofUpdate: soundUpdateEventId, to: true)
+                    setVisibility(ofUpdate: songUpdateEventId, to: true)
                 }), secondaryButton: .cancel(Text("Cancelar")))
             default:
                 return Alert(title: Text(alertTitle), message: Text(alertMessage), dismissButton: .default(Text("OK")))
@@ -182,7 +181,7 @@ struct EditSoundOnServerView: View {
             modalMessage = "Enviando Dados..."
             
             let url = URL(string: serverPath + "v3/create-sound")!
-            guard let authorId = selectedAuthor else {
+            guard let genreId = selectedGenre else {
                 alertType = .singleOptionInformative
                 alertTitle = "Dados Incompletos"
                 alertMessage = "Selecione um Autor."
@@ -191,7 +190,7 @@ struct EditSoundOnServerView: View {
             }
             guard let fileURL = selectedFile else { return }
             guard let duration = await FileHelper.getDuration(of: fileURL) else { return }
-            let content = MedoContent(sound: sound, authorId: authorId, duration: duration)
+            let content = MedoContent(song: song, genreId: genreId, duration: duration)
             print(content)
             do {
                 let response: CreateSoundResponse? = try await NetworkRabbit.post(data: content, to: url)
@@ -219,7 +218,7 @@ struct EditSoundOnServerView: View {
                     return showingAlert = true
                 }
 
-                soundUpdateEventId = createdContentResponse.eventId
+                songUpdateEventId = createdContentResponse.eventId
                 
                 progressAmount = 1
                 modalMessage = "Renomeando Arquivo..."
@@ -259,68 +258,68 @@ struct EditSoundOnServerView: View {
         }
     }
     
-    private func updateContent() {
-        Task {
-            totalAmount = 2
-            showSendProgress = true
-            modalMessage = "Enviando Dados..."
-            
-            let url = URL(string: serverPath + "v3/update-content")!
-            guard let authorId = selectedAuthor else {
-                alertType = .singleOptionInformative
-                alertTitle = "Dados Incompletos"
-                alertMessage = "Selecione um Autor."
-                return showingAlert = true
-            }
-            // File and duration here
-            let content = MedoContent(sound: sound, authorId: authorId, duration: sound.duration)
-            print(content)
-            do {
-                let response = try await NetworkRabbit.put(in: url, data: content)
-                
-                print(response as Any)
-                
-                guard response else {
-                    alertType = .singleOptionInformative
-                    alertTitle = "Falha ao Atualizar o Som"
-                    alertMessage = "Houve uma falha."
-                    showSendProgress = false
-                    return showingAlert = true
-                }
-                
-                progressAmount = 1
-                
-                if let fileURL = selectedFile {
-                    modalMessage = "Renomeando Arquivo..."
-                    let documentsFolder = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
-                    do {
-                        try renameFile(from: fileURL, with: "\(sound.id).mp3", saveTo: documentsFolder)
-                    } catch {
-                        alertType = .singleOptionInformative
-                        alertTitle = "Falha Ao Renomear Arquivo"
-                        alertMessage = error.localizedDescription
-                        showSendProgress = false
-                        return showingAlert = true
-                    }
-                    
-                    FileHelper.openFolderInFinder(documentsFolder)
-                }
-                
-                progressAmount = 2
-                
-                DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(600)) {
-                    showSendProgress = false
-                    isBeingShown = false
-                }
-            } catch {
-                alertType = .singleOptionInformative
-                alertTitle = "Falha ao Atualizar o Som"
-                alertMessage = error.localizedDescription
-                showSendProgress = false
-                return showingAlert = true
-            }
-        }
-    }
+//    private func updateContent() {
+//        Task {
+//            totalAmount = 2
+//            showSendProgress = true
+//            modalMessage = "Enviando Dados..."
+//            
+//            let url = URL(string: serverPath + "v3/update-content")!
+//            guard let authorId = selectedAuthor else {
+//                alertType = .singleOptionInformative
+//                alertTitle = "Dados Incompletos"
+//                alertMessage = "Selecione um Autor."
+//                return showingAlert = true
+//            }
+//            // File and duration here
+//            let content = MedoContent(sound: sound, authorId: authorId, duration: sound.duration)
+//            print(content)
+//            do {
+//                let response = try await NetworkRabbit.put(in: url, data: content)
+//                
+//                print(response as Any)
+//                
+//                guard response else {
+//                    alertType = .singleOptionInformative
+//                    alertTitle = "Falha ao Atualizar o Som"
+//                    alertMessage = "Houve uma falha."
+//                    showSendProgress = false
+//                    return showingAlert = true
+//                }
+//                
+//                progressAmount = 1
+//                
+//                if let fileURL = selectedFile {
+//                    modalMessage = "Renomeando Arquivo..."
+//                    let documentsFolder = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
+//                    do {
+//                        try renameFile(from: fileURL, with: "\(sound.id).mp3", saveTo: documentsFolder)
+//                    } catch {
+//                        alertType = .singleOptionInformative
+//                        alertTitle = "Falha Ao Renomear Arquivo"
+//                        alertMessage = error.localizedDescription
+//                        showSendProgress = false
+//                        return showingAlert = true
+//                    }
+//                    
+//                    FileHelper.openFolderInFinder(documentsFolder)
+//                }
+//                
+//                progressAmount = 2
+//                
+//                DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(600)) {
+//                    showSendProgress = false
+//                    isBeingShown = false
+//                }
+//            } catch {
+//                alertType = .singleOptionInformative
+//                alertTitle = "Falha ao Atualizar o Som"
+//                alertMessage = error.localizedDescription
+//                showSendProgress = false
+//                return showingAlert = true
+//            }
+//        }
+//    }
     
     private func loadAuthors() {
         Task {
@@ -386,8 +385,8 @@ struct EditSoundOnServerView: View {
     }
 }
 
-struct CreateSoundOnServerView_Previews: PreviewProvider {
+struct EditSongOnServerView_Previews: PreviewProvider {
     static var previews: some View {
-        EditSoundOnServerView(isBeingShown: .constant(true), sound: Sound(title: ""))
+        EditSongOnServerView(isBeingShown: .constant(true), song: Song(title: ""))
     }
 }
