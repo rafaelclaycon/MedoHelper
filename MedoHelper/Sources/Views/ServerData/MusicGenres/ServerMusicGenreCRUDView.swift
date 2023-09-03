@@ -16,6 +16,8 @@ struct ServerMusicGenreCRUDView: View {
 
     @State private var genres: [MusicGenre] = []
     @State private var selectedItem: MusicGenre.ID?
+
+    @State private var showLoadingView = false
     @State private var showEditSheet = false
     @State private var showDeleteAlert = false
     @State private var searchText = ""
@@ -38,79 +40,123 @@ struct ServerMusicGenreCRUDView: View {
     }
 
     var body: some View {
-        VStack {
-            Table(searchResults, selection: $selectedItem) {
-                TableColumn("Nome", value: \.name)
-            }.contextMenu(forSelectionType: MusicGenre.ID.self) { items in
-                Section {
-                    Button("Editar Som") {
-//                        guard let selectedItemId = items.first else { return }
-//                        editAuthor(withId: selectedItemId)
+        ZStack {
+            VStack {
+                Table(searchResults, selection: $selectedItem) {
+                    TableColumn("Sím.", value: \.symbol).width(min: 30, max: 30)
+                    TableColumn("Nome", value: \.name)
+                }.contextMenu(forSelectionType: MusicGenre.ID.self) { items in
+                    Section {
+                        Button("Editar Som") {
+                            //                        guard let selectedItemId = items.first else { return }
+                            //                        editAuthor(withId: selectedItemId)
+                        }
                     }
-                }
 
-                Section {
-                    Button("Remover Som") {
-//                        guard let selectedItemId = items.first else { return }
-//                        selectedSound = selectedItemId
-//                        alertType = .twoOptionsOneDelete
-//                        showAlert = true
+                    Section {
+                        Button("Remover Som") {
+                            //                        guard let selectedItemId = items.first else { return }
+                            //                        selectedSound = selectedItemId
+                            //                        alertType = .twoOptionsOneDelete
+                            //                        showAlert = true
+                        }
                     }
+                } primaryAction: { items in
+                    guard let selectedItemId = items.first else { return }
+                    //editAuthor(withId: selectedItemId)
                 }
-            } primaryAction: { items in
-                guard let selectedItemId = items.first else { return }
-                //editAuthor(withId: selectedItemId)
-            }
-            .searchable(text: $searchText)
+                .searchable(text: $searchText)
 
-            HStack(spacing: 10) {
-                Button {
-                    //self.author = nil
-                    //showEditSheet = true
-                } label: {
-                    Image(systemName: "plus")
-                }
-//                .sheet(isPresented: $showEditSheet) {
-//                    EditAuthorOnServerView(isBeingShown: $showEditSheet, author: author)
-//                        .frame(minWidth: 800, minHeight: 500)
-//                }
-                .disabled(genres.count == 0)
+                HStack(spacing: 10) {
+                    Button {
+                        //self.author = nil
+                        //showEditSheet = true
+                    } label: {
+                        Image(systemName: "plus")
+                    }
+                    //                .sheet(isPresented: $showEditSheet) {
+                    //                    EditAuthorOnServerView(isBeingShown: $showEditSheet, author: author)
+                    //                        .frame(minWidth: 800, minHeight: 500)
+                    //                }
+                    .disabled(genres.count == 0)
 
-                Button {
-                    print((selectedItem ?? "") as String)
-                    //showDeleteAlert = true
-                } label: {
-                    Image(systemName: "minus")
-                }
-//                .alert(isPresented: $showDeleteAlert) {
-//                    Alert(title: Text("Remover \"\(selectedAuthorName)\""), message: Text("Tem certeza de que deseja remover o(a) autor(a) \"\(selectedAuthorName)\"? A mudança será sincronizada com o servidor e propagada para todos os clientes na próxima sincronização."), primaryButton: .destructive(Text("Remover"), action: {
-//                        guard let selectedItem = selectedItem else { return }
-//                        removeAuthor(withId: selectedItem)
-//                    }), secondaryButton: .cancel(Text("Cancelar")))
-//                }
-                .disabled(genres.count == 0)
+                    Button {
+                        print((selectedItem ?? "") as String)
+                        //showDeleteAlert = true
+                    } label: {
+                        Image(systemName: "minus")
+                    }
+                    //                .alert(isPresented: $showDeleteAlert) {
+                    //                    Alert(title: Text("Remover \"\(selectedAuthorName)\""), message: Text("Tem certeza de que deseja remover o(a) autor(a) \"\(selectedAuthorName)\"? A mudança será sincronizada com o servidor e propagada para todos os clientes na próxima sincronização."), primaryButton: .destructive(Text("Remover"), action: {
+                    //                        guard let selectedItem = selectedItem else { return }
+                    //                        removeAuthor(withId: selectedItem)
+                    //                    }), secondaryButton: .cancel(Text("Cancelar")))
+                    //                }
+                    .disabled(genres.count == 0)
 
-                Spacer()
+                    Spacer()
 
-                Button("Enviar Gêneros Musicais Já no App") {
-                    fixedData.sort(by: { $0.name.preparedForComparison() < $1.name.preparedForComparison() })
-                    showAddAlreadyOnAppSheet = true
-                }
-                .sheet(isPresented: $showAddAlreadyOnAppSheet) {
-                    MoveDataToServerView(isBeingShown: $showAddAlreadyOnAppSheet,
-                                         data: fixedData,
-                                         chunkSize: 100,
-                                         endpointEnding: "v3/import-music-genres")
+                    Button("Enviar Gêneros Musicais Já no App") {
+                        fixedData.sort(by: { $0.name.preparedForComparison() < $1.name.preparedForComparison() })
+                        showAddAlreadyOnAppSheet = true
+                    }
+                    .sheet(isPresented: $showAddAlreadyOnAppSheet) {
+                        MoveDataToServerView(isBeingShown: $showAddAlreadyOnAppSheet,
+                                             data: fixedData,
+                                             chunkSize: 100,
+                                             endpointEnding: "v3/import-music-genres")
                         .frame(minWidth: 800, minHeight: 500)
-                }
-                .padding(.trailing, 10)
-                .disabled(genres.count > 0)
+                    }
+                    .padding(.trailing, 10)
+                    .disabled(genres.count > 0)
 
-                Text("\(genres.count.formattedString) itens")
+                    Text("\(genres.count.formattedString) itens")
+                }
+            }
+            .navigationTitle("Gêneros Musicais no Servidor")
+            .padding()
+            .onAppear {
+                fetchItems()
+            }
+            .onChange(of: showAddAlreadyOnAppSheet) { showAddAlreadyOnAppSheet in
+                if showAddAlreadyOnAppSheet == false {
+                    fetchItems()
+                }
+            }
+            .onChange(of: showEditSheet) { showEditSheet in
+                if !showEditSheet {
+                    fetchItems()
+                }
+            }
+
+            if showLoadingView {
+                LoadingView()
             }
         }
-        .navigationTitle("Gêneros Musicais no Servidor")
-        .padding()
+    }
+
+    func fetchItems() {
+        Task {
+            await MainActor.run {
+                showLoadingView = true
+            }
+
+            do {
+                let url = URL(string: serverPath + "v3/all-music-genres")!
+
+                var fetchedItems: [MusicGenre] = try await NetworkRabbit.getArray(from: url)
+
+                fetchedItems.sort(by: { $0.name.preparedForComparison() < $1.name.preparedForComparison() })
+
+                self.genres = fetchedItems
+            } catch {
+                print(error)
+            }
+
+            await MainActor.run {
+                showLoadingView = false
+            }
+        }
     }
 
     private func getMusicGenre(withID id: String, from genres: [MusicGenre]) -> MusicGenre? {
