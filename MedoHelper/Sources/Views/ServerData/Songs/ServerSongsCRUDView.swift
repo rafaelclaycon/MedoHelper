@@ -46,7 +46,7 @@ struct ServerSongsCRUDView: View {
                 Table(searchResults, selection: $selectedItem) {
                     TableColumn("Título", value: \.title)
                     
-                    TableColumn("Gênero", value: \.genre)
+                    TableColumn("Gênero", value: \.genreId)
                         .width(min: 50, max: 100)
                     
                     TableColumn("Adicionado em") { song in
@@ -101,7 +101,7 @@ struct ServerSongsCRUDView: View {
                         MoveDataToServerView(isBeingShown: $showAddAlreadyOnAppSheet,
                                              data: fixedData!,
                                              chunkSize: 10,
-                                             endpointEnding: "v3/import-sounds")
+                                             endpointEnding: "v3/import-songs")
                             .frame(minWidth: 800, minHeight: 500)
                     }
 
@@ -171,7 +171,7 @@ struct ServerSongsCRUDView: View {
 
     private func showMoveDataSheet() {
         Task {
-            fixedData = Bundle.main.decodeJSON("sound_data.json")
+            fixedData = Bundle.main.decodeJSON("song_data.json")
             fixedData?.sort(by: { $0.dateAdded ?? Date() > $1.dateAdded ?? Date() })
             showAddAlreadyOnAppSheet = true
         }

@@ -17,7 +17,7 @@ struct MedoContent: Codable {
     let creationDate: String
     let duration: Double
     let isOffensive: Bool
-    let musicGenre: MusicGenre?
+    let musicGenre: String?
     let contentType: ContentType
     let isHidden: Bool
     
@@ -30,7 +30,7 @@ struct MedoContent: Codable {
         creationDate: String,
         duration: Double,
         isOffensive: Bool,
-        musicGenre: MusicGenre?,
+        musicGenre: String?,
         contentType: ContentType,
         isHidden: Bool
     ) {
@@ -62,6 +62,24 @@ struct MedoContent: Codable {
         self.isOffensive = sound.isOffensive
         self.musicGenre = nil
         self.contentType = .sound
+        self.isHidden = false
+    }
+
+    init(
+        song: Song,
+        genreId: String,
+        duration: Double
+    ) {
+        self.id = UUID(uuidString: song.id)!
+        self.title = song.title
+        self.authorId = ""
+        self.description = song.description
+        self.fileId = song.filename
+        self.creationDate = Date.now.toISO8601String()
+        self.duration = duration
+        self.isOffensive = song.isOffensive
+        self.musicGenre = genreId
+        self.contentType = .song
         self.isHidden = false
     }
 }

@@ -194,7 +194,7 @@ struct EditSoundOnServerView: View {
             let content = MedoContent(sound: sound, authorId: authorId, duration: duration)
             print(content)
             do {
-                let response: CreateSoundResponse? = try await NetworkRabbit.post(data: content, to: url)
+                let response: CreateContentResponse? = try await NetworkRabbit.post(data: content, to: url)
                 
                 print(response as Any)
                 

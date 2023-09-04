@@ -69,7 +69,7 @@ struct EditSongOnServerView: View {
     var body: some View {
         VStack(spacing: 30) {
             HStack {
-                Text(isEditing ? "Editando Som \"\(song.title)\"" : "Criando Novo Som")
+                Text(isEditing ? "Editando Música \"\(song.title)\"" : "Criando Nova Música")
                     .font(.title)
                     .bold()
                 
@@ -83,9 +83,9 @@ struct EditSongOnServerView: View {
                 Spacer()
             }
             
-            TextField("Título do Som", text: $song.title)
+            TextField("Título da Música", text: $song.title)
             
-            TextField("Descrição do Som", text: $song.description)
+            TextField("Descrição da Música", text: $song.description)
             
             Picker("Gênero: ", selection: $selectedGenre) {
                 Text("<Nenhum Gênero Musical selecionado>").tag(nil as MusicGenre.ID?)
@@ -117,18 +117,11 @@ struct EditSongOnServerView: View {
                     .foregroundColor(.orange)
                     .fixedSize()
             }
-            
-            HStack(spacing: 50) {
-                //                DatePicker("Data de adição", selection: $sound.dateAdded, displayedComponents: .date)
-                //                    .datePickerStyle(.compact)
-                //                    .labelsHidden()
-                //                    .frame(width: 110)
-                
-                Toggle("É ofensivo", isOn: $song.isOffensive)
-            }
-            
+
+            Toggle("É ofensivo", isOn: $song.isOffensive)
+
             Spacer()
-            
+
             HStack(spacing: 15) {
                 Spacer()
                 
@@ -142,7 +135,7 @@ struct EditSongOnServerView: View {
                 
                 Button {
                     if isEditing {
-                        updateContent()
+                        //updateContent()
                     } else {
                         createContent()
                     }
@@ -156,7 +149,7 @@ struct EditSongOnServerView: View {
         }
         .padding(.all, 26)
         .onAppear {
-            loadAuthors()
+            loadGenres()
         }
         .disabled(showSendProgress)
         .sheet(isPresented: $showSendProgress) {
@@ -180,7 +173,7 @@ struct EditSongOnServerView: View {
             showSendProgress = true
             modalMessage = "Enviando Dados..."
             
-            let url = URL(string: serverPath + "v3/create-sound")!
+            let url = URL(string: serverPath + "v3/create-song")!
             guard let genreId = selectedGenre else {
                 alertType = .singleOptionInformative
                 alertTitle = "Dados Incompletos"
@@ -193,27 +186,27 @@ struct EditSongOnServerView: View {
             let content = MedoContent(song: song, genreId: genreId, duration: duration)
             print(content)
             do {
-                let response: CreateSoundResponse? = try await NetworkRabbit.post(data: content, to: url)
+                let response: CreateContentResponse? = try await NetworkRabbit.post(data: content, to: url)
                 
                 print(response as Any)
                 
                 guard let createdContentResponse = response else {
                     alertType = .singleOptionInformative
-                    alertTitle = "Falha ao Criar Som"
+                    alertTitle = "Falha ao Criar Música"
                     alertMessage = "O servidor não retornou a resposta esperada."
                     return showingAlert = true
                 }
 
                 guard !createdContentResponse.eventId.isEmpty else {
                     alertType = .singleOptionInformative
-                    alertTitle = "Falha ao Criar Som"
+                    alertTitle = "Falha ao Criar Música"
                     alertMessage = "O eventId retornado pelo servidor está vazio. Sem um eventId válido não é possível definir o UpdateEvent como visível mais para frente."
                     return showingAlert = true
                 }
 
                 guard !createdContentResponse.contentId.isEmpty else {
                     alertType = .singleOptionInformative
-                    alertTitle = "Falha ao Criar Som"
+                    alertTitle = "Falha ao Criar Música"
                     alertMessage = "O contentId retornado pelo servidor está vazio. Sem um contentId válido não é possível renomear o arquivo de som."
                     return showingAlert = true
                 }
@@ -245,12 +238,12 @@ struct EditSongOnServerView: View {
 
                 alertType = .twoOptionsOneContinue
                 alertTitle = "Aguardando Subida do Arquivo para o Servidor"
-                alertMessage = "Coloque o arquivo recém gerado em /Public/sounds/ e clique em Continuar."
+                alertMessage = "Coloque o arquivo recém gerado em /Public/songs/ e clique em Continuar."
                 showingAlert = true
             } catch {
                 print(error)
                 alertType = .singleOptionInformative
-                alertTitle = "Falha ao Criar o Som"
+                alertTitle = "Falha ao Criar Música"
                 alertMessage = error.localizedDescription
                 showSendProgress = false
                 return showingAlert = true
@@ -281,7 +274,7 @@ struct EditSongOnServerView: View {
 //                
 //                guard response else {
 //                    alertType = .singleOptionInformative
-//                    alertTitle = "Falha ao Atualizar o Som"
+//                    alertTitle = "Falha ao Atualizar a Música"
 //                    alertMessage = "Houve uma falha."
 //                    showSendProgress = false
 //                    return showingAlert = true
@@ -313,7 +306,7 @@ struct EditSongOnServerView: View {
 //                }
 //            } catch {
 //                alertType = .singleOptionInformative
-//                alertTitle = "Falha ao Atualizar o Som"
+//                alertTitle = "Falha ao Atualizar a Música"
 //                alertMessage = error.localizedDescription
 //                showSendProgress = false
 //                return showingAlert = true
@@ -321,15 +314,15 @@ struct EditSongOnServerView: View {
 //        }
 //    }
     
-    private func loadAuthors() {
+    private func loadGenres() {
         Task {
-            let url = URL(string: serverPath + "v3/all-authors")!
+            let url = URL(string: serverPath + "v3/all-music-genres")!
             do {
-                authors = try await NetworkRabbit.get(from: url)
-                authors.sort(by: { $0.name.preparedForComparison() < $1.name.preparedForComparison() })
+                genres = try await NetworkRabbit.get(from: url)
+                genres.sort(by: { $0.name.preparedForComparison() < $1.name.preparedForComparison() })
                 
-                if !sound.authorId.isEmpty {
-                    selectedAuthor = sound.authorId
+                if !song.genreId.isEmpty {
+                    selectedGenre = song.genreId
                 }
             } catch {
                 print(error.localizedDescription)

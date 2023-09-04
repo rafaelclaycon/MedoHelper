@@ -10,13 +10,13 @@ import Foundation
 struct Song: Hashable, Codable, Identifiable, CustomDebugStringConvertible {
 
     let id: String
-    let title: String
-    let description: String
-    let genre: String
+    var title: String
+    var description: String
+    let genreId: String
     let duration: Double
     let filename: String
     var dateAdded: Date?
-    let isOffensive: Bool
+    var isOffensive: Bool
     var isFromServer: Bool?
 
     static let undefinedGenreId: String = "16B61F20-5D24-429F-8751-55F62DBB8DA8"
@@ -25,7 +25,7 @@ struct Song: Hashable, Codable, Identifiable, CustomDebugStringConvertible {
         id: String = UUID().uuidString,
         title: String,
         description: String = "",
-        genre: String = Song.undefinedGenreId,
+        genreId: String = Song.undefinedGenreId,
         duration: Double = 0,
         filename: String = "",
         dateAdded: Date = Date(),
@@ -35,7 +35,7 @@ struct Song: Hashable, Codable, Identifiable, CustomDebugStringConvertible {
         self.id = id
         self.title = title
         self.description = description
-        self.genre = genre
+        self.genreId = genreId
         self.duration = duration
         self.filename = filename
         self.dateAdded = dateAdded
