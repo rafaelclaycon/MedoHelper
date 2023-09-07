@@ -135,7 +135,7 @@ struct EditSongOnServerView: View {
                 
                 Button {
                     if isEditing {
-                        //updateContent()
+                        updateContent()
                     } else {
                         createContent()
                     }
@@ -251,68 +251,68 @@ struct EditSongOnServerView: View {
         }
     }
     
-//    private func updateContent() {
-//        Task {
-//            totalAmount = 2
-//            showSendProgress = true
-//            modalMessage = "Enviando Dados..."
-//            
-//            let url = URL(string: serverPath + "v3/update-content")!
-//            guard let authorId = selectedAuthor else {
-//                alertType = .singleOptionInformative
-//                alertTitle = "Dados Incompletos"
-//                alertMessage = "Selecione um Autor."
-//                return showingAlert = true
-//            }
-//            // File and duration here
-//            let content = MedoContent(sound: sound, authorId: authorId, duration: sound.duration)
-//            print(content)
-//            do {
-//                let response = try await NetworkRabbit.put(in: url, data: content)
-//                
-//                print(response as Any)
-//                
-//                guard response else {
-//                    alertType = .singleOptionInformative
-//                    alertTitle = "Falha ao Atualizar a Música"
-//                    alertMessage = "Houve uma falha."
-//                    showSendProgress = false
-//                    return showingAlert = true
-//                }
-//                
-//                progressAmount = 1
-//                
-//                if let fileURL = selectedFile {
-//                    modalMessage = "Renomeando Arquivo..."
-//                    let documentsFolder = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
-//                    do {
-//                        try renameFile(from: fileURL, with: "\(sound.id).mp3", saveTo: documentsFolder)
-//                    } catch {
-//                        alertType = .singleOptionInformative
-//                        alertTitle = "Falha Ao Renomear Arquivo"
-//                        alertMessage = error.localizedDescription
-//                        showSendProgress = false
-//                        return showingAlert = true
-//                    }
-//                    
-//                    FileHelper.openFolderInFinder(documentsFolder)
-//                }
-//                
-//                progressAmount = 2
-//                
-//                DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(600)) {
-//                    showSendProgress = false
-//                    isBeingShown = false
-//                }
-//            } catch {
-//                alertType = .singleOptionInformative
-//                alertTitle = "Falha ao Atualizar a Música"
-//                alertMessage = error.localizedDescription
-//                showSendProgress = false
-//                return showingAlert = true
-//            }
-//        }
-//    }
+    private func updateContent() {
+        Task {
+            totalAmount = 2
+            showSendProgress = true
+            modalMessage = "Enviando Dados..."
+
+            let url = URL(string: serverPath + "v3/update-content")!
+            guard let genreId = selectedGenre else {
+                alertType = .singleOptionInformative
+                alertTitle = "Dados Incompletos"
+                alertMessage = "Selecione um Gênero Musical."
+                return showingAlert = true
+            }
+            // File and duration here
+            let content = MedoContent(song: song, genreId: genreId, duration: song.duration)
+            print(content)
+            do {
+                let response = try await NetworkRabbit.put(in: url, data: content)
+
+                print(response as Any)
+
+                guard response else {
+                    alertType = .singleOptionInformative
+                    alertTitle = "Falha ao Atualizar a Música"
+                    alertMessage = "Houve uma falha."
+                    showSendProgress = false
+                    return showingAlert = true
+                }
+
+                progressAmount = 1
+
+                if let fileURL = selectedFile {
+                    modalMessage = "Renomeando Arquivo..."
+                    let documentsFolder = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
+                    do {
+                        try renameFile(from: fileURL, with: "\(song.id).mp3", saveTo: documentsFolder)
+                    } catch {
+                        alertType = .singleOptionInformative
+                        alertTitle = "Falha Ao Renomear Arquivo"
+                        alertMessage = error.localizedDescription
+                        showSendProgress = false
+                        return showingAlert = true
+                    }
+
+                    FileHelper.openFolderInFinder(documentsFolder)
+                }
+
+                progressAmount = 2
+
+                DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(600)) {
+                    showSendProgress = false
+                    isBeingShown = false
+                }
+            } catch {
+                alertType = .singleOptionInformative
+                alertTitle = "Falha ao Atualizar a Música"
+                alertMessage = error.localizedDescription
+                showSendProgress = false
+                return showingAlert = true
+            }
+        }
+    }
     
     private func loadGenres() {
         Task {
