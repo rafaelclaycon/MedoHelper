@@ -173,7 +173,7 @@ struct EditSongOnServerView: View {
             showSendProgress = true
             modalMessage = "Enviando Dados..."
             
-            let url = URL(string: serverPath + "v3/create-song")!
+            let url = URL(string: serverPath + "v3/create-song/\(assetOperationPassword)")!
             guard let genreId = selectedGenre else {
                 alertType = .singleOptionInformative
                 alertTitle = "Dados Incompletos"
@@ -257,7 +257,7 @@ struct EditSongOnServerView: View {
             showSendProgress = true
             modalMessage = "Enviando Dados..."
 
-            let url = URL(string: serverPath + "v3/update-content")!
+            let url = URL(string: serverPath + "v3/update-content/\(assetOperationPassword)")!
             guard let genreId = selectedGenre else {
                 alertType = .singleOptionInformative
                 alertTitle = "Dados Incompletos"

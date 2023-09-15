@@ -101,7 +101,7 @@ struct ServerSongsCRUDView: View {
                         MoveDataToServerView(isBeingShown: $showAddAlreadyOnAppSheet,
                                              data: fixedData!,
                                              chunkSize: 10,
-                                             endpointEnding: "v3/import-songs")
+                                             endpointEnding: "v3/import-songs/\(assetOperationPassword)")
                             .frame(minWidth: 800, minHeight: 500)
                     }
 

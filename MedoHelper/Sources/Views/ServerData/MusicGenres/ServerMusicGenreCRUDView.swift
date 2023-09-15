@@ -104,7 +104,7 @@ struct ServerMusicGenreCRUDView: View {
                         MoveDataToServerView(isBeingShown: $showAddAlreadyOnAppSheet,
                                              data: fixedData,
                                              chunkSize: 100,
-                                             endpointEnding: "v3/import-music-genres")
+                                             endpointEnding: "v3/import-music-genres/\(assetOperationPassword)")
                         .frame(minWidth: 800, minHeight: 500)
                     }
                     .padding(.trailing, 10)

@@ -124,7 +124,6 @@ struct MoveDataToServerView<T: Codable & CustomDebugStringConvertible & Identifi
 }
 
 struct MoveDataToServerView_Previews: PreviewProvider {
-    
     static var previews: some View {
         MoveDataToServerView<Sound>(isBeingShown: .constant(true), data: [Sound](), chunkSize: 10, endpointEnding: "v3/import-sounds")
     }

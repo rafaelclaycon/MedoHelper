@@ -100,7 +100,7 @@ struct ServerAuthorsCRUDView: View {
                     MoveDataToServerView(isBeingShown: $showAddAlreadyOnAppSheet,
                                          data: fixedData!,
                                          chunkSize: 100,
-                                         endpointEnding: "v3/import-authors")
+                                         endpointEnding: "v3/import-authors/\(assetOperationPassword)")
                         .frame(minWidth: 800, minHeight: 500)
                 }
                 .padding(.trailing, 10)
@@ -158,7 +158,7 @@ struct ServerAuthorsCRUDView: View {
     private func hideAuthor(withId authorId: String) {
         Task {
             do {
-                let url = URL(string: serverPath + "v3/author/\(authorId)")!
+                let url = URL(string: serverPath + "v3/author/\(authorId)/\(assetOperationPassword)")!
                 let response = try await NetworkRabbit.delete(in: url, data: nil as String?)
                 
                 print(response as Any)
