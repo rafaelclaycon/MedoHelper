@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-public let serverPath: String = CommandLine.arguments.contains("-USE_LOCAL_SERVER") ? "http://127.0.0.1:8080/api/" : "http://170.187.141.103:8080/api/"
+public let serverPath: String = CommandLine.arguments.contains("-USE_LOCAL_SERVER") ? "http://127.0.0.1:8080/api/" : "http://medodelirioios.lat:8080/api/"
 public let assetOperationPassword = "total-real-password-3"
 
 @main

@@ -84,6 +84,7 @@
 		D92694002A015C7E007872D9 /* NetworkRabbit.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkRabbit.swift; sourceTree = "<group>"; };
 		D92694022A01A7F9007872D9 /* String+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+.swift"; sourceTree = "<group>"; };
 		D92828702AA515AC009E5D37 /* EditSongOnServerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditSongOnServerView.swift; sourceTree = "<group>"; };
+		D929E3D12AB499DE008D8B3C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		D9310C282A0BDDDF006A3058 /* CreateAuthorAndSoundView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateAuthorAndSoundView.swift; sourceTree = "<group>"; };
 		D94A421E283DC94B00A504BD /* MedoHelper.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MedoHelper.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D94A4221283DC94B00A504BD /* MedoHelperApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MedoHelperApp.swift; sourceTree = "<group>"; };
@@ -188,6 +189,7 @@
 		D94A4220283DC94B00A504BD /* MedoHelper */ = {
 			isa = PBXGroup;
 			children = (
+				D929E3D12AB499DE008D8B3C /* Info.plist */,
 				D94A424C283E702A00A504BD /* Sources */,
 				D9B8784C286513ED009CA7AD /* Resources */,
 			);
@@ -707,6 +709,7 @@
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = MedoHelper/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "Ajudante do Medo e Delírio";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.developer-tools";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
@@ -738,6 +741,7 @@
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = MedoHelper/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "Ajudante do Medo e Delírio";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.developer-tools";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
