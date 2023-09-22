@@ -20,6 +20,7 @@ struct ServerSongsCRUDView: View {
     @State private var showAlert = false
     @State private var alertType: AlertType = .singleOptionInformative
     @State private var alertErrorMessage: String = ""
+    @State private var showReplaceSheet = false
     @State private var searchText = ""
     
     private var selectedSongTitle: String {
@@ -60,14 +61,19 @@ struct ServerSongsCRUDView: View {
                     .width(min: 50, max: 100)
                 }.contextMenu(forSelectionType: Song.ID.self) { items in
                     Section {
-                        Button("Editar Som") {
+                        Button("Editar Metadados da Música") {
                             guard let selectedItemId = items.first else { return }
                             editSong(withId: selectedItemId)
+                        }
+
+                        Button("Substituir Arquivo da Música") {
+                            guard let selectedItemId = items.first else { return }
+                            replaceSongFile(withId: selectedItemId)
                         }
                     }
                     
                     Section {
-                        Button("Remover Som") {
+                        Button("Remover Música") {
                             guard let selectedItemId = items.first else { return }
                             selectedItem = selectedItemId
                             alertType = .twoOptionsOneDelete
@@ -91,6 +97,29 @@ struct ServerSongsCRUDView: View {
                         EditSongOnServerView(isBeingShown: $showEditSheet, song: song)
                             .frame(minWidth: 800, minHeight: 500)
                     }
+
+//                    Button {
+//                        print((selectedItem ?? "") as String)
+//                        alertType = .twoOptionsOneDelete
+//                        showAlert = true
+//                    } label: {
+//                        Image(systemName: "minus")
+//                    }
+//                    .alert(isPresented: $showAlert) {
+//                        switch alertType {
+//                        case .singleOptionInformative:
+//                            return Alert(title: Text("Som Removido Com Sucesso"), message: Text("O som \"\(selectedSongTitle)\" foi marcado como removido no servidor e a mudança será propagada para todos os clientes na próxima sincronização."), dismissButton: .cancel(Text("OK")))
+//
+//                        case .twoOptionsOneDelete:
+//                            return Alert(title: Text("Remover \"\(selectedSongTitle)\""), message: Text("Tem certeza de que deseja remover o som \"\(selectedSongTitle)\"? A mudança será sincronizada com o servidor e propagada para todos os clientes na próxima sincronização."), primaryButton: .destructive(Text("Remover"), action: {
+//                                guard let selectedItem else { return }
+//                                removeSong(withId: selectedItem)
+//                            }), secondaryButton: .cancel(Text("Cancelar")))
+//
+//                        default:
+//                            return Alert(title: Text("Houve um Problema Ao Tentar Marcar a Música como Removida"), message: Text(alertErrorMessage), dismissButton: .cancel(Text("OK")))
+//                        }
+//                    }
 
                     Spacer()
 
@@ -167,6 +196,15 @@ struct ServerSongsCRUDView: View {
         guard let item = getSong(withID: itemId, from: items) else { return }
         self.song = item
         showEditSheet = true
+    }
+
+    private func replaceSongFile(withId itemId: String) {
+//        guard let item = getSound(withID: itemId, from: sounds) else { return }
+//        self.sound = item
+//
+//        DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(600)) {
+//            showReplaceSheet = true
+//        }
     }
 
     private func showMoveDataSheet() {
