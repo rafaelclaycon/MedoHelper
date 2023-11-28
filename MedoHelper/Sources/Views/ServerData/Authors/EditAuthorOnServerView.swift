@@ -15,7 +15,12 @@ struct EditAuthorOnServerView: View {
     
     @State private var description: String = ""
     @State private var photoURL: String = ""
-    
+
+    // Alert
+    @State private var showingAlert = false
+    @State private var alertTitle = ""
+    @State private var alertMessage = ""
+
     // Progress View
     @State private var showSendProgress = false
     @State private var progressAmount = 0.0
@@ -60,7 +65,7 @@ struct EditAuthorOnServerView: View {
             TextField("Descrição do Autor", text: $description)
             
             TextField("URL para Foto", text: $photoURL)
-            
+
             Spacer()
             
             HStack(spacing: 15) {
@@ -92,6 +97,13 @@ struct EditAuthorOnServerView: View {
         .disabled(showSendProgress)
         .sheet(isPresented: $showSendProgress) {
             SendingProgressView(isBeingShown: $showSendProgress, message: $modalMessage, currentAmount: $progressAmount, totalAmount: .constant(1))
+        }
+        .alert(isPresented: $showingAlert) {
+            Alert(title: Text(alertTitle), message: Text(alertMessage), dismissButton: .default(Text("OK")))
+        }
+        .onAppear {
+            description = author.description ?? ""
+            photoURL = author.photo ?? ""
         }
     }
     
@@ -127,7 +139,45 @@ struct EditAuthorOnServerView: View {
     }
     
     func updateAuthor() {
-        print("NOT IMPLEMENTED YET")
+        Task {
+            progressAmount = 0
+            showSendProgress = true
+            modalMessage = "Enviando Dados..."
+
+            let url = URL(string: serverPath + "v3/update-author/\(assetOperationPassword)")!
+
+            let newAuthor: Author = .init(
+                id: author.id,
+                name: author.name,
+                photo: photoURL,
+                description: description
+            )
+
+            do {
+                let response = try await NetworkRabbit.put(in: url, data: newAuthor)
+
+                print(response as Any)
+
+                guard response else {
+                    alertTitle = "Falha ao Atualizar o Autor"
+                    alertMessage = "Houve uma falha."
+                    showSendProgress = false
+                    return showingAlert = true
+                }
+
+                progressAmount = 1
+
+                DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(600)) {
+                    showSendProgress = false
+                    isBeingShown = false
+                }
+            } catch {
+                alertTitle = "Falha ao Atualizar o Autor"
+                alertMessage = error.localizedDescription
+                showSendProgress = false
+                return showingAlert = true
+            }
+        }
     }
 }
 
