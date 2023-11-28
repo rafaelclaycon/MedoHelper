@@ -109,8 +109,14 @@ struct ServerSoundsCRUDView: View {
                     .alert(isPresented: $showAlert) {
                         switch alertType {
                         case .singleOptionInformative:
-                            return Alert(title: Text("Som Removido Com Sucesso"), message: Text("O som \"\(selectedSoundTitle)\" foi marcado como removido no servidor e a mudança será propagada para todos os clientes na próxima sincronização."), dismissButton: .cancel(Text("OK")))
-                            
+                            return Alert(
+                                title: Text("Som Removido Com Sucesso"),
+                                message: Text("O som \"\(selectedSoundTitle)\" foi marcado como removido no servidor e a mudança será propagada para todos os clientes na próxima sincronização."),
+                                dismissButton: .cancel(Text("OK")) {
+                                    fetchSounds()
+                                }
+                            )
+
                         case .twoOptionsOneDelete:
                             return Alert(title: Text("Remover \"\(selectedSoundTitle)\""), message: Text("Tem certeza de que deseja remover o som \"\(selectedSoundTitle)\"? A mudança será sincronizada com o servidor e propagada para todos os clientes na próxima sincronização."), primaryButton: .destructive(Text("Remover"), action: {
                                 guard let selectedItem else { return }
@@ -215,7 +221,7 @@ struct ServerSoundsCRUDView: View {
         Task {
             do {
                 let url = URL(string: serverPath + "v3/sound/\(soundId)/\(assetOperationPassword)")!
-                let _ =  try await NetworkRabbit.delete(in: url, data: nil as String?)
+                let _ = try await NetworkRabbit.delete(in: url, data: nil as String?)
                 alertType = .singleOptionInformative
                 showAlert = true
             } catch {
