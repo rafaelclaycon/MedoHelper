@@ -149,7 +149,7 @@ struct EditAuthorOnServerView: View {
             let newAuthor: Author = .init(
                 id: author.id,
                 name: author.name,
-                photo: photoURL,
+                photo: photoURL.isEmpty ? nil : photoURL,
                 description: description
             )
 
