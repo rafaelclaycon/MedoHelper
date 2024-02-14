@@ -149,17 +149,9 @@ struct ServerSoundsCRUDView: View {
             .onAppear {
                 fetchSounds()
             }
-            .onChange(of: showAddAlreadyOnAppSheet) { showAddAlreadyOnAppSheet in
-                if showAddAlreadyOnAppSheet == false {
-                    fetchSounds()
-                }
-            }
-            .onChange(of: showEditSheet) { showEditSheet in
-                if !showEditSheet {
-                    fetchSounds()
-                }
-            }
-            
+            .onChange(of: showAddAlreadyOnAppSheet) { if !$0 { fetchSounds() } }
+            .onChange(of: showEditSheet) { if !$0 { fetchSounds() } }
+
             if showLoadingView {
                 LoadingView()
             }

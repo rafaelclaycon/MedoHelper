@@ -114,18 +114,10 @@ struct ServerAuthorsCRUDView: View {
         .onAppear {
             fetchAuthors()
         }
-        .onChange(of: showAddAlreadyOnAppSheet) { showAddAlreadyOnAppSheet in
-            if showAddAlreadyOnAppSheet == false {
-                fetchAuthors()
-            }
-        }
-        .onChange(of: showEditSheet) { showEditSheet in
-            if !showEditSheet {
-                fetchAuthors()
-            }
-        }
+        .onChange(of: showAddAlreadyOnAppSheet) { if !$0 { fetchAuthors() } }
+        .onChange(of: showEditSheet) { if !$0 { fetchAuthors() } }
     }
-    
+
     private func fetchAuthors() {
         Task {
             let url = URL(string: serverPath + "v3/all-authors")!
