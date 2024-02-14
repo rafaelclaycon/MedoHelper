@@ -2,7 +2,7 @@
 
 ![The app running on a Mac.](Resources/main_screen.png)
 
-This is an internal tool for managing all server aspects of to the [Medo e Delírio iOS project](https://github.com/rafaelclaycon/MedoDelirioBrasilia).
+This is an internal tool for managing all server aspects of the [Medo e Delírio iOS project](https://github.com/rafaelclaycon/MedoDelirioBrasilia).
 
 🌟 Star this repo! ↗️
 
