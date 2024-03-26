@@ -12,7 +12,7 @@ public let assetOperationPassword = "total-real-password-3"
 
 @main
 struct MedoHelperApp: App {
-    
+
     var body: some Scene {
         WindowGroup {
             MainView()
