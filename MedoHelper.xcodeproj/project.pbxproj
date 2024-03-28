@@ -7,6 +7,11 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		D90449562BB2743A0023088B /* ExternalLink.swift in Sources */ = {isa = PBXBuildFile; fileRef = D90449552BB2743A0023088B /* ExternalLink.swift */; };
+		D90449582BB281960023088B /* ExternalLinkButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = D90449572BB281960023088B /* ExternalLinkButton.swift */; };
+		D904495D2BB483C20023088B /* CapsuleButtonStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = D904495C2BB483C20023088B /* CapsuleButtonStyle.swift */; };
+		D904495F2BB486F80023088B /* NewExternalLinkView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D904495E2BB486F80023088B /* NewExternalLinkView.swift */; };
+		D90449612BB4E9140023088B /* Color+.swift in Sources */ = {isa = PBXBuildFile; fileRef = D90449602BB4E9140023088B /* Color+.swift */; };
 		D90998CD2AA448800059CAE8 /* EditMusicGenreOnServerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D90998CC2AA448800059CAE8 /* EditMusicGenreOnServerView.swift */; };
 		D91338A12A87F43D00C0502A /* CreateContentResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = D91338A02A87F43D00C0502A /* CreateContentResponse.swift */; };
 		D914C7212A0986AF0011EC5B /* Int+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = D914C7202A0986AF0011EC5B /* Int+Extensions.swift */; };
@@ -73,6 +78,11 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		D90449552BB2743A0023088B /* ExternalLink.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExternalLink.swift; sourceTree = "<group>"; };
+		D90449572BB281960023088B /* ExternalLinkButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExternalLinkButton.swift; sourceTree = "<group>"; };
+		D904495C2BB483C20023088B /* CapsuleButtonStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CapsuleButtonStyle.swift; sourceTree = "<group>"; };
+		D904495E2BB486F80023088B /* NewExternalLinkView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewExternalLinkView.swift; sourceTree = "<group>"; };
+		D90449602BB4E9140023088B /* Color+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Color+.swift"; sourceTree = "<group>"; };
 		D90998CC2AA448800059CAE8 /* EditMusicGenreOnServerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditMusicGenreOnServerView.swift; sourceTree = "<group>"; };
 		D91338A02A87F43D00C0502A /* CreateContentResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateContentResponse.swift; sourceTree = "<group>"; };
 		D914C7202A0986AF0011EC5B /* Int+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Int+Extensions.swift"; sourceTree = "<group>"; };
@@ -150,6 +160,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		D904495B2BB483AB0023088B /* Modifiers */ = {
+			isa = PBXGroup;
+			children = (
+				D904495C2BB483C20023088B /* CapsuleButtonStyle.swift */,
+			);
+			path = Modifiers;
+			sourceTree = "<group>";
+		};
 		D92693FF2A015C67007872D9 /* Networking */ = {
 			isa = PBXGroup;
 			children = (
@@ -245,6 +263,7 @@
 				D92694022A01A7F9007872D9 /* String+.swift */,
 				D9D798712A05D338002B2D77 /* Double+Extensions.swift */,
 				D914C7202A0986AF0011EC5B /* Int+Extensions.swift */,
+				D90449602BB4E9140023088B /* Color+.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -297,6 +316,7 @@
 				D960F22D2A1D5DBA007D12D7 /* Song.swift */,
 				D914C7222A09AD6D0011EC5B /* MusicGenre.swift */,
 				D98755082A9C36F900B6E96A /* UpdateEvent.swift */,
+				D90449552BB2743A0023088B /* ExternalLink.swift */,
 			);
 			path = FromTheApp;
 			sourceTree = "<group>";
@@ -381,6 +401,8 @@
 				D9CA30272A05921200F1F23D /* ServerAuthorsCRUDView.swift */,
 				D992E8232A17FF8700137469 /* EditAuthorOnServerView.swift */,
 				D92693F92A015048007872D9 /* MoveAuthorsToServerView.swift */,
+				D90449572BB281960023088B /* ExternalLinkButton.swift */,
+				D904495E2BB486F80023088B /* NewExternalLinkView.swift */,
 			);
 			path = Authors;
 			sourceTree = "<group>";
@@ -398,6 +420,7 @@
 		D9CA30262A057ADA00F1F23D /* Shared */ = {
 			isa = PBXGroup;
 			children = (
+				D904495B2BB483AB0023088B /* Modifiers */,
 				D9CA301F2A0441A000F1F23D /* SendingProgressView.swift */,
 				D960F2292A1D577A007D12D7 /* LoadingView.swift */,
 				D9ABF0CC2A41E7D5009872DB /* MoveDataToServerView.swift */,
@@ -509,6 +532,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D90449582BB281960023088B /* ExternalLinkButton.swift in Sources */,
 				D91338A12A87F43D00C0502A /* CreateContentResponse.swift in Sources */,
 				D960F2252A1D22E1007D12D7 /* AnalyticsView.swift in Sources */,
 				D9FB1D9D29FEEF3900AE8744 /* ServerSoundsCRUDView.swift in Sources */,
@@ -516,6 +540,7 @@
 				D9B87851286538C6009CA7AD /* JSONFileToData.swift in Sources */,
 				D90998CD2AA448800059CAE8 /* EditMusicGenreOnServerView.swift in Sources */,
 				D92693FA2A015048007872D9 /* MoveAuthorsToServerView.swift in Sources */,
+				D904495F2BB486F80023088B /* NewExternalLinkView.swift in Sources */,
 				D94A4259283E809000A504BD /* ProtoSound.swift in Sources */,
 				D914C7212A0986AF0011EC5B /* Int+Extensions.swift in Sources */,
 				D94A4257283E805900A504BD /* ProtoAuthor.swift in Sources */,
@@ -527,7 +552,9 @@
 				D95FCB6F29FEF75F00952868 /* EditSoundOnServerView.swift in Sources */,
 				D9B8784B28650F4E009CA7AD /* CSVParser.swift in Sources */,
 				D92828712AA515AC009E5D37 /* EditSongOnServerView.swift in Sources */,
+				D904495D2BB483C20023088B /* CapsuleButtonStyle.swift in Sources */,
 				D94A424F283E704300A504BD /* AuthorView.swift in Sources */,
+				D90449562BB2743A0023088B /* ExternalLink.swift in Sources */,
 				D960F22E2A1D5DBA007D12D7 /* Song.swift in Sources */,
 				D960F22A2A1D577A007D12D7 /* LoadingView.swift in Sources */,
 				D9E39DB32A1E4C5F0053A527 /* MoveSongsToServerView.swift in Sources */,
@@ -542,6 +569,7 @@
 				D9B87853286540E5009CA7AD /* Sound.swift in Sources */,
 				D9ABF0CD2A41E7D5009872DB /* MoveDataToServerView.swift in Sources */,
 				D94A4251283E705100A504BD /* SoundView.swift in Sources */,
+				D90449612BB4E9140023088B /* Color+.swift in Sources */,
 				D9FB487E286E435A00FF90D0 /* Author.swift in Sources */,
 				D98755092A9C36F900B6E96A /* UpdateEvent.swift in Sources */,
 				D9D798722A05D338002B2D77 /* Double+Extensions.swift in Sources */,

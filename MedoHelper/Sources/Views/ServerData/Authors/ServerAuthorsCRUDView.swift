@@ -101,7 +101,7 @@ struct ServerAuthorsCRUDView: View {
                                          data: fixedData!,
                                          chunkSize: 100,
                                          endpointEnding: "v3/import-authors/\(assetOperationPassword)")
-                        .frame(minWidth: 800, minHeight: 500)
+                        .frame(minWidth: 800, minHeight: 900)
                 }
                 .padding(.trailing, 10)
                 .disabled(authors.count > 0)

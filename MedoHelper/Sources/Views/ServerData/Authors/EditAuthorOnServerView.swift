@@ -12,9 +12,13 @@ struct EditAuthorOnServerView: View {
     @Binding var isBeingShown: Bool
     @State var author: Author
     private let isEditing: Bool
-    
+
     @State private var description: String = ""
     @State private var photoURL: String = ""
+    @State private var externalLinks: [ExternalLink] = []
+
+    @State private var showNewExternalLinkSheet = false
+    @State private var selectedExternalLink: ExternalLink? = nil
 
     // Alert
     @State private var showingAlert = false
@@ -25,7 +29,9 @@ struct EditAuthorOnServerView: View {
     @State private var showSendProgress = false
     @State private var progressAmount = 0.0
     @State private var modalMessage = ""
-    
+
+    // MARK: - Computed Properties
+
     private var idText: String {
         var text = "ID: \(author.id)"
         if !isEditing {
@@ -33,6 +39,8 @@ struct EditAuthorOnServerView: View {
         }
         return text
     }
+
+    // MARK: - Initializers
 
     init(
         isBeingShown: Binding<Bool>,
@@ -65,6 +73,59 @@ struct EditAuthorOnServerView: View {
             TextField("Descrição do Autor", text: $description)
             
             TextField("URL para Foto", text: $photoURL)
+
+            HStack {
+                Text("Links Externos:")
+
+                Spacer()
+            }
+
+            HStack(spacing: 10) {
+                if externalLinks.isEmpty {
+                    Text("Nenhum link externo cadastrado.")
+                        .foregroundStyle(.gray)
+                } else {
+                    ForEach(externalLinks) {
+                        ExternalLinkButton(
+                            title: $0.title,
+                            color: .red,
+                            symbol: $0.symbol,
+                            link: $0.link,
+                            onTapAction: {
+                                selectedExternalLink = $0
+                                showNewExternalLinkSheet = true
+                            }
+                        )
+                    }
+                }
+
+                Spacer()
+            }
+
+            HStack(spacing: 10) {
+                Button {
+                    selectedExternalLink = nil
+                    showNewExternalLinkSheet = true
+                } label: {
+                    Image(systemName: "plus")
+                }
+                .sheet(isPresented: $showNewExternalLinkSheet) {
+                    NewExternalLinkView(
+                        isBeingShown: $showNewExternalLinkSheet,
+                        externalLink: selectedExternalLink,
+                        saveAction: { newLink in
+                            if let index = externalLinks.firstIndex(where: { $0.id == newLink.id }) {
+                                externalLinks[index] = newLink
+                            } else {
+                                externalLinks.append(newLink)
+                            }
+                        }
+                    )
+                    .frame(minWidth: 500, minHeight: 300)
+                }
+
+                Spacer()
+            }
 
             Spacer()
             
