@@ -9,19 +9,16 @@ import SwiftUI
 
 struct ExternalLinkButton: View {
 
-    let title: String
-    let color: Color
-    let symbol: String
-    let link: String
+    let externalLink: ExternalLink
     let onTapAction: (ExternalLink) -> Void
 
     var imageUrl: URL {
-        URL(string: "\(baseURL)images/\(symbol)")!
+        URL(string: "\(baseURL)images/\(externalLink.symbol)")!
     }
 
     var body: some View {
         Button {
-            onTapAction(.init(symbol: symbol, title: title, color: color.toString(), link: link))
+            onTapAction(externalLink)
         } label: {
             HStack(spacing: 10) {
                 AsyncImage(url: imageUrl) { image in
@@ -32,21 +29,23 @@ struct ExternalLinkButton: View {
                 .scaledToFit()
                 .frame(width: 22)
 
-                Text(title)
+                Text(externalLink.title)
             }
             .padding(.vertical, 2)
             .padding(.horizontal, 6)
         }
-        .capsule(colored: color)
+        .capsule(colored: externalLink.color.toColor())
     }
 }
 
 #Preview {
     ExternalLinkButton(
-        title: "YouTube",
-        color: .red,
-        symbol: "youtube-a.png",
-        link: "https://www.youtube.com/@CasimiroMiguel",
+        externalLink: .init(
+            symbol: "youtube-a.png",
+            title: "YouTube",
+            color: "red",
+            link: "https://www.youtube.com/@CasimiroMiguel"
+        ),
         onTapAction: { _ in }
     )
 }

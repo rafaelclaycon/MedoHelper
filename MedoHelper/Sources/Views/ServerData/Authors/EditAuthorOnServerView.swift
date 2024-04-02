@@ -87,10 +87,7 @@ struct EditAuthorOnServerView: View {
                 } else {
                     ForEach(externalLinks) {
                         ExternalLinkButton(
-                            title: $0.title,
-                            color: .red,
-                            symbol: $0.symbol,
-                            link: $0.link,
+                            externalLink: $0,
                             onTapAction: {
                                 selectedExternalLink = $0
                                 showNewExternalLinkSheet = true
@@ -165,10 +162,11 @@ struct EditAuthorOnServerView: View {
         .onAppear {
             description = author.description ?? ""
             photoURL = author.photo ?? ""
+            externalLinks = decode(externalLinks: author.externalLinks)
         }
     }
     
-    func createAuthor() {
+    private func createAuthor() {
         Task {
             showSendProgress = true
             modalMessage = "Enviando Dados..."
@@ -180,6 +178,9 @@ struct EditAuthorOnServerView: View {
             }
             if photoURL != "" {
                 author.photo = photoURL
+            }
+            if !externalLinks.isEmpty {
+                author.externalLinks = externalLinks.asJSONString()
             }
             dump(author)
             do {
@@ -199,7 +200,7 @@ struct EditAuthorOnServerView: View {
         }
     }
     
-    func updateAuthor() {
+    private func updateAuthor() {
         Task {
             progressAmount = 0
             showSendProgress = true
@@ -211,7 +212,8 @@ struct EditAuthorOnServerView: View {
                 id: author.id,
                 name: author.name,
                 photo: photoURL.isEmpty ? nil : photoURL,
-                description: description
+                description: description,
+                externalLinks: externalLinks.asJSONString()
             )
 
             do {
@@ -238,6 +240,23 @@ struct EditAuthorOnServerView: View {
                 showSendProgress = false
                 return showingAlert = true
             }
+        }
+    }
+
+    private func decode(externalLinks incomingExternalLinks: String?) -> [ExternalLink] {
+        guard let links = incomingExternalLinks else {
+            return []
+        }
+        guard let jsonData = links.data(using: .utf8) else {
+            return []
+        }
+        let decoder = JSONDecoder()
+        do {
+            let decodedLinks = try decoder.decode([SimplifiedExternalLink].self, from: jsonData)
+            return decodedLinks.map { ExternalLink(symbol: $0.symbol, title: $0.title, color: $0.color, link: $0.link) }
+        } catch {
+            print("Error decoding JSON: \(error)")
+            return []
         }
     }
 }

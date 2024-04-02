@@ -29,3 +29,28 @@ struct ExternalLink: Hashable, Codable, Identifiable {
         self.link = link
     }
 }
+
+struct SimplifiedExternalLink: Codable {
+
+    var symbol: String
+    var title: String
+    var color: String
+    var link: String
+}
+
+extension Array where Element == ExternalLink {
+
+    func asJSONString() -> String? {
+        guard self.count > 0 else {
+            return nil
+        }
+        let simplifiedExternalLinks = self.map { SimplifiedExternalLink(symbol: $0.symbol, title: $0.title, color: $0.color, link: $0.link) }
+        let jsonData = try? JSONEncoder().encode(simplifiedExternalLinks)
+        if let jsonData = jsonData, let jsonString = String(data: jsonData, encoding: .utf8) {
+            print(jsonString)
+            return jsonString
+        } else {
+            return nil
+        }
+    }
+}
