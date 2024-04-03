@@ -13,11 +13,13 @@ struct NewExternalLinkView: View {
 
     @Binding var isBeingShown: Bool
     @State var externalLink: ExternalLink
+    @State private var showRemoveAlert: Bool = false
 
     // MARK: - Private Variables
 
     private let isEditing: Bool
     private let saveAction: (ExternalLink) -> Void
+    private let removeAction: (ExternalLink) -> Void
 
     // MARK: - Computed Properties
 
@@ -30,12 +32,14 @@ struct NewExternalLinkView: View {
     init(
         isBeingShown: Binding<Bool>,
         externalLink: ExternalLink? = nil,
-        saveAction: @escaping (ExternalLink) -> Void
+        saveAction: @escaping (ExternalLink) -> Void,
+        removeAction: @escaping (ExternalLink) -> Void
     ) {
         _isBeingShown = isBeingShown
         self.isEditing = externalLink != nil
-        self.saveAction = saveAction
         self.externalLink = externalLink ?? ExternalLink()
+        self.saveAction = saveAction
+        self.removeAction = removeAction
     }
 
     var body: some View {
@@ -59,6 +63,26 @@ struct NewExternalLinkView: View {
             Spacer()
 
             HStack(spacing: 15) {
+                if isEditing {
+                    Button {
+                        showRemoveAlert = true
+                    } label: {
+                        Text("Remover")
+                            .padding(.horizontal)
+                    }
+                    .alert(isPresented: $showRemoveAlert) {
+                        Alert(
+                            title: Text("Remover \"\(externalLink.title)\"?"),
+                            message: Text(""),
+                            primaryButton: .destructive(Text("Remover"), action: {
+                                isBeingShown = false
+                                removeAction(externalLink)
+                            }),
+                            secondaryButton: .cancel(Text("Cancelar"))
+                        )
+                    }
+                }
+
                 Spacer()
 
                 Button {
@@ -87,6 +111,7 @@ struct NewExternalLinkView: View {
 #Preview {
     NewExternalLinkView(
         isBeingShown: .constant(true),
-        saveAction: { _ in }
+        saveAction: { _ in },
+        removeAction: { _ in }
     )
 }

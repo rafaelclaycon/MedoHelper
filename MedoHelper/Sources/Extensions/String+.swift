@@ -50,8 +50,34 @@ extension String {
         switch self {
         case "red":
             return .red
-        default:
+        case "orange":
+            return .orange
+        case "yellow":
+            return .yellow
+        case "black":
             return .black
+        case "blue":
+            return .blue
+        case "brown":
+            return .brown
+        case "gray":
+            return .gray
+        case "green":
+            return .green
+        case "purple":
+            return .purple
+        case "pink":
+            return .pink
+        case "mint":
+            return .mint
+        case "teal":
+            return .teal
+        case "cyan":
+            return .cyan
+        case "indigo":
+            return .indigo
+        default:
+            return .white
         }
     }
 }

@@ -88,9 +88,9 @@ struct EditAuthorOnServerView: View {
                     ForEach(externalLinks) {
                         ExternalLinkButton(
                             externalLink: $0,
-                            onTapAction: {
-                                selectedExternalLink = $0
-                                showNewExternalLinkSheet = true
+                            onTapAction: { link in
+                                self.selectedExternalLink = link
+                                self.showNewExternalLinkSheet = true
                             }
                         )
                     }
@@ -101,8 +101,8 @@ struct EditAuthorOnServerView: View {
 
             HStack(spacing: 10) {
                 Button {
-                    selectedExternalLink = nil
-                    showNewExternalLinkSheet = true
+                    self.selectedExternalLink = nil
+                    self.showNewExternalLinkSheet = true
                 } label: {
                     Image(systemName: "plus")
                 }
@@ -115,6 +115,11 @@ struct EditAuthorOnServerView: View {
                                 externalLinks[index] = newLink
                             } else {
                                 externalLinks.append(newLink)
+                            }
+                        },
+                        removeAction: { link in
+                            if let index = externalLinks.firstIndex(where: { $0.id == link.id }) {
+                                externalLinks.remove(at: index)
                             }
                         }
                     )
