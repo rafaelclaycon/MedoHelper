@@ -13,17 +13,20 @@ struct Author: Hashable, Codable, Identifiable, CustomDebugStringConvertible {
     var name: String
     var photo: String?
     var description: String?
+    var externalLinks: String?
 
     init(
         id: String = UUID().uuidString,
         name: String,
         photo: String? = nil,
-        description: String? = nil
+        description: String? = nil,
+        externalLinks: String? = nil
     ) {
         self.id = id
         self.name = name
         self.photo = photo
         self.description = description
+        self.externalLinks = externalLinks
     }
 
     var debugDescription: String {

@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import SwiftUI
 
 extension String {
     
@@ -39,6 +40,44 @@ extension String {
             return dateFormatter.string(from: date)
         } else {
             return "Formato de data inválido"
+        }
+    }
+}
+
+extension String {
+
+    func toColor() -> Color {
+        switch self {
+        case "red":
+            return .red
+        case "orange":
+            return .orange
+        case "yellow":
+            return .yellow
+        case "black":
+            return .black
+        case "blue":
+            return .blue
+        case "brown":
+            return .brown
+        case "gray":
+            return .gray
+        case "green":
+            return .green
+        case "purple":
+            return .purple
+        case "pink":
+            return .pink
+        case "mint":
+            return .mint
+        case "teal":
+            return .teal
+        case "cyan":
+            return .cyan
+        case "indigo":
+            return .indigo
+        default:
+            return .white
         }
     }
 }
