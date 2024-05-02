@@ -130,6 +130,10 @@ struct ServerSoundsCRUDView: View {
                     
                     Spacer()
 
+                    Button("Copiar títulos") {
+                        copyTitlesToClipboard()
+                    }
+
                     Button("Enviar Sons Já no App") {
                         showMoveDataSheet()
                     }
@@ -231,11 +235,15 @@ struct ServerSoundsCRUDView: View {
             showAddAlreadyOnAppSheet = true
         }
     }
+
+    private func copyTitlesToClipboard() {
+        let titles = sounds.map { $0.title }.joined(separator: "\n")
+        let pasteboard = NSPasteboard.general
+        pasteboard.clearContents()
+        pasteboard.setString(titles, forType: .string)
+    }
 }
 
-struct ServerSoundsCRUDView_Previews: PreviewProvider {
-    
-    static var previews: some View {
-        ServerSoundsCRUDView()
-    }
+#Preview {
+    ServerSoundsCRUDView()
 }

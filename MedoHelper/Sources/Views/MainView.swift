@@ -2,13 +2,13 @@ import SwiftUI
 
 struct MainView: View {
     
-    @State private var currentTab = 0
+    @State private var currentTab = 2
     @State private var testVersionDotColor: Color = .red
     
     var body: some View {
         NavigationView {
             List(selection: $currentTab) {
-                Section("DADOS NO SERVIDOR") {
+                Section("SONS") {
                     NavigationLink {
                         ServerSoundsCRUDView()
                     } label: {
@@ -24,26 +24,37 @@ struct MainView: View {
                     .tag(1)
                     
                     NavigationLink {
+                        ReactionsCRUDView()
+                    } label: {
+                        Label("Reações", systemImage: "rectangle.grid.2x2.fill")
+                    }
+                    .tag(2)
+                }
+
+                Section("MÚSICAS") {
+                    NavigationLink {
                         ServerSongsCRUDView()
                     } label: {
                         Label("Músicas", systemImage: "music.quarternote.3")
                     }
-                    .tag(2)
+                    .tag(3)
 
                     NavigationLink {
                         ServerMusicGenreCRUDView()
                     } label: {
                         Label("Gêneros Musicais", systemImage: "guitars")
                     }
-                    .tag(3)
+                    .tag(4)
+                }
 
+                Section("MANUTENÇÃO") {
                     NavigationLink {
                         UpdateEventListView()
                     } label: {
                         Label("Eventos de Atualização", systemImage: "clock.arrow.2.circlepath")
                     }
-                    .tag(4)
-                    
+                    .tag(5)
+
                     NavigationLink {
                         TestVersionView()
                     } label: {
@@ -55,24 +66,24 @@ struct MainView: View {
                                 .frame(width: 10, height: 10)
                         }
                     }
-                    .tag(5)
-                }
-                
-                Section("FERRAMENTAS LOCAIS") {
-                    NavigationLink {
-                        CreateAuthorAndSoundView()
-                    } label: {
-                        Label("Criar Autor e Som", systemImage: "plus.circle")
-                    }
                     .tag(6)
-                    
-                    NavigationLink {
-                        ParseSoundRankingCSVView()
-                    } label: {
-                        Label("Parsear CSV", systemImage: "text.justify.leading")
-                    }
-                    .tag(7)
                 }
+
+//                Section("FERRAMENTAS LOCAIS") {
+//                    NavigationLink {
+//                        CreateAuthorAndSoundView()
+//                    } label: {
+//                        Label("Criar Autor e Som", systemImage: "plus.circle")
+//                    }
+//                    .tag(7)
+//
+//                    NavigationLink {
+//                        ParseSoundRankingCSVView()
+//                    } label: {
+//                        Label("Parsear CSV", systemImage: "text.justify.leading")
+//                    }
+//                    .tag(8)
+//                }
                 
                 Section("ANÁLISE") {
                     NavigationLink {
@@ -80,7 +91,7 @@ struct MainView: View {
                     } label: {
                         Label("Estatísticas", systemImage: "chart.line.uptrend.xyaxis")
                     }
-                    .tag(8)
+                    .tag(9)
                 }
             }
             .listStyle(.sidebar)

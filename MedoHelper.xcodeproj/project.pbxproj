@@ -49,6 +49,9 @@
 		D98755092A9C36F900B6E96A /* UpdateEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = D98755082A9C36F900B6E96A /* UpdateEvent.swift */; };
 		D987550B2A9C3EC800B6E96A /* UpdateEventRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = D987550A2A9C3EC800B6E96A /* UpdateEventRow.swift */; };
 		D992E8242A17FF8700137469 /* EditAuthorOnServerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D992E8232A17FF8700137469 /* EditAuthorOnServerView.swift */; };
+		D99AEF2E2BE28FA100C4A8FA /* ReactionsCRUDView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D99AEF2D2BE28FA100C4A8FA /* ReactionsCRUDView.swift */; };
+		D99AEF302BE2900F00C4A8FA /* Reaction.swift in Sources */ = {isa = PBXBuildFile; fileRef = D99AEF2F2BE2900F00C4A8FA /* Reaction.swift */; };
+		D99AEF322BE294C900C4A8FA /* EditReactionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D99AEF312BE294C900C4A8FA /* EditReactionView.swift */; };
 		D9ABF0CD2A41E7D5009872DB /* MoveDataToServerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9ABF0CC2A41E7D5009872DB /* MoveDataToServerView.swift */; };
 		D9B878482864FA73009CA7AD /* ParseSoundRankingCSVView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9B878472864FA73009CA7AD /* ParseSoundRankingCSVView.swift */; };
 		D9B8784B28650F4E009CA7AD /* CSVParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9B8784A28650F4E009CA7AD /* CSVParser.swift */; };
@@ -124,6 +127,9 @@
 		D98755082A9C36F900B6E96A /* UpdateEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateEvent.swift; sourceTree = "<group>"; };
 		D987550A2A9C3EC800B6E96A /* UpdateEventRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateEventRow.swift; sourceTree = "<group>"; };
 		D992E8232A17FF8700137469 /* EditAuthorOnServerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditAuthorOnServerView.swift; sourceTree = "<group>"; };
+		D99AEF2D2BE28FA100C4A8FA /* ReactionsCRUDView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReactionsCRUDView.swift; sourceTree = "<group>"; };
+		D99AEF2F2BE2900F00C4A8FA /* Reaction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Reaction.swift; sourceTree = "<group>"; };
+		D99AEF312BE294C900C4A8FA /* EditReactionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditReactionView.swift; sourceTree = "<group>"; };
 		D9ABF0CC2A41E7D5009872DB /* MoveDataToServerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoveDataToServerView.swift; sourceTree = "<group>"; };
 		D9B878472864FA73009CA7AD /* ParseSoundRankingCSVView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ParseSoundRankingCSVView.swift; sourceTree = "<group>"; };
 		D9B8784A28650F4E009CA7AD /* CSVParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CSVParser.swift; sourceTree = "<group>"; };
@@ -248,6 +254,7 @@
 			children = (
 				D94A4223283DC94B00A504BD /* MainView.swift */,
 				D9CA30222A057A9600F1F23D /* ServerData */,
+				D99AEF2C2BE28F6900C4A8FA /* Maintenance */,
 				D9CA30212A057A9100F1F23D /* LocalTools */,
 				D960F2232A1D22D1007D12D7 /* Analytics */,
 				D9CA30262A057ADA00F1F23D /* Shared */,
@@ -279,6 +286,7 @@
 				D914C7242A09AD970011EC5B /* ContentType.swift */,
 				D9E39DB62A1E59BF0053A527 /* AlertType.swift */,
 				D91338A02A87F43D00C0502A /* CreateContentResponse.swift */,
+				D99AEF2F2BE2900F00C4A8FA /* Reaction.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -330,6 +338,24 @@
 			path = UpdateEvents;
 			sourceTree = "<group>";
 		};
+		D99AEF2B2BE28F5F00C4A8FA /* Reactions */ = {
+			isa = PBXGroup;
+			children = (
+				D99AEF2D2BE28FA100C4A8FA /* ReactionsCRUDView.swift */,
+				D99AEF312BE294C900C4A8FA /* EditReactionView.swift */,
+			);
+			path = Reactions;
+			sourceTree = "<group>";
+		};
+		D99AEF2C2BE28F6900C4A8FA /* Maintenance */ = {
+			isa = PBXGroup;
+			children = (
+				D98755052A9C364600B6E96A /* UpdateEvents */,
+				D960F2262A1D27D4007D12D7 /* TestVersion */,
+			);
+			path = Maintenance;
+			sourceTree = "<group>";
+		};
 		D9B8784928650F3E009CA7AD /* Helpers */ = {
 			isa = PBXGroup;
 			children = (
@@ -376,10 +402,9 @@
 			children = (
 				D9CA30232A057AB500F1F23D /* Sounds */,
 				D9CA30242A057ABC00F1F23D /* Authors */,
+				D99AEF2B2BE28F5F00C4A8FA /* Reactions */,
 				D9CA30252A057AC200F1F23D /* Songs */,
 				D95315AA2A9AD031003DA40E /* MusicGenres */,
-				D98755052A9C364600B6E96A /* UpdateEvents */,
-				D960F2262A1D27D4007D12D7 /* TestVersion */,
 			);
 			path = ServerData;
 			sourceTree = "<group>";
@@ -535,6 +560,7 @@
 				D90449582BB281960023088B /* ExternalLinkButton.swift in Sources */,
 				D91338A12A87F43D00C0502A /* CreateContentResponse.swift in Sources */,
 				D960F2252A1D22E1007D12D7 /* AnalyticsView.swift in Sources */,
+				D99AEF2E2BE28FA100C4A8FA /* ReactionsCRUDView.swift in Sources */,
 				D9FB1D9D29FEEF3900AE8744 /* ServerSoundsCRUDView.swift in Sources */,
 				D92694032A01A7F9007872D9 /* String+.swift in Sources */,
 				D9B87851286538C6009CA7AD /* JSONFileToData.swift in Sources */,
@@ -568,6 +594,7 @@
 				D94A4224283DC94B00A504BD /* MainView.swift in Sources */,
 				D9B87853286540E5009CA7AD /* Sound.swift in Sources */,
 				D9ABF0CD2A41E7D5009872DB /* MoveDataToServerView.swift in Sources */,
+				D99AEF322BE294C900C4A8FA /* EditReactionView.swift in Sources */,
 				D94A4251283E705100A504BD /* SoundView.swift in Sources */,
 				D90449612BB4E9140023088B /* Color+.swift in Sources */,
 				D9FB487E286E435A00FF90D0 /* Author.swift in Sources */,
@@ -583,6 +610,7 @@
 				D9310C292A0BDDDF006A3058 /* CreateAuthorAndSoundView.swift in Sources */,
 				D960F22C2A1D5D6D007D12D7 /* ServerSongsCRUDView.swift in Sources */,
 				D9CA302A2A05975900F1F23D /* MoveSoundsToServerView.swift in Sources */,
+				D99AEF302BE2900F00C4A8FA /* Reaction.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
