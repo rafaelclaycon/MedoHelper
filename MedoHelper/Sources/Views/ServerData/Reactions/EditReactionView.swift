@@ -10,12 +10,12 @@ import SwiftUI
 struct EditReactionView: View {
 
     @Binding var isBeingShown: Bool
-    @State var reaction: Reaction
+    @State var reaction: ReactionDTO
     private let isEditing: Bool
 
     init(
         isBeingShown: Binding<Bool>,
-        reaction: Reaction? = nil
+        reaction: ReactionDTO? = nil
     ) {
         _isBeingShown = isBeingShown
         self.isEditing = reaction != nil

@@ -68,6 +68,7 @@
 		D9E39DB72A1E59BF0053A527 /* AlertType.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9E39DB62A1E59BF0053A527 /* AlertType.swift */; };
 		D9FB1D9D29FEEF3900AE8744 /* ServerSoundsCRUDView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9FB1D9C29FEEF3900AE8744 /* ServerSoundsCRUDView.swift */; };
 		D9FB487E286E435A00FF90D0 /* Author.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9FB487D286E435A00FF90D0 /* Author.swift */; };
+		D9FF96C02BF0E19F00803572 /* ReactionSound.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9FF96BF2BF0E19F00803572 /* ReactionSound.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -146,6 +147,7 @@
 		D9E39DB62A1E59BF0053A527 /* AlertType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlertType.swift; sourceTree = "<group>"; };
 		D9FB1D9C29FEEF3900AE8744 /* ServerSoundsCRUDView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerSoundsCRUDView.swift; sourceTree = "<group>"; };
 		D9FB487D286E435A00FF90D0 /* Author.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Author.swift; sourceTree = "<group>"; };
+		D9FF96BF2BF0E19F00803572 /* ReactionSound.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReactionSound.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -286,7 +288,7 @@
 				D914C7242A09AD970011EC5B /* ContentType.swift */,
 				D9E39DB62A1E59BF0053A527 /* AlertType.swift */,
 				D91338A02A87F43D00C0502A /* CreateContentResponse.swift */,
-				D99AEF2F2BE2900F00C4A8FA /* Reaction.swift */,
+				D9FF96BE2BF0DE8600803572 /* Reactions */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -453,6 +455,15 @@
 			path = Shared;
 			sourceTree = "<group>";
 		};
+		D9FF96BE2BF0DE8600803572 /* Reactions */ = {
+			isa = PBXGroup;
+			children = (
+				D99AEF2F2BE2900F00C4A8FA /* Reaction.swift */,
+				D9FF96BF2BF0E19F00803572 /* ReactionSound.swift */,
+			);
+			path = Reactions;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -592,6 +603,7 @@
 				D92693FE2A015665007872D9 /* Bundle+Extensions.swift in Sources */,
 				D92694012A015C7E007872D9 /* NetworkRabbit.swift in Sources */,
 				D94A4224283DC94B00A504BD /* MainView.swift in Sources */,
+				D9FF96C02BF0E19F00803572 /* ReactionSound.swift in Sources */,
 				D9B87853286540E5009CA7AD /* Sound.swift in Sources */,
 				D9ABF0CD2A41E7D5009872DB /* MoveDataToServerView.swift in Sources */,
 				D99AEF322BE294C900C4A8FA /* EditReactionView.swift in Sources */,

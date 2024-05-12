@@ -9,13 +9,14 @@ import SwiftUI
 
 struct ReactionsCRUDView: View {
 
-    @State private var reactions: [Reaction] = []
+    @State private var reactions: [ReactionDTO] = []
 
     @State private var isInEditMode: Bool = false
+    @State private var showFileSelector: Bool = false
 
     @State private var searchText = ""
-    @State private var selectedItem: Reaction.ID?
-    @State private var reaction: Reaction? = nil
+    @State private var selectedItem: ReactionDTO.ID?
+    @State private var reaction: ReactionDTO? = nil
 
     @State private var showEditSheet = false
 
@@ -24,7 +25,9 @@ struct ReactionsCRUDView: View {
     @State private var alertType: AlertType = .singleOptionInformative
     @State private var alertErrorMessage: String = ""
 
-    private var searchResults: [Reaction] {
+    // MARK: - Computed Properties
+
+    private var searchResults: [ReactionDTO] {
         if searchText.isEmpty {
             return reactions
         } else {
@@ -34,7 +37,11 @@ struct ReactionsCRUDView: View {
         }
     }
 
+    // MARK: - Environment
+
     @Environment(\.colorScheme) var colorScheme
+
+    // MARK: - View Body
 
     var body: some View {
         VStack {
@@ -45,7 +52,7 @@ struct ReactionsCRUDView: View {
                             .bold()
                             .foregroundStyle(.red)
 
-                        Text("Edite e reordene as reações como quer que elas apareçam no app.")
+                        Text("Edite e ordene as reações como deseja que elas apareçam no app.")
                             .foregroundStyle(.red)
                     }
 
@@ -96,27 +103,27 @@ struct ReactionsCRUDView: View {
                 .searchable(text: $searchText)
 
                 HStack(spacing: 20) {
-                    HStack(spacing: 10) {
-                        Button {
-                            self.reaction = nil
-                            showEditSheet = true
-                        } label: {
-                            Image(systemName: "plus")
-                        }
-                        .sheet(isPresented: $showEditSheet) {
-                            EditReactionView(isBeingShown: $showEditSheet, reaction: reaction)
-                                .frame(minWidth: 800, minHeight: 500)
-                        }
-
-                        Button {
-                            // print((selectedItem ?? "") as String)
-                            alertType = .twoOptionsOneDelete
-                            showAlert = true
-                        } label: {
-                            Image(systemName: "minus")
-                        }
-                    }
-                    .disabled(!isInEditMode)
+//                    HStack(spacing: 10) {
+//                        Button {
+//                            self.reaction = nil
+//                            showEditSheet = true
+//                        } label: {
+//                            Image(systemName: "plus")
+//                        }
+//                        .sheet(isPresented: $showEditSheet) {
+//                            EditReactionView(isBeingShown: $showEditSheet, reaction: reaction)
+//                                .frame(minWidth: 800, minHeight: 500)
+//                        }
+//
+//                        Button {
+//                            // print((selectedItem ?? "") as String)
+//                            alertType = .twoOptionsOneDelete
+//                            showAlert = true
+//                        } label: {
+//                            Image(systemName: "minus")
+//                        }
+//                    }
+//                    .disabled(!isInEditMode)
                     //                .alert(isPresented: $showAlert) {
                     //                    switch alertType {
                     //                    case .singleOptionInformative:
@@ -139,9 +146,28 @@ struct ReactionsCRUDView: View {
                     //                    }
                     //                }
 
-                    Button("Importar das Pastas") {
-                        print("")
+                    Button("Importar de Arquivo JSON") {
+                        showFileSelector.toggle()
                     }
+                    .fileImporter(
+                        isPresented: $showFileSelector,
+                        allowedContentTypes: [.json],
+                        allowsMultipleSelection: false
+                    ) { result in
+                        switch result {
+                        case .success(let urls):
+                            guard let url = urls.first else { return }
+                            decodeJSON(from: url)
+                        case .failure(let error):
+                            print("Error selecting file: \(error.localizedDescription)")
+                        }
+                    }
+                    .disabled(!isInEditMode)
+
+//                    Button("Importar das Pastas") {
+//                        print("")
+//                    }
+//                    .disabled(!isInEditMode)
 
                     Spacer()
 
@@ -177,6 +203,17 @@ struct ReactionsCRUDView: View {
             //        .onAppear {
             //            fetchSounds()
             //        }
+        }
+    }
+
+    // MARK: - Functions
+
+    private func decodeJSON(from url: URL) {
+        do {
+            let jsonData = try Data(contentsOf: url)
+            reactions = try JSONDecoder().decode([ReactionDTO].self, from: jsonData)
+        } catch {
+            print("Error decoding JSON: \(error)")
         }
     }
 }
