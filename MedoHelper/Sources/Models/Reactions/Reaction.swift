@@ -14,7 +14,7 @@ struct ReactionDTO: Codable, Identifiable {
     let position: Int
     let image: String
     let lastUpdate: String
-    let sounds: [ReactionSound]
+    let sounds: [ReactionSound]?
 
     init(
         id: String,
@@ -22,7 +22,7 @@ struct ReactionDTO: Codable, Identifiable {
         position: Int,
         image: String,
         lastUpdate: String,
-        sounds: [ReactionSound]
+        sounds: [ReactionSound]?
     ) {
         self.id = id
         self.title = title
@@ -41,7 +41,7 @@ struct ReactionDTO: Codable, Identifiable {
         self.position = position
         self.image = ""
         self.lastUpdate = ""
-        self.sounds = []
+        self.sounds = nil
     }
 }
 
@@ -76,5 +76,15 @@ struct AppReaction: Codable, Identifiable {
         self.position = position
         self.image = ""
         self.lastUpdate = ""
+    }
+
+    init(
+        dto: ReactionDTO
+    ) {
+        self.id = dto.id
+        self.title = dto.title
+        self.position = dto.position
+        self.image = dto.image
+        self.lastUpdate = dto.lastUpdate
     }
 }

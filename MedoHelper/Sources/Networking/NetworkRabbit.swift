@@ -8,6 +8,7 @@
 import Foundation
 
 class NetworkRabbit {
+
     static func `get`<T: Codable>(from url: URL) async throws -> T {
         let (data, _) = try await URLSession.shared.data(from: url)
         
@@ -100,6 +101,25 @@ class NetworkRabbit {
         return decodedData
     }
 
+    static func post(to url: URL) async throws -> Bool {
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+
+        let session = URLSession.shared
+        let (data, response) = try await session.data(for: request)
+
+        guard let httpResponse = response as? HTTPURLResponse else {
+            throw NetworkError.badResponse
+        }
+        guard (200...299).contains(httpResponse.statusCode) else {
+            print(url.absoluteString + " - Response: \(httpResponse.statusCode)")
+            throw NetworkError.badResponse
+        }
+
+        return true
+    }
+
     static func put<T: Encodable>(in url: URL, data: T? = nil) async throws -> Bool {
         var request = URLRequest(url: url)
         request.httpMethod = "PUT"
@@ -110,6 +130,24 @@ class NetworkRabbit {
             encoder.dateEncodingStrategy = .iso8601
             request.httpBody = try encoder.encode(data)
         }
+
+        let (_, response) = try await URLSession.shared.data(for: request)
+
+        guard let httpResponse = response as? HTTPURLResponse else {
+            throw NetworkError.badResponse
+        }
+        guard (200...299).contains(httpResponse.statusCode) else {
+            print(httpResponse.statusCode)
+            throw NetworkError.badResponse
+        }
+
+        return true
+    }
+
+    static func delete(in url: URL) async throws -> Bool {
+        var request = URLRequest(url: url)
+        request.httpMethod = "DELETE"
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
 
         let (_, response) = try await URLSession.shared.data(for: request)
 

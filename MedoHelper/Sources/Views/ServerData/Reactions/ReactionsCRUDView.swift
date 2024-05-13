@@ -20,6 +20,12 @@ struct ReactionsCRUDView: View {
 
     @State private var showEditSheet = false
 
+    // Progress View
+    @State private var showSendProgress = false
+    @State private var progressAmount = 0.0
+    @State private var totalAmount = 2.0
+    @State private var modalMessage = ""
+
     // Alert
     @State private var showAlert = false
     @State private var alertType: AlertType = .singleOptionInformative
@@ -71,8 +77,15 @@ struct ReactionsCRUDView: View {
                     TableColumn("Posição") { reaction in
                         Text("\(reaction.position)")
                     }
-                    .width(min: 50, max: 100)
+                    .width(min: 50, max: 50)
+
                     TableColumn("Título", value: \.title)
+
+                    TableColumn("Sons") { reaction in
+                        guard let sounds = reaction.sounds else { return Text("0") }
+                        return Text("\(sounds.count)")
+                    }
+                    .width(min: 50, max: 50)
                 }
                 .disabled(!isInEditMode)
                 //            .contextMenu(forSelectionType: Sound.ID.self) { items in
@@ -147,21 +160,22 @@ struct ReactionsCRUDView: View {
                     //                }
 
                     Button("Importar de Arquivo JSON") {
-                        showFileSelector.toggle()
+                        reactions = Bundle.main.decodeJSON("reactions_data.json")
+                        reactions.sort(by: { $0.position < $1.position })
                     }
-                    .fileImporter(
-                        isPresented: $showFileSelector,
-                        allowedContentTypes: [.json],
-                        allowsMultipleSelection: false
-                    ) { result in
-                        switch result {
-                        case .success(let urls):
-                            guard let url = urls.first else { return }
-                            decodeJSON(from: url)
-                        case .failure(let error):
-                            print("Error selecting file: \(error.localizedDescription)")
-                        }
-                    }
+//                    .fileImporter(
+//                        isPresented: $showFileSelector,
+//                        allowedContentTypes: [.json],
+//                        allowsMultipleSelection: false
+//                    ) { result in
+//                        switch result {
+//                        case .success(let urls):
+//                            guard let url = urls.first else { return }
+//                            decodeJSON(from: url)
+//                        case .failure(let error):
+//                            print("Error selecting file: \(error.localizedDescription)")
+//                        }
+//                    }
                     .disabled(!isInEditMode)
 
 //                    Button("Importar das Pastas") {
@@ -189,7 +203,11 @@ struct ReactionsCRUDView: View {
                     Text("\(reactions.count.formattedString) itens")
 
                     Button {
-                        isInEditMode.toggle()
+                        if isInEditMode {
+                            sendAll()
+                        } else {
+                            isInEditMode.toggle()
+                        }
                     } label: {
                         Text(isInEditMode ? "Enviar Dados" : "Iniciar Edição")
                             .padding(.horizontal)
@@ -200,21 +218,68 @@ struct ReactionsCRUDView: View {
             }
             .navigationTitle("Reações")
             .padding()
-            //        .onAppear {
-            //            fetchSounds()
-            //        }
+            .sheet(isPresented: $showSendProgress) {
+                SendingProgressView(
+                    isBeingShown: $showSendProgress,
+                    message: $modalMessage,
+                    currentAmount: $progressAmount,
+                    totalAmount: $totalAmount
+                )
+            }
+//            .onAppear {
+//                fetchSounds()
+//            }
         }
     }
 
     // MARK: - Functions
 
-    private func decodeJSON(from url: URL) {
-        do {
-            let jsonData = try Data(contentsOf: url)
-            reactions = try JSONDecoder().decode([ReactionDTO].self, from: jsonData)
-        } catch {
-            print("Error decoding JSON: \(error)")
+    private func sendAll() {
+        Task {
+            totalAmount = Double(reactions.count)
+            showSendProgress = true
+            modalMessage = "Enviando Dados..."
+            progressAmount = 0
+
+            do {
+                let url = URL(string: serverPath + "v4/delete-all-reactions/\(reactionsPassword)")!
+                print(url.absoluteString)
+                guard try await NetworkRabbit.delete(in: url) else {
+                    print("DEU RUIM")
+                    return
+                }
+
+                print("Reactions count: \(reactions.count)")
+                for reaction in reactions {
+                    try await send(reaction: AppReaction(dto: reaction))
+
+                    // try await
+
+                    progressAmount += 1
+                }
+
+                DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(600)) {
+                    showSendProgress = false
+                }
+            } catch {
+                print(error)
+//                alertType = .singleOptionInformative
+//                alertTitle = "Falha ao Criar o Som"
+//                alertMessage = error.localizedDescription
+                showSendProgress = false
+                // return showingAlert = true
+            }
         }
+    }
+
+    private func send(reaction: AppReaction) async throws {
+        let url = URL(string: serverPath + "v4/create-reaction/\(reactionsPassword)")!
+        let _ = try await NetworkRabbit.post(data: reaction, to: url)
+    }
+
+    private func send(reactionSound: ReactionSound) async throws {
+        let url = URL(string: serverPath + "v4/create-reaction/\(reactionsPassword)")!
+        let _ = try await NetworkRabbit.post(data: reaction, to: url)
     }
 }
 
