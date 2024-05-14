@@ -49,3 +49,33 @@ struct ReactionSound: Identifiable, Codable {
         self.position = position
     }
 }
+
+struct ReactionSoundDTO: Codable {
+
+    let soundId: String
+    let dateAdded: String
+    let position: Int
+    let reactionId: String
+
+    init(
+        soundId: String,
+        dateAdded: String,
+        position: Int,
+        reactionId: String
+    ) {
+        self.soundId = soundId
+        self.dateAdded = dateAdded
+        self.position = position
+        self.reactionId = reactionId
+    }
+
+    init(
+        reactionSound: ReactionSound,
+        reactionId: String
+    ) {
+        self.soundId = reactionSound.soundId
+        self.dateAdded = reactionSound.dateAdded
+        self.position = reactionSound.position
+        self.reactionId = reactionId
+    }
+}

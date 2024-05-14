@@ -242,10 +242,16 @@ struct ReactionsCRUDView: View {
             progressAmount = 0
 
             do {
-                let url = URL(string: serverPath + "v4/delete-all-reactions/\(reactionsPassword)")!
-                print(url.absoluteString)
-                guard try await NetworkRabbit.delete(in: url) else {
-                    print("DEU RUIM")
+                let reactionsUrl = URL(string: serverPath + "v4/delete-all-reactions/\(reactionsPassword)")!
+                let soundsUrl = URL(string: serverPath + "v4/delete-all-reaction-sounds/\(reactionsPassword)")!
+                print(reactionsUrl.absoluteString)
+                print(soundsUrl.absoluteString)
+                guard try await NetworkRabbit.delete(in: reactionsUrl) else {
+                    print("Não foi possível apagar as Reações.")
+                    return
+                }
+                guard try await NetworkRabbit.delete(in: soundsUrl) else {
+                    print("Não foi possível apagar os sons das Reações.")
                     return
                 }
 
@@ -253,7 +259,10 @@ struct ReactionsCRUDView: View {
                 for reaction in reactions {
                     try await send(reaction: AppReaction(dto: reaction))
 
-                    // try await
+                    if let sounds = reaction.sounds {
+                        let dtos = sounds.map { ReactionSoundDTO(reactionSound: $0, reactionId: reaction.id) }
+                        try await send(reactionSounds: dtos)
+                    }
 
                     progressAmount += 1
                 }
@@ -277,9 +286,9 @@ struct ReactionsCRUDView: View {
         let _ = try await NetworkRabbit.post(data: reaction, to: url)
     }
 
-    private func send(reactionSound: ReactionSound) async throws {
-        let url = URL(string: serverPath + "v4/create-reaction/\(reactionsPassword)")!
-        let _ = try await NetworkRabbit.post(data: reaction, to: url)
+    private func send(reactionSounds: [ReactionSoundDTO]) async throws {
+        let url = URL(string: serverPath + "v4/add-sounds-to-reaction/\(reactionsPassword)")!
+        let _ = try await NetworkRabbit.post(data: reactionSounds, to: url)
     }
 }
 
