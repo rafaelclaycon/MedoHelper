@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct ReplaceSoundFileOnServerView: View {
+
     @Binding var isBeingShown: Bool
     private var sound: Sound
     

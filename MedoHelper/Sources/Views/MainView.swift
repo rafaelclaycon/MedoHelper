@@ -2,7 +2,7 @@ import SwiftUI
 
 struct MainView: View {
     
-    @State private var currentTab = 2
+    @State private var currentTab = 0
     @State private var testVersionDotColor: Color = .red
     
     var body: some View {
