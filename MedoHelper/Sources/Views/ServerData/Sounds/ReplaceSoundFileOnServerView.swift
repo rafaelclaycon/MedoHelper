@@ -10,7 +10,6 @@ import SwiftUI
 struct ReplaceSoundFileOnServerView: View {
 
     @Binding var isBeingShown: Bool
-    private var sound: Sound
     
     @State private var showFilePicker = false
     @State private var selectedFile: URL? = nil
@@ -25,23 +24,43 @@ struct ReplaceSoundFileOnServerView: View {
     @State private var showSendProgress = false
     @State private var progressAmount = 0.0
     @State private var modalMessage = ""
-    
+
+    // MARK: - Environment
+
+    @EnvironmentObject var helper: ReplaceSoundHelper
+
+    // MARK: - Computed Properties
+
+    private var sound: Sound? {
+        helper.sound
+    }
+
+    private var soundId: String {
+        if let sound {
+            return sound.id
+        } else {
+            return ""
+        }
+    }
+
+    private var soundTitle: String {
+        if let sound {
+            return sound.title
+        } else {
+            return ""
+        }
+    }
+
     private var filename: String {
         return selectedFile?.lastPathComponent ?? ""
     }
 
-    init(
-        isBeingShown: Binding<Bool>,
-        sound: Sound? = nil
-    ) {
-        _isBeingShown = isBeingShown
-        self.sound = sound ?? Sound(title: "")
-    }
-    
+    // MARK: - View Body
+
     var body: some View {
         VStack(spacing: 30) {
             HStack {
-                Text("Substituir Arquivo do Som \"\(sound.title)\"")
+                Text("Substituir Arquivo do Som \"\(soundTitle)\"")
                     .font(.title)
                     .bold()
                 
@@ -94,7 +113,7 @@ struct ReplaceSoundFileOnServerView: View {
         .alert(isPresented: $showingAlert) {
             switch alertType {
             case .twoOptionsOneContinue:
-                return Alert(title: Text("Aguardando para Criar os Eventos de Atualização"), message: Text("Mova o arquivo \"\(sound.id).mp3\" para o servidor antes de criar o UpdateEvent de arquivo alterado."), primaryButton: .default(Text("Continuar"), action: {
+                return Alert(title: Text("Aguardando para Criar os Eventos de Atualização"), message: Text("Mova o arquivo \"\(soundId).mp3\" para o servidor antes de criar o UpdateEvent de arquivo alterado."), primaryButton: .default(Text("Continuar"), action: {
                     createUpdateEvents()
                 }), secondaryButton: .cancel(Text("Cancelar")))
                 
@@ -108,7 +127,9 @@ struct ReplaceSoundFileOnServerView: View {
             }
         }
     }
-    
+
+    // MARK: - Functions
+
     private func generateNewFile() {
         Task {
             guard let fileURL = selectedFile else { return }
@@ -118,7 +139,7 @@ struct ReplaceSoundFileOnServerView: View {
             
             let documentsFolder = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
             do {
-                try renameFile(from: fileURL, with: "\(sound.id).mp3", saveTo: documentsFolder)
+                try renameFile(from: fileURL, with: "\(soundId).mp3", saveTo: documentsFolder)
             } catch {
                 print(error)
                 alertTitle = "Falha Ao Renomear Arquivo"
@@ -172,7 +193,7 @@ struct ReplaceSoundFileOnServerView: View {
     }
     
     private func createFileUpdatedUpdateEvent() async throws {
-        let url = URL(string: serverPath + "v3/update-content-file/sound/\(sound.id)/\(assetOperationPassword)")!
+        let url = URL(string: serverPath + "v3/update-content-file/sound/\(soundId)/\(assetOperationPassword)")!
         _ = try await NetworkRabbit.post(data: nil as String?, to: url)
     }
     
@@ -181,7 +202,9 @@ struct ReplaceSoundFileOnServerView: View {
         
         guard let fileURL = selectedFile else { throw ReplaceSoundFileOnServerViewError.couldNotGetFile }
         guard let newDuration = await FileHelper.getDuration(of: fileURL) else { throw ReplaceSoundFileOnServerViewError.unableToCalculateNewDuration }
-        
+
+        guard let sound else { throw ReplaceSoundFileOnServerViewError.soundObjectNotAvailable }
+
         let content = MedoContent(sound: sound, authorId: sound.authorId, duration: newDuration)
         let _: Bool = try await NetworkRabbit.put(in: url, data: content)
     }
@@ -197,16 +220,13 @@ struct ReplaceSoundFileOnServerView: View {
     }
 }
 
-struct ReplaceSoundFileOnServerView_Previews: PreviewProvider {
-    
-    static var previews: some View {
-        ReplaceSoundFileOnServerView(isBeingShown: .constant(true), sound: Sound(title: ""))
-    }
-}
+//#Preview {
+//    ReplaceSoundFileOnServerView(isBeingShown: .constant(true), sound: Sound(title: ""))
+//}
 
 enum ReplaceSoundFileOnServerViewError: Error {
     
-    case couldNotGetFile, unableToCalculateNewDuration
+    case couldNotGetFile, unableToCalculateNewDuration, soundObjectNotAvailable
 }
 
 extension ReplaceSoundFileOnServerViewError: LocalizedError {
@@ -217,6 +237,8 @@ extension ReplaceSoundFileOnServerViewError: LocalizedError {
             return NSLocalizedString("Não conseguiu obter o arquivo do som.", comment: "")
         case .unableToCalculateNewDuration:
             return NSLocalizedString("Não conseguiu calcular a nova duração.", comment: "")
+        case .soundObjectNotAvailable:
+            return NSLocalizedString("Objeto do Som não disponível.", comment: "")
         }
     }
 }

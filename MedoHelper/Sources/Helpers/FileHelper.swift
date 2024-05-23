@@ -43,10 +43,10 @@ class FileHelper {
         guard fileManager.isReadableFile(atPath: sourceURL.path(percentEncoded: false)) else { throw FileError.noPermissionToRead }
         
         var isDirectory: ObjCBool = false
-        guard fileManager.fileExists(atPath: destinationURL.path, isDirectory: &isDirectory) else { throw FileError.destinationDirDoesNotExist }
+        guard fileManager.fileExists(atPath: destinationURL.path, isDirectory: &isDirectory) else { throw FileError.destinationDirDoesNotExist(destinationURL.path()) }
         print(isDirectory)
         
-        guard fileManager.fileExists(atPath: destinationURL.path) else { throw FileError.destinationDirDoesNotExist }
+        guard fileManager.fileExists(atPath: destinationURL.path) else { throw FileError.destinationDirDoesNotExist(destinationURL.path()) }
         guard fileManager.isWritableFile(atPath: destinationURL.path) else { throw FileError.destinationIsNotWritable }
         
         print("Source: \(sourceURL.path(percentEncoded: false))")
@@ -63,7 +63,10 @@ class FileHelper {
 
 enum FileError: Error {
     
-    case sourceFileDoesNotExist, noPermissionToRead, destinationDirDoesNotExist, destinationIsNotWritable
+    case sourceFileDoesNotExist
+    case noPermissionToRead
+    case destinationDirDoesNotExist(String)
+    case destinationIsNotWritable
 }
 
 extension FileError: LocalizedError {
@@ -74,8 +77,8 @@ extension FileError: LocalizedError {
             return NSLocalizedString("O arquivo de origem não existe.", comment: "")
         case .noPermissionToRead:
             return NSLocalizedString("Sem permissão para ler o arquivo de origem.", comment: "")
-        case .destinationDirDoesNotExist:
-            return NSLocalizedString("A URL de destino não existe.", comment: "")
+        case .destinationDirDoesNotExist(let dirUrl):
+            return NSLocalizedString("A URL de destino '\(dirUrl)' não existe.", comment: "")
         case .destinationIsNotWritable:
             return NSLocalizedString("Sem permissão para escrever no destino.", comment: "")
         }

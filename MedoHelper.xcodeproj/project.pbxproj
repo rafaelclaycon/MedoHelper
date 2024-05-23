@@ -49,6 +49,7 @@
 		D98755072A9C366200B6E96A /* UpdateEventListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D98755062A9C366200B6E96A /* UpdateEventListView.swift */; };
 		D98755092A9C36F900B6E96A /* UpdateEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = D98755082A9C36F900B6E96A /* UpdateEvent.swift */; };
 		D987550B2A9C3EC800B6E96A /* UpdateEventRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = D987550A2A9C3EC800B6E96A /* UpdateEventRow.swift */; };
+		D98B60B42BFE7E8A0093321A /* ReplaceSoundHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = D98B60B32BFE7E8A0093321A /* ReplaceSoundHelper.swift */; };
 		D992E8242A17FF8700137469 /* EditAuthorOnServerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D992E8232A17FF8700137469 /* EditAuthorOnServerView.swift */; };
 		D99AEF2E2BE28FA100C4A8FA /* ReactionsCRUDView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D99AEF2D2BE28FA100C4A8FA /* ReactionsCRUDView.swift */; };
 		D99AEF302BE2900F00C4A8FA /* Reaction.swift in Sources */ = {isa = PBXBuildFile; fileRef = D99AEF2F2BE2900F00C4A8FA /* Reaction.swift */; };
@@ -129,6 +130,7 @@
 		D98755062A9C366200B6E96A /* UpdateEventListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateEventListView.swift; sourceTree = "<group>"; };
 		D98755082A9C36F900B6E96A /* UpdateEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateEvent.swift; sourceTree = "<group>"; };
 		D987550A2A9C3EC800B6E96A /* UpdateEventRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateEventRow.swift; sourceTree = "<group>"; };
+		D98B60B32BFE7E8A0093321A /* ReplaceSoundHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReplaceSoundHelper.swift; sourceTree = "<group>"; };
 		D992E8232A17FF8700137469 /* EditAuthorOnServerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditAuthorOnServerView.swift; sourceTree = "<group>"; };
 		D99AEF2D2BE28FA100C4A8FA /* ReactionsCRUDView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReactionsCRUDView.swift; sourceTree = "<group>"; };
 		D99AEF2F2BE2900F00C4A8FA /* Reaction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Reaction.swift; sourceTree = "<group>"; };
@@ -282,6 +284,7 @@
 		D94A4255283E804100A504BD /* Models */ = {
 			isa = PBXGroup;
 			children = (
+				D98B60B22BFE7E760093321A /* EnvObjs */,
 				D982218C2A20E2A20076042D /* FromTheApp */,
 				D94A4256283E805900A504BD /* ProtoAuthor.swift */,
 				D94A4258283E809000A504BD /* ProtoSound.swift */,
@@ -340,6 +343,14 @@
 				D987550A2A9C3EC800B6E96A /* UpdateEventRow.swift */,
 			);
 			path = UpdateEvents;
+			sourceTree = "<group>";
+		};
+		D98B60B22BFE7E760093321A /* EnvObjs */ = {
+			isa = PBXGroup;
+			children = (
+				D98B60B32BFE7E8A0093321A /* ReplaceSoundHelper.swift */,
+			);
+			path = EnvObjs;
 			sourceTree = "<group>";
 		};
 		D99AEF2B2BE28F5F00C4A8FA /* Reactions */ = {
@@ -596,6 +607,7 @@
 				D904495D2BB483C20023088B /* CapsuleButtonStyle.swift in Sources */,
 				D94A424F283E704300A504BD /* AuthorView.swift in Sources */,
 				D90449562BB2743A0023088B /* ExternalLink.swift in Sources */,
+				D98B60B42BFE7E8A0093321A /* ReplaceSoundHelper.swift in Sources */,
 				D960F22E2A1D5DBA007D12D7 /* Song.swift in Sources */,
 				D960F22A2A1D577A007D12D7 /* LoadingView.swift in Sources */,
 				D9E39DB32A1E4C5F0053A527 /* MoveSongsToServerView.swift in Sources */,

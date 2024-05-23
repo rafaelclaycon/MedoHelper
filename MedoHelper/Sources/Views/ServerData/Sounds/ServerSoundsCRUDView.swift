@@ -21,11 +21,15 @@ struct ServerSoundsCRUDView: View {
     @State private var showReplaceSheet = false
     @State private var searchText = ""
 
+    @StateObject var replaceSoundEnv = ReplaceSoundHelper()
+
     // Alert
     @State private var showAlert = false
     @State private var alertType: AlertType = .singleOptionInformative
     @State private var alertErrorMessage: String = ""
-    
+
+    // MARK: - Computed Properties
+
     private var selectedSoundTitle: String {
         guard let selectedSound = selectedItem else { return "" }
         guard let sound = getSound(withID: selectedSound, from: sounds) else { return "" }
@@ -42,7 +46,9 @@ struct ServerSoundsCRUDView: View {
             }
         }
     }
-    
+
+    // MARK: - View Body
+
     var body: some View {
         ZStack {
             VStack {
@@ -95,8 +101,9 @@ struct ServerSoundsCRUDView: View {
                             .frame(minWidth: 800, minHeight: 500)
                     }
                     .sheet(isPresented: $showReplaceSheet) {
-                        ReplaceSoundFileOnServerView(isBeingShown: $showReplaceSheet, sound: sound)
+                        ReplaceSoundFileOnServerView(isBeingShown: $showReplaceSheet)
                             .frame(minWidth: 800, minHeight: 300)
+                            .environmentObject(replaceSoundEnv)
                     }
                     
                     Button {
@@ -161,7 +168,9 @@ struct ServerSoundsCRUDView: View {
             }
         }
     }
-    
+
+    // MARK: - Functions
+
     private func fetchSounds() {
         Task {
             await MainActor.run {
@@ -206,8 +215,8 @@ struct ServerSoundsCRUDView: View {
     
     private func replaceSoundFile(withId itemId: String) {
         guard let item = getSound(withID: itemId, from: sounds) else { return }
-        self.sound = item
-        
+        replaceSoundEnv.sound = item
+
         DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(600)) {
             showReplaceSheet = true
         }

@@ -32,8 +32,12 @@ struct EditSoundOnServerView: View {
     @State private var totalAmount = 2.0
     @State private var modalMessage = ""
 
+    // MARK: - Environment
+
     @Environment(\.dismiss) private var dismiss
-    
+
+    // MARK: - Computed Properties
+
     private var filename: String {
         return selectedFile?.lastPathComponent ?? ""
     }
@@ -58,6 +62,8 @@ struct EditSoundOnServerView: View {
         isEditing ? "edição" : "criação"
     }
 
+    // MARK: - Initializer
+
     init(
         isBeingShown: Binding<Bool>,
         sound: Sound? = nil
@@ -66,6 +72,8 @@ struct EditSoundOnServerView: View {
         self.isEditing = sound != nil
         self._sound = State(initialValue: sound ?? Sound(title: ""))
     }
+
+    // MARK: - View Body
 
     var body: some View {
         VStack(spacing: 30) {
@@ -386,8 +394,8 @@ struct EditSoundOnServerView: View {
     }
 }
 
-struct CreateSoundOnServerView_Previews: PreviewProvider {
-    static var previews: some View {
-        EditSoundOnServerView(isBeingShown: .constant(true), sound: Sound(title: ""))
-    }
+#Preview {
+    EditSoundOnServerView(
+        isBeingShown: .constant(true), sound: Sound(title: "")
+    )
 }
