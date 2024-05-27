@@ -21,6 +21,8 @@ struct ReactionsCRUDView: View {
 
     @State private var showEditSheet = false
 
+    @StateObject private var editReactionEnv = EditReactionHelper()
+
     // Progress View
     @State private var showSendProgress = false
     @State private var progressAmount = 0.0
@@ -88,32 +90,17 @@ struct ReactionsCRUDView: View {
                     }
                     .width(min: 50, max: 50)
                 }
-                .disabled(!isInEditMode)
-                //            .contextMenu(forSelectionType: Sound.ID.self) { items in
-                //                Section {
-                //                    Button("Editar Metadados do Som") {
-                //                        guard let selectedItemId = items.first else { return }
-                //                        editSound(withId: selectedItemId)
-                //                    }
-                //
-                //                    Button("Substituir Arquivo do Som") {
-                //                        guard let selectedItemId = items.first else { return }
-                //                        replaceSoundFile(withId: selectedItemId)
-                //                    }
-                //                }
-                //
-                //                Section {
-                //                    Button("Remover Som") {
-                //                        guard let selectedItemId = items.first else { return }
-                //                        selectedItem = selectedItemId
-                //                        alertType = .twoOptionsOneDelete
-                //                        showAlert = true
-                //                    }
-                //                }
-                //            } primaryAction: { items in
-                //                guard let selectedItemId = items.first else { return }
-                //                editSound(withId: selectedItemId)
-                //            }
+                .contextMenu(forSelectionType: Sound.ID.self) { items in
+                    Section {
+                        Button("Editar Reação") {
+                            guard let selectedItemId = items.first else { return }
+                            editReaction(withId: selectedItemId)
+                        }
+                    }
+                } primaryAction: { items in
+                    guard let selectedItemId = items.first else { return }
+                    editReaction(withId: selectedItemId)
+                }
                 .searchable(text: $searchText)
 
                 HStack(spacing: 20) {
@@ -227,6 +214,11 @@ struct ReactionsCRUDView: View {
                     totalAmount: $totalAmount
                 )
             }
+            .sheet(isPresented: $showEditSheet) {
+                EditReactionView(isBeingShown: $showEditSheet)
+                    .frame(minWidth: 800, minHeight: 500)
+                    .environmentObject(editReactionEnv)
+            }
             .onAppear {
                 loadReactions()
             }
@@ -253,6 +245,11 @@ struct ReactionsCRUDView: View {
                 var dtos = serverReactions.map { ReactionDTO(appReaction: $0) }
                 dtos.sort(by: { $0.position < $1.position })
 
+                for i in 0...(dtos.count - 1) {
+                    let reactionUrl = URL(string: serverPath + "v4/reaction/\(dtos[i].id)")!
+                    dtos[i].sounds = try await NetworkRabbit.getArray(from: reactionUrl)
+                }
+
                 self.reactions = dtos
             } catch {
                 print(error)
@@ -262,6 +259,21 @@ struct ReactionsCRUDView: View {
                 showLoadingView = false
             }
         }
+    }
+
+    private func reaction(withId id: String) -> ReactionDTO? {
+        for reaction in reactions {
+            if reaction.id == id {
+                return reaction
+            }
+        }
+        return nil
+    }
+
+    private func editReaction(withId itemId: String) {
+        guard let item = reaction(withId: itemId) else { return }
+        self.editReactionEnv.reaction = item
+        showEditSheet = true
     }
 
     private func sendAll() {

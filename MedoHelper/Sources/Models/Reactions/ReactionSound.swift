@@ -79,3 +79,40 @@ struct ReactionSoundDTO: Codable {
         self.reactionId = reactionId
     }
 }
+
+struct ReactionSoundForDisplay: Identifiable, Codable {
+
+    let id: String
+    let soundId: String
+    var title: String
+    var authorName: String
+    let dateAdded: String
+    let position: Int
+
+    init(
+        id: String?,
+        soundId: String,
+        title: String,
+        authorName: String,
+        dateAdded: String,
+        position: Int
+    ) {
+        self.id = soundId
+        self.soundId = soundId
+        self.title = title
+        self.authorName = authorName
+        self.dateAdded = dateAdded
+        self.position = position
+    }
+
+    init(
+        reactionSound: ReactionSound
+    ) {
+        self.id = reactionSound.id
+        self.soundId = reactionSound.soundId
+        self.title = ""
+        self.authorName = ""
+        self.dateAdded = reactionSound.dateAdded
+        self.position = reactionSound.position
+    }
+}
