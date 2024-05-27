@@ -26,7 +26,7 @@ struct MainView: View {
                     NavigationLink {
                         ReactionsCRUDView()
                     } label: {
-                        Label("Reações", systemImage: "rectangle.grid.2x2.fill")
+                        Label("Reações", systemImage: "rectangle.grid.2x2")
                     }
                     .tag(2)
                 }

@@ -89,6 +89,10 @@ struct ReactionsCRUDView: View {
                         return Text("\(sounds.count)")
                     }
                     .width(min: 50, max: 50)
+
+                    TableColumn("Data de última atualização") { reaction in
+                        return Text(reaction.lastUpdate.formattedDate)
+                    }
                 }
                 .contextMenu(forSelectionType: Sound.ID.self) { items in
                     Section {
@@ -216,7 +220,7 @@ struct ReactionsCRUDView: View {
             }
             .sheet(isPresented: $showEditSheet) {
                 EditReactionView(isBeingShown: $showEditSheet)
-                    .frame(minWidth: 800, minHeight: 500)
+                    .frame(minWidth: 1024, minHeight: 700)
                     .environmentObject(editReactionEnv)
             }
             .onAppear {

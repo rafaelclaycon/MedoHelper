@@ -12,6 +12,11 @@ struct EditReactionView: View {
     @Binding var isBeingShown: Bool
 
     @State private var editableReactionTitle: String = ""
+    @State private var editableImageUrl: String = ""
+    @State private var didLoadSoundInfo: Bool = false
+    @State private var reactionSounds: [ReactionSoundForDisplay] = []
+
+    @State private var selectedItem: ReactionSoundForDisplay.ID?
 
     // MARK: - Computed Properties
 
@@ -24,15 +29,14 @@ struct EditReactionView: View {
         return reaction.title
     }
 
+    private var reactionImageUrl: String {
+        guard let reaction = helper.reaction else { return "" }
+        return reaction.image
+    }
+
     private var id: String {
         guard let reaction = helper.reaction else { return "" }
         return "ID: \(reaction.id)"
-    }
-
-    private var searchResults: [ReactionSound] {
-        guard let reaction = helper.reaction else { return [] }
-        guard let sounds = reaction.sounds else { return [] }
-        return sounds
     }
 
     // MARK: - Environment
@@ -58,17 +62,51 @@ struct EditReactionView: View {
                 Spacer()
             }
 
-            TextField("Título do Som", text: $editableReactionTitle)
+            TextField("Título", text: $editableReactionTitle)
 
-            Table(searchResults) {
-                TableColumn("Posição") { reaction in
-                    Text("\(reaction.position)")
+            TextField("URL da Imagem", text: $editableImageUrl)
+
+            VStack {
+                Table(reactionSounds, selection: $selectedItem) {
+                    TableColumn("Posição") { reaction in
+                        Text("\(reaction.position)")
+                    }
+                    .width(min: 50, max: 50)
+
+                    TableColumn("Som", value: \.title)
+
+                    TableColumn("Autor", value: \.authorName)
+
+                    TableColumn("Data de Adição", value: \.dateAdded)
                 }
-                .width(min: 50, max: 50)
 
-                TableColumn("ID do Som", value: \.soundId)
+                HStack(spacing: 20) {
+                    HStack(spacing: 10) {
+                        Button {
+                            //                        self.reaction = nil
+                            //                        showEditSheet = true
+                        } label: {
+                            Image(systemName: "plus")
+                        }
+                        //                    .sheet(isPresented: $showEditSheet) {
+                        //                        EditReactionView(isBeingShown: $showEditSheet, reaction: reaction)
+                        //                            .frame(minWidth: 800, minHeight: 500)
+                        //                    }
 
-                TableColumn("Data de Adição", value: \.dateAdded)
+                        Button {
+                            // print((selectedItem ?? "") as String)
+                            //                        alertType = .twoOptionsOneDelete
+                            //                        showAlert = true
+                        } label: {
+                            Image(systemName: "minus")
+                        }
+                    }
+
+                    Spacer()
+
+                    Text("\(reactionSounds.count.formattedString) sons")
+                }
+                .frame(height: 40)
             }
 
             Spacer()
@@ -101,6 +139,63 @@ struct EditReactionView: View {
         .padding(.all, 26)
         .onAppear {
             editableReactionTitle = reactionTitle
+            editableImageUrl = reactionImageUrl
+            populateSoundsWithInfo()
+        }
+    }
+
+    // MARK: - Functions
+
+    private func populateSoundsWithInfo() {
+        Task {
+            //totalAmount = Double(reactions.count)
+            //showSendProgress = true
+            //modalMessage = "Enviando Dados..."
+            //progressAmount = 0
+
+            do {
+                guard helper.reaction != nil else { return }
+                guard let reactSounds = helper.reaction?.sounds else { return }
+
+                print("Reactions count: \(reactSounds.count)")
+
+                var toBeSet: [ReactionSoundForDisplay] = []
+
+                for reactionSound in reactSounds {
+                    let soundDetailUrl = URL(string: serverPath + "v3/sound/\(reactionSound.soundId)")!
+                    print("RITA: \(reactionSound.id)")
+                    let serverSound: SoundDTO = try await NetworkRabbit.get(from: soundDetailUrl)
+
+                    let auhtorDetailUrl = URL(string: serverPath + "v3/author/\(serverSound.authorId)")!
+                    let author: Author = try await NetworkRabbit.get(from: auhtorDetailUrl)
+
+                    toBeSet.append(
+                        .init(
+                            id: reactionSound.id,
+                            soundId: reactionSound.soundId,
+                            title: serverSound.title,
+                            authorName: author.name,
+                            dateAdded: reactionSound.dateAdded,
+                            position: reactionSound.position
+                        )
+                    )
+                }
+
+                await MainActor.run {
+                    self.reactionSounds = toBeSet
+                }
+
+//                DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(600)) {
+//                    showSendProgress = false
+//                }
+            } catch {
+                print(error)
+//                alertType = .singleOptionInformative
+//                alertTitle = "Falha ao Criar o Som"
+//                alertMessage = error.localizedDescription
+                // showSendProgress = false
+                // return showingAlert = true
+            }
         }
     }
 }
