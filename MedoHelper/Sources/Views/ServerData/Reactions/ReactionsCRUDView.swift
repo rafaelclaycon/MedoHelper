@@ -17,6 +17,7 @@ struct ReactionsCRUDView: View {
     @State private var searchText = ""
     @State private var selectedItem: ReactionDTO.ID?
     @State private var reaction: ReactionDTO? = nil
+    @State private var showLoadingView: Bool = false
 
     @State private var showEditSheet = false
 
@@ -226,13 +227,42 @@ struct ReactionsCRUDView: View {
                     totalAmount: $totalAmount
                 )
             }
-//            .onAppear {
-//                fetchSounds()
-//            }
+            .onAppear {
+                loadReactions()
+            }
+        }
+        .overlay {
+            if showLoadingView {
+                LoadingView()
+            }
         }
     }
 
     // MARK: - Functions
+
+    private func loadReactions() {
+        Task {
+            await MainActor.run {
+                showLoadingView = true
+            }
+
+            do {
+                let url = URL(string: serverPath + "v4/reactions")!
+
+                let serverReactions: [AppReaction] = try await NetworkRabbit.getArray(from: url)
+                var dtos = serverReactions.map { ReactionDTO(appReaction: $0) }
+                dtos.sort(by: { $0.position < $1.position })
+
+                self.reactions = dtos
+            } catch {
+                print(error)
+            }
+
+            await MainActor.run {
+                showLoadingView = false
+            }
+        }
+    }
 
     private func sendAll() {
         Task {

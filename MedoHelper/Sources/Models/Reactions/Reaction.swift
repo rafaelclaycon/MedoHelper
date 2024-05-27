@@ -43,6 +43,17 @@ struct ReactionDTO: Codable, Identifiable {
         self.lastUpdate = ""
         self.sounds = nil
     }
+
+    init(
+        appReaction: AppReaction
+    ) {
+        self.id = appReaction.id
+        self.title = appReaction.title
+        self.position = appReaction.position
+        self.image = appReaction.image
+        self.lastUpdate = appReaction.lastUpdate
+        self.sounds = nil
+    }
 }
 
 struct AppReaction: Codable, Identifiable {
