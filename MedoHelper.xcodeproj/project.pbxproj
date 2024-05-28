@@ -52,6 +52,7 @@
 		D98B60B42BFE7E8A0093321A /* ReplaceSoundHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = D98B60B32BFE7E8A0093321A /* ReplaceSoundHelper.swift */; };
 		D992E8242A17FF8700137469 /* EditAuthorOnServerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D992E8232A17FF8700137469 /* EditAuthorOnServerView.swift */; };
 		D99941F02C0502DA00D16BCD /* EditReactionHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = D99941EF2C0502DA00D16BCD /* EditReactionHelper.swift */; };
+		D99941F22C05553D00D16BCD /* SoundSearchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D99941F12C05553D00D16BCD /* SoundSearchView.swift */; };
 		D99AEF2E2BE28FA100C4A8FA /* ReactionsCRUDView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D99AEF2D2BE28FA100C4A8FA /* ReactionsCRUDView.swift */; };
 		D99AEF302BE2900F00C4A8FA /* Reaction.swift in Sources */ = {isa = PBXBuildFile; fileRef = D99AEF2F2BE2900F00C4A8FA /* Reaction.swift */; };
 		D99AEF322BE294C900C4A8FA /* EditReactionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D99AEF312BE294C900C4A8FA /* EditReactionView.swift */; };
@@ -134,6 +135,7 @@
 		D98B60B32BFE7E8A0093321A /* ReplaceSoundHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReplaceSoundHelper.swift; sourceTree = "<group>"; };
 		D992E8232A17FF8700137469 /* EditAuthorOnServerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditAuthorOnServerView.swift; sourceTree = "<group>"; };
 		D99941EF2C0502DA00D16BCD /* EditReactionHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditReactionHelper.swift; sourceTree = "<group>"; };
+		D99941F12C05553D00D16BCD /* SoundSearchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SoundSearchView.swift; sourceTree = "<group>"; };
 		D99AEF2D2BE28FA100C4A8FA /* ReactionsCRUDView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReactionsCRUDView.swift; sourceTree = "<group>"; };
 		D99AEF2F2BE2900F00C4A8FA /* Reaction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Reaction.swift; sourceTree = "<group>"; };
 		D99AEF312BE294C900C4A8FA /* EditReactionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditReactionView.swift; sourceTree = "<group>"; };
@@ -361,6 +363,7 @@
 			children = (
 				D99AEF2D2BE28FA100C4A8FA /* ReactionsCRUDView.swift */,
 				D99AEF312BE294C900C4A8FA /* EditReactionView.swift */,
+				D99941F12C05553D00D16BCD /* SoundSearchView.swift */,
 			);
 			path = Reactions;
 			sourceTree = "<group>";
@@ -628,6 +631,7 @@
 				D9ABF0CD2A41E7D5009872DB /* MoveDataToServerView.swift in Sources */,
 				D99AEF322BE294C900C4A8FA /* EditReactionView.swift in Sources */,
 				D94A4251283E705100A504BD /* SoundView.swift in Sources */,
+				D99941F22C05553D00D16BCD /* SoundSearchView.swift in Sources */,
 				D90449612BB4E9140023088B /* Color+.swift in Sources */,
 				D9FB487E286E435A00FF90D0 /* Author.swift in Sources */,
 				D98755092A9C36F900B6E96A /* UpdateEvent.swift in Sources */,

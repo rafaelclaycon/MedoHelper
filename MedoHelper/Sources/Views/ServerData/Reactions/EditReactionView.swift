@@ -18,6 +18,8 @@ struct EditReactionView: View {
 
     @State private var selectedItem: ReactionSoundForDisplay.ID?
 
+    @State private var showAddSheet: Bool = false
+
     // MARK: - Computed Properties
 
     private var isEditing: Bool {
@@ -83,15 +85,14 @@ struct EditReactionView: View {
                 HStack(spacing: 20) {
                     HStack(spacing: 10) {
                         Button {
-                            //                        self.reaction = nil
-                            //                        showEditSheet = true
+                            showAddSheet = true
                         } label: {
                             Image(systemName: "plus")
                         }
-                        //                    .sheet(isPresented: $showEditSheet) {
-                        //                        EditReactionView(isBeingShown: $showEditSheet, reaction: reaction)
-                        //                            .frame(minWidth: 800, minHeight: 500)
-                        //                    }
+                        .sheet(isPresented: $showAddSheet) {
+                            SoundSearchView()
+                                .frame(minWidth: 800, minHeight: 500)
+                        }
 
                         Button {
                             // print((selectedItem ?? "") as String)
@@ -109,7 +110,7 @@ struct EditReactionView: View {
                 .frame(height: 40)
             }
 
-            Spacer()
+            //Spacer()
 
             HStack(spacing: 15) {
                 Spacer()
@@ -163,7 +164,6 @@ struct EditReactionView: View {
 
                 for reactionSound in reactSounds {
                     let soundDetailUrl = URL(string: serverPath + "v3/sound/\(reactionSound.soundId)")!
-                    print("RITA: \(reactionSound.id)")
                     let serverSound: SoundDTO = try await NetworkRabbit.get(from: soundDetailUrl)
 
                     let auhtorDetailUrl = URL(string: serverPath + "v3/author/\(serverSound.authorId)")!
