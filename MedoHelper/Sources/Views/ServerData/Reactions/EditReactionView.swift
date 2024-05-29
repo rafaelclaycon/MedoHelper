@@ -79,7 +79,9 @@ struct EditReactionView: View {
 
                     TableColumn("Autor", value: \.authorName)
 
-                    TableColumn("Data de Adição", value: \.dateAdded)
+                    TableColumn("Data de Adição") { soundForDisplay in
+                        return Text(soundForDisplay.dateAdded.formattedDate)
+                    }
                 }
 
                 HStack(spacing: 20) {
@@ -90,8 +92,17 @@ struct EditReactionView: View {
                             Image(systemName: "plus")
                         }
                         .sheet(isPresented: $showAddSheet) {
-                            SoundSearchView()
-                                .frame(minWidth: 800, minHeight: 500)
+                            SoundSearchView(addAction: { sound in
+                                reactionSounds.append(.init(
+                                    id: nil,
+                                    soundId: sound.id,
+                                    title: sound.title,
+                                    authorName: sound.authorName ?? "",
+                                    dateAdded: Date.now.toISO8601String(),
+                                    position: reactionSounds.count + 1
+                                ))
+                            })
+                            .frame(minWidth: 800, minHeight: 500)
                         }
 
                         Button {

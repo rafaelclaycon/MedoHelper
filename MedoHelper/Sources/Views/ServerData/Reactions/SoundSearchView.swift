@@ -9,6 +9,8 @@ import SwiftUI
 
 struct SoundSearchView: View {
 
+    let addAction: (Sound) -> Void
+
     @State private var sounds: [Sound] = []
 
     @State private var searchText = ""
@@ -58,11 +60,11 @@ struct SoundSearchView: View {
                 .keyboardShortcut(.cancelAction)
 
                 Button {
-//                    if isEditing {
-//                        updateContent()
-//                    } else {
-//                        createContent()
-//                    }
+                    guard let selectedItemId = selectedItem else { return }
+                    print("SELECTED SOUND ID: \(selectedItemId)")
+                    guard let sound = sounds.first(where: { $0.id == selectedItemId }) else { return }
+                    addAction(sound)
+                    dismiss()
                 } label: {
                     Text("Adicionar")
                         .padding(.horizontal)
@@ -118,5 +120,5 @@ struct SoundSearchView: View {
 }
 
 #Preview {
-    SoundSearchView()
+    SoundSearchView(addAction: { _ in })
 }
