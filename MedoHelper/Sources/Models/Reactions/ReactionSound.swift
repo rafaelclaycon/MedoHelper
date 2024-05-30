@@ -11,7 +11,7 @@ struct ReactionSound: Identifiable, Codable {
 
     let id: String
     let soundId: String
-    let dateAdded: String
+    var dateAdded: String
     let position: Int
 
     enum CodingKeys: String, CodingKey {

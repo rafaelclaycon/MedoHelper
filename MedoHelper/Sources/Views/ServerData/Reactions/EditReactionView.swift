@@ -20,6 +20,8 @@ struct EditReactionView: View {
 
     @State private var showAddSheet: Bool = false
 
+    @State private var originalReaction: ReactionDTO?
+
     // MARK: - Computed Properties
 
     private var isEditing: Bool {
@@ -39,6 +41,13 @@ struct EditReactionView: View {
     private var id: String {
         guard let reaction = helper.reaction else { return "" }
         return "ID: \(reaction.id)"
+    }
+
+    private var didChange: Bool {
+        guard let originalReac = helper.reaction else { return false }
+        return reactionTitle != originalReac.title ||
+        reactionImageUrl != originalReac.image ||
+        reactionSounds != originalReac.sounds
     }
 
     // MARK: - Environment
@@ -150,6 +159,7 @@ struct EditReactionView: View {
         }
         .padding(.all, 26)
         .onAppear {
+            originalReaction = helper.reaction
             editableReactionTitle = reactionTitle
             editableImageUrl = reactionImageUrl
             populateSoundsWithInfo()

@@ -11,9 +11,6 @@ struct ReactionsCRUDView: View {
 
     @State private var reactions: [ReactionDTO] = []
 
-    @State private var isInEditMode: Bool = false
-    @State private var showFileSelector: Bool = false
-
     @State private var searchText = ""
     @State private var selectedItem: ReactionDTO.ID?
     @State private var reaction: ReactionDTO? = nil
@@ -54,27 +51,6 @@ struct ReactionsCRUDView: View {
 
     var body: some View {
         VStack {
-            if isInEditMode {
-                HStack {
-                    VStack(alignment: .leading, spacing: 10) {
-                        Text("Modo de Edição Ativado")
-                            .bold()
-                            .foregroundStyle(.red)
-
-                        Text("Edite e ordene as reações como deseja que elas apareçam no app.")
-                            .foregroundStyle(.red)
-                    }
-
-                    Spacer()
-                }
-                .padding()
-                .background {
-                    Rectangle()
-                        .foregroundColor(.red)
-                        .opacity(colorScheme == .dark ? 0.3 : 0.15)
-                }
-            }
-
             VStack {
                 Table(searchResults, selection: $selectedItem) {
                     TableColumn("Posição") { reaction in
@@ -108,27 +84,23 @@ struct ReactionsCRUDView: View {
                 .searchable(text: $searchText)
 
                 HStack(spacing: 20) {
-//                    HStack(spacing: 10) {
-//                        Button {
-//                            self.reaction = nil
-//                            showEditSheet = true
-//                        } label: {
-//                            Image(systemName: "plus")
-//                        }
-//                        .sheet(isPresented: $showEditSheet) {
-//                            EditReactionView(isBeingShown: $showEditSheet, reaction: reaction)
-//                                .frame(minWidth: 800, minHeight: 500)
-//                        }
-//
-//                        Button {
-//                            // print((selectedItem ?? "") as String)
+                    HStack(spacing: 10) {
+                        Button {
+                            self.editReactionEnv.reaction = nil
+                            showEditSheet = true
+                        } label: {
+                            Image(systemName: "plus")
+                        }
+
+                        Button {
+                            // print((selectedItem ?? "") as String)
 //                            alertType = .twoOptionsOneDelete
 //                            showAlert = true
-//                        } label: {
-//                            Image(systemName: "minus")
-//                        }
-//                    }
-//                    .disabled(!isInEditMode)
+                        } label: {
+                            Image(systemName: "minus")
+                        }
+                    }
+
                     //                .alert(isPresented: $showAlert) {
                     //                    switch alertType {
                     //                    case .singleOptionInformative:
@@ -152,23 +124,8 @@ struct ReactionsCRUDView: View {
                     //                }
 
                     Button("Importar de Arquivo JSON") {
-                        reactions = Bundle.main.decodeJSON("reactions_data.json")
-                        reactions.sort(by: { $0.position < $1.position })
+                        importAndSendPreExistingReactions()
                     }
-//                    .fileImporter(
-//                        isPresented: $showFileSelector,
-//                        allowedContentTypes: [.json],
-//                        allowsMultipleSelection: false
-//                    ) { result in
-//                        switch result {
-//                        case .success(let urls):
-//                            guard let url = urls.first else { return }
-//                            decodeJSON(from: url)
-//                        case .failure(let error):
-//                            print("Error selecting file: \(error.localizedDescription)")
-//                        }
-//                    }
-                    .disabled(!isInEditMode)
 
 //                    Button("Importar das Pastas") {
 //                        print("")
@@ -195,13 +152,9 @@ struct ReactionsCRUDView: View {
                     Text("\(reactions.count.formattedString) itens")
 
                     Button {
-                        if isInEditMode {
-                            sendAll()
-                        } else {
-                            isInEditMode.toggle()
-                        }
+                        print("TO IMPLEMENT")
                     } label: {
-                        Text(isInEditMode ? "Enviar Dados" : "Iniciar Edição")
+                        Text("Enviar Dados")
                             .padding(.horizontal)
                     }
                     .keyboardShortcut(.defaultAction)
@@ -249,6 +202,13 @@ struct ReactionsCRUDView: View {
                 var dtos = serverReactions.map { ReactionDTO(appReaction: $0) }
                 dtos.sort(by: { $0.position < $1.position })
 
+                guard !dtos.isEmpty else {
+                    await MainActor.run {
+                        showLoadingView = false
+                    }
+                    return
+                }
+
                 for i in 0...(dtos.count - 1) {
                     let reactionUrl = URL(string: serverPath + "v4/reaction/\(dtos[i].id)")!
                     dtos[i].sounds = try await NetworkRabbit.getArray(from: reactionUrl)
@@ -278,6 +238,26 @@ struct ReactionsCRUDView: View {
         guard let item = reaction(withId: itemId) else { return }
         self.editReactionEnv.reaction = item
         showEditSheet = true
+    }
+
+    private func importAndSendPreExistingReactions() {
+        guard reactions.isEmpty else {
+            return print("TEM CERTEZA QUE QUER FAZER ISSO?")
+        }
+
+        reactions = Bundle.main.decodeJSON("reactions_data.json")
+        reactions.sort(by: { $0.position < $1.position })
+
+        for i in 0...(reactions.count-1) {
+            reactions[i].lastUpdate = Date.now.toISO8601String()
+            if let reactionSounds = reactions[i].sounds, !reactionSounds.isEmpty {
+                for j in 0...(reactions[i].sounds!.count-1) {
+                    reactions[i].sounds![j].dateAdded = Date.now.toISO8601String()
+                }
+            }
+        }
+
+        sendAll()
     }
 
     private func sendAll() {
