@@ -45,9 +45,9 @@ struct EditReactionView: View {
 
     private var didChange: Bool {
         guard let originalReac = helper.reaction else { return false }
-        return reactionTitle != originalReac.title ||
-        reactionImageUrl != originalReac.image ||
-        reactionSounds != originalReac.sounds
+        return editableReactionTitle != originalReac.title ||
+            editableImageUrl != originalReac.image ||
+            reactionSounds.count != originalReac.sounds?.count
     }
 
     // MARK: - Environment
@@ -144,9 +144,10 @@ struct EditReactionView: View {
                 .keyboardShortcut(.cancelAction)
 
                 Button {
-//                    if isEditing {
-//                        updateContent()
-//                    } else {
+                    if isEditing {
+                        updateReaction()
+                    }
+//                    else {
 //                        createContent()
 //                    }
                 } label: {
@@ -154,7 +155,7 @@ struct EditReactionView: View {
                         .padding(.horizontal)
                 }
                 .keyboardShortcut(.defaultAction)
-                //.disabled(!hasAllNecessaryData)
+                .disabled(!didChange)
             }
         }
         .padding(.all, 26)
@@ -216,6 +217,30 @@ struct EditReactionView: View {
 //                alertMessage = error.localizedDescription
                 // showSendProgress = false
                 // return showingAlert = true
+            }
+        }
+    }
+
+    private func updateReaction() {
+        Task {
+            let newReaction = ReactionDTO(
+                id: id,
+                title: editableReactionTitle,
+                position: originalReaction?.position ?? 0,
+                image: reactionImageUrl,
+                lastUpdate: Date.now.toISO8601String(),
+                sounds: reactionSounds.asBasicType
+            )
+
+            let updateUrl = URL(string: serverPath + "v4/reaction/\(newReaction.id)/\(reactionsPassword)")!
+            guard try await NetworkRabbit.put(in: updateUrl, data: updateUrl) else {
+                return print("ERROR")
+            }
+
+            let soundsUrl = URL(string: serverPath + "v4/delete-reaction-sounds/\(newReaction.id)/\(reactionsPassword)")!
+            guard try await NetworkRabbit.delete(in: soundsUrl) else {
+                print("Não foi possível apagar os sons da Reação.")
+                return
             }
         }
     }

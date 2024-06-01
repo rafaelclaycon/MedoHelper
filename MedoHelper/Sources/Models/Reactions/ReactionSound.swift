@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct ReactionSound: Identifiable, Codable {
+struct ReactionSound: Identifiable, Codable, Equatable {
 
     let id: String
     let soundId: String
@@ -114,5 +114,19 @@ struct ReactionSoundForDisplay: Identifiable, Codable {
         self.authorName = ""
         self.dateAdded = reactionSound.dateAdded
         self.position = reactionSound.position
+    }
+}
+
+extension Array where Element == ReactionSoundForDisplay {
+
+    var asBasicType: [ReactionSound] {
+        return self.map { displayItem in
+            ReactionSound(
+                id: displayItem.id,
+                soundId: displayItem.soundId,
+                dateAdded: displayItem.dateAdded,
+                position: displayItem.position
+            )
+        }
     }
 }
