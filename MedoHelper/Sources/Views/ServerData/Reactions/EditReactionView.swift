@@ -272,6 +272,11 @@ struct EditReactionView: View {
             await MainActor.run {
                 progressAmount = 3.0
             }
+
+            DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(600)) {
+                showSendProgress = false
+                isBeingShown = false
+            }
         }
     }
 }
