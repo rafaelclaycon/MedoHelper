@@ -22,6 +22,12 @@ struct EditReactionView: View {
 
     @State private var originalReaction: ReactionDTO?
 
+    // Progress View
+    @State private var showSendProgress = false
+    @State private var progressAmount = 0.0
+    @State private var totalAmount = 2.0
+    @State private var modalMessage = ""
+
     // MARK: - Computed Properties
 
     private var isEditing: Bool {
@@ -171,7 +177,7 @@ struct EditReactionView: View {
 
     private func populateSoundsWithInfo() {
         Task {
-            //totalAmount = Double(reactions.count)
+            totalAmount = Double(reactions.count)
             //showSendProgress = true
             //modalMessage = "Enviando Dados..."
             //progressAmount = 0
@@ -223,6 +229,13 @@ struct EditReactionView: View {
 
     private func updateReaction() {
         Task {
+            await MainActor.run {
+                totalAmount = 3.0
+                showSendProgress = true
+                modalMessage = "Atualizando Reação..."
+                progressAmount = 0
+            }
+
             let newReaction = ReactionDTO(
                 id: id,
                 title: editableReactionTitle,
@@ -232,15 +245,32 @@ struct EditReactionView: View {
                 sounds: reactionSounds.asBasicType
             )
 
-            let updateUrl = URL(string: serverPath + "v4/reaction/\(newReaction.id)/\(reactionsPassword)")!
+            let updateUrl = URL(string: serverPath + "v4/reaction/\(reactionsPassword)")!
             guard try await NetworkRabbit.put(in: updateUrl, data: updateUrl) else {
                 return print("ERROR")
             }
 
-            let soundsUrl = URL(string: serverPath + "v4/delete-reaction-sounds/\(newReaction.id)/\(reactionsPassword)")!
-            guard try await NetworkRabbit.delete(in: soundsUrl) else {
+            await MainActor.run {
+                progressAmount = 1.0
+                modalMessage = "Apagando Sons Antigos..."
+            }
+
+            let soundsDeleteUrl = URL(string: serverPath + "v4/delete-reaction-sounds/\(newReaction.id)/\(reactionsPassword)")!
+            guard try await NetworkRabbit.delete(in: soundsDeleteUrl) else {
                 print("Não foi possível apagar os sons da Reação.")
                 return
+            }
+
+            await MainActor.run {
+                progressAmount = 2.0
+                modalMessage = "Adicionando Sons Novos..."
+            }
+
+            let soundsAddUrl = URL(string: serverPath + "v4/add-sounds-to-reaction/\(reactionsPassword)")!
+            let _ = try await NetworkRabbit.post(data: newReaction.sounds, to: soundsAddUrl)
+
+            await MainActor.run {
+                progressAmount = 3.0
             }
         }
     }
