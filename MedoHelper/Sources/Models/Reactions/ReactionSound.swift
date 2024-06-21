@@ -87,7 +87,7 @@ struct ReactionSoundForDisplay: Identifiable, Codable {
     var title: String
     var authorName: String
     let dateAdded: String
-    let position: Int
+    var position: Int
 
     init(
         id: String?,
@@ -126,6 +126,17 @@ extension Array where Element == ReactionSoundForDisplay {
                 soundId: displayItem.soundId,
                 dateAdded: displayItem.dateAdded,
                 position: displayItem.position
+            )
+        }
+    }
+
+    func asServerCompatibleType(reactionId: String) -> [ReactionSoundDTO] {
+        return self.map { displayItem in
+            ReactionSoundDTO(
+                soundId: displayItem.soundId,
+                dateAdded: displayItem.dateAdded,
+                position: displayItem.position,
+                reactionId: reactionId
             )
         }
     }

@@ -22,7 +22,7 @@ struct ReactionDTO: Codable, Identifiable {
         position: Int,
         image: String,
         lastUpdate: String,
-        sounds: [ReactionSound]?
+        sounds: [ReactionSound]? = nil
     ) {
         self.id = id
         self.title = title

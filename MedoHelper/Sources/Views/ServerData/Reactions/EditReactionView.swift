@@ -11,6 +11,8 @@ struct EditReactionView: View {
 
     @Binding var isBeingShown: Bool
 
+    let onChangeAction: () -> Void
+
     @State private var editableReactionTitle: String = ""
     @State private var editableImageUrl: String = ""
     @State private var didLoadSoundInfo: Bool = false
@@ -21,6 +23,12 @@ struct EditReactionView: View {
     @State private var showAddSheet: Bool = false
 
     @State private var originalReaction: ReactionDTO?
+
+    // Alert
+    @State private var showingAlert = false
+    @State private var alertTitle = ""
+    @State private var alertMessage = ""
+    @State private var alertType: AlertType = .singleOptionInformative
 
     // Progress View
     @State private var showSendProgress = false
@@ -44,7 +52,7 @@ struct EditReactionView: View {
         return reaction.image
     }
 
-    private var id: String {
+    private var idText: String {
         guard let reaction = helper.reaction else { return "" }
         return "ID: \(reaction.id)"
     }
@@ -73,7 +81,7 @@ struct EditReactionView: View {
             }
 
             HStack {
-                Text(id)
+                Text(idText)
                     .foregroundColor(isEditing ? .primary : .gray)
 
                 Spacer()
@@ -131,6 +139,20 @@ struct EditReactionView: View {
 
                     Spacer()
 
+//                    Button {
+//                        moveUp(item: selectedItem)
+//                    } label: {
+//                        Label("Mover Para Cima", systemImage: "chevron.up")
+//                    }
+//
+//                    Button {
+//                        moveDown(item: selectedItem)
+//                    } label: {
+//                        Label("Mover Para Baixo", systemImage: "chevron.down")
+//                    }
+
+                    Spacer()
+
                     Text("\(reactionSounds.count.formattedString) sons")
                 }
                 .frame(height: 40)
@@ -171,13 +193,20 @@ struct EditReactionView: View {
             editableImageUrl = reactionImageUrl
             populateSoundsWithInfo()
         }
+        .alert(isPresented: $showingAlert) {
+            Alert(
+                title: Text(alertTitle),
+                message: Text(alertMessage),
+                dismissButton: .default(Text("OK"))
+            )
+        }
     }
 
     // MARK: - Functions
 
     private func populateSoundsWithInfo() {
         Task {
-            totalAmount = Double(reactions.count)
+            //totalAmount = Double(reactions.count)
             //showSendProgress = true
             //modalMessage = "Enviando Dados..."
             //progressAmount = 0
@@ -236,18 +265,25 @@ struct EditReactionView: View {
                 progressAmount = 0
             }
 
+            guard let oldReaction = helper.reaction else {
+                showAlert("Incapaz de Obter ID", "Verifique se uma Reação válida foi selecionada.")
+                return
+            }
+
+            print("UPDATE REACTION - Set .now as lastUpdate on Reaction")
             let newReaction = ReactionDTO(
-                id: id,
+                id: oldReaction.id,
                 title: editableReactionTitle,
                 position: originalReaction?.position ?? 0,
                 image: reactionImageUrl,
-                lastUpdate: Date.now.toISO8601String(),
-                sounds: reactionSounds.asBasicType
+                lastUpdate: Date.now.toISO8601String()
             )
 
+            print("UPDATE REACTION - Update Reaction data")
             let updateUrl = URL(string: serverPath + "v4/reaction/\(reactionsPassword)")!
-            guard try await NetworkRabbit.put(in: updateUrl, data: updateUrl) else {
-                return print("ERROR")
+            guard try await NetworkRabbit.put(in: updateUrl, data: newReaction) else {
+                showAlert("Erro ao Atualizar Reação", "PUT")
+                return
             }
 
             await MainActor.run {
@@ -255,9 +291,10 @@ struct EditReactionView: View {
                 modalMessage = "Apagando Sons Antigos..."
             }
 
+            print("UPDATE REACTION - Delete previous sounds of Reaction")
             let soundsDeleteUrl = URL(string: serverPath + "v4/delete-reaction-sounds/\(newReaction.id)/\(reactionsPassword)")!
             guard try await NetworkRabbit.delete(in: soundsDeleteUrl) else {
-                print("Não foi possível apagar os sons da Reação.")
+                showAlert("Erro ao Apagar os Sons da Reação", "DELETE")
                 return
             }
 
@@ -266,8 +303,13 @@ struct EditReactionView: View {
                 modalMessage = "Adicionando Sons Novos..."
             }
 
+            print("UPDATE REACTION - Add new sounds to Reaction")
             let soundsAddUrl = URL(string: serverPath + "v4/add-sounds-to-reaction/\(reactionsPassword)")!
-            let _ = try await NetworkRabbit.post(data: newReaction.sounds, to: soundsAddUrl)
+            let newSounds = reactionSounds.asServerCompatibleType(reactionId: oldReaction.id)
+            guard let _ = try await NetworkRabbit.post(data: newSounds, to: soundsAddUrl) else {
+                showAlert("Erro ao Inserir Novos Sons na Reação", "POST")
+                return
+            }
 
             await MainActor.run {
                 progressAmount = 3.0
@@ -276,11 +318,39 @@ struct EditReactionView: View {
             DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(600)) {
                 showSendProgress = false
                 isBeingShown = false
+                onChangeAction()
             }
+        }
+    }
+
+    private func showAlert(_ title: String, _ message: String) {
+        alertTitle = title
+        alertMessage = message
+        showingAlert = true
+    }
+
+    private func moveUp(item: ReactionSoundForDisplay) {
+        guard let index = reactionSounds.firstIndex(where: { $0.id == item.id }), index > 0 else { return }
+        reactionSounds.swapAt(index, index - 1)
+        updatePositions()
+    }
+
+    private func moveDown(item: ReactionSoundForDisplay) {
+        guard let index = reactionSounds.firstIndex(where: { $0.id == item.id }), index < reactionSounds.count - 1 else { return }
+        reactionSounds.swapAt(index, index + 1)
+        updatePositions()
+    }
+
+    private func updatePositions() {
+        for (index, item) in reactionSounds.enumerated() {
+            reactionSounds[index].position = index + 1
         }
     }
 }
 
 #Preview {
-    EditReactionView(isBeingShown: .constant(true))
+    EditReactionView(
+        isBeingShown: .constant(true),
+        onChangeAction: { }
+    )
 }

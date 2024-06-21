@@ -172,9 +172,12 @@ struct ReactionsCRUDView: View {
                 )
             }
             .sheet(isPresented: $showEditSheet) {
-                EditReactionView(isBeingShown: $showEditSheet)
-                    .frame(minWidth: 1024, minHeight: 700)
-                    .environmentObject(editReactionEnv)
+                EditReactionView(
+                    isBeingShown: $showEditSheet,
+                    onChangeAction: { loadReactions() }
+                )
+                .frame(minWidth: 1024, minHeight: 700)
+                .environmentObject(editReactionEnv)
             }
             .onAppear {
                 loadReactions()
