@@ -80,7 +80,7 @@ struct ReactionSoundDTO: Codable {
     }
 }
 
-struct ReactionSoundForDisplay: Identifiable, Codable {
+struct ReactionSoundForDisplay: Identifiable, Codable, Hashable {
 
     let id: String
     let soundId: String

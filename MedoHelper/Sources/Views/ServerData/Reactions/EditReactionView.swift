@@ -59,9 +59,21 @@ struct EditReactionView: View {
 
     private var didChange: Bool {
         guard let originalReac = helper.reaction else { return false }
-        return editableReactionTitle != originalReac.title ||
-            editableImageUrl != originalReac.image ||
-            reactionSounds.count != originalReac.sounds?.count
+
+        let titleOrImageChanged = editableReactionTitle != originalReac.title || editableImageUrl != originalReac.image
+        let countChanged = reactionSounds.count != originalReac.sounds?.count
+
+        let positionsChanged: Bool
+        if let originalSounds = originalReac.sounds {
+            positionsChanged = reactionSounds.enumerated().contains { index, currentSound in
+                guard let originalSound = originalSounds.first(where: { $0.id == currentSound.id }) else { return true }
+                return currentSound.position != originalSound.position || index != currentSound.position - 1
+            }
+        } else {
+            positionsChanged = false
+        }
+
+        return titleOrImageChanged || countChanged || positionsChanged
     }
 
     // MARK: - Environment
@@ -139,19 +151,19 @@ struct EditReactionView: View {
 
                     Spacer()
 
-//                    Button {
-//                        moveUp(item: selectedItem)
-//                    } label: {
-//                        Label("Mover Para Cima", systemImage: "chevron.up")
-//                    }
-//
-//                    Button {
-//                        moveDown(item: selectedItem)
-//                    } label: {
-//                        Label("Mover Para Baixo", systemImage: "chevron.down")
-//                    }
+                    Button {
+                        moveDown(selectedID: selectedItem)
+                    } label: {
+                        Label("Mover Para Baixo", systemImage: "chevron.down")
+                    }
+                    .disabled(selectedItem == nil)
 
-                    Spacer()
+                    Button {
+                        moveUp(selectedID: selectedItem)
+                    } label: {
+                        Label("Mover Para Cima", systemImage: "chevron.up")
+                    }
+                    .disabled(selectedItem == nil)
 
                     Text("\(reactionSounds.count.formattedString) sons")
                 }
@@ -329,20 +341,24 @@ struct EditReactionView: View {
         showingAlert = true
     }
 
-    private func moveUp(item: ReactionSoundForDisplay) {
-        guard let index = reactionSounds.firstIndex(where: { $0.id == item.id }), index > 0 else { return }
+    private func moveUp(selectedID: ReactionSoundForDisplay.ID?) {
+        guard let selectedID = selectedID,
+              let index = reactionSounds.firstIndex(where: { $0.id == selectedID }),
+              index > 0 else { return }
         reactionSounds.swapAt(index, index - 1)
         updatePositions()
     }
 
-    private func moveDown(item: ReactionSoundForDisplay) {
-        guard let index = reactionSounds.firstIndex(where: { $0.id == item.id }), index < reactionSounds.count - 1 else { return }
+    private func moveDown(selectedID: ReactionSoundForDisplay.ID?) {
+        guard let selectedID = selectedID,
+              let index = reactionSounds.firstIndex(where: { $0.id == selectedID }),
+              index < reactionSounds.count - 1 else { return }
         reactionSounds.swapAt(index, index + 1)
         updatePositions()
     }
 
     private func updatePositions() {
-        for (index, item) in reactionSounds.enumerated() {
+        for (index, _) in reactionSounds.enumerated() {
             reactionSounds[index].position = index + 1
         }
     }
