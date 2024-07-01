@@ -23,6 +23,7 @@ struct EditReactionView: View {
     @State private var showAddSheet: Bool = false
 
     @State private var originalReaction: ReactionDTO?
+    @State private var didChangeSoundOrder: Bool = false
 
     // Alert
     @State private var showingAlert = false
@@ -63,17 +64,7 @@ struct EditReactionView: View {
         let titleOrImageChanged = editableReactionTitle != originalReac.title || editableImageUrl != originalReac.image
         let countChanged = reactionSounds.count != originalReac.sounds?.count
 
-        let positionsChanged: Bool
-        if let originalSounds = originalReac.sounds {
-            positionsChanged = reactionSounds.enumerated().contains { index, currentSound in
-                guard let originalSound = originalSounds.first(where: { $0.id == currentSound.id }) else { return true }
-                return currentSound.position != originalSound.position || index != currentSound.position - 1
-            }
-        } else {
-            positionsChanged = false
-        }
-
-        return titleOrImageChanged || countChanged || positionsChanged
+        return titleOrImageChanged || countChanged || didChangeSoundOrder
     }
 
     // MARK: - Environment
@@ -152,6 +143,7 @@ struct EditReactionView: View {
                     Spacer()
 
                     Button {
+                        didChangeSoundOrder = true
                         moveDown(selectedID: selectedItem)
                     } label: {
                         Label("Mover Para Baixo", systemImage: "chevron.down")
@@ -159,6 +151,7 @@ struct EditReactionView: View {
                     .disabled(selectedItem == nil)
 
                     Button {
+                        didChangeSoundOrder = true
                         moveUp(selectedID: selectedItem)
                     } label: {
                         Label("Mover Para Cima", systemImage: "chevron.up")
