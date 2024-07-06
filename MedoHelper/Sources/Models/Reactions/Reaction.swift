@@ -11,7 +11,7 @@ struct ReactionDTO: Codable, Identifiable {
 
     let id: String
     let title: String
-    let position: Int
+    var position: Int
     let image: String
     var lastUpdate: String
     var sounds: [ReactionSound]?

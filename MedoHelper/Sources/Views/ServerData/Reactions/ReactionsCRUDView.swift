@@ -20,6 +20,8 @@ struct ReactionsCRUDView: View {
 
     @StateObject private var editReactionEnv = EditReactionHelper()
 
+    @State private var didChangeReactionOrder: Bool = false
+
     // Progress View
     @State private var showSendProgress = false
     @State private var progressAmount = 0.0
@@ -149,6 +151,22 @@ struct ReactionsCRUDView: View {
                     //                        .frame(minWidth: 800, minHeight: 500)
                     //                }
 
+                    Button {
+                        didChangeReactionOrder = true
+                        moveDown(selectedID: selectedItem)
+                    } label: {
+                        Label("Mover", systemImage: "chevron.down")
+                    }
+                    .disabled(selectedItem == nil)
+
+                    Button {
+                        didChangeReactionOrder = true
+                        moveUp(selectedID: selectedItem)
+                    } label: {
+                        Label("Mover", systemImage: "chevron.up")
+                    }
+                    .disabled(selectedItem == nil)
+
                     Text("\(reactions.count.formattedString) itens")
 
                     Button {
@@ -158,6 +176,7 @@ struct ReactionsCRUDView: View {
                             .padding(.horizontal)
                     }
                     .keyboardShortcut(.defaultAction)
+                    .disabled(didChangeReactionOrder)
                 }
                 .frame(height: 40)
             }
@@ -318,6 +337,28 @@ struct ReactionsCRUDView: View {
     private func send(reactionSounds: [ReactionSoundDTO]) async throws {
         let url = URL(string: serverPath + "v4/add-sounds-to-reaction/\(reactionsPassword)")!
         let _ = try await NetworkRabbit.post(data: reactionSounds, to: url)
+    }
+
+    private func moveUp(selectedID: ReactionSoundForDisplay.ID?) {
+        guard let selectedID = selectedID,
+              let index = reactions.firstIndex(where: { $0.id == selectedID }),
+              index > 0 else { return }
+        reactions.swapAt(index, index - 1)
+        updatePositions()
+    }
+
+    private func moveDown(selectedID: ReactionSoundForDisplay.ID?) {
+        guard let selectedID = selectedID,
+              let index = reactions.firstIndex(where: { $0.id == selectedID }),
+              index < reactions.count - 1 else { return }
+        reactions.swapAt(index, index + 1)
+        updatePositions()
+    }
+
+    private func updatePositions() {
+        for (index, _) in reactions.enumerated() {
+            reactions[index].position = index + 1
+        }
     }
 }
 
