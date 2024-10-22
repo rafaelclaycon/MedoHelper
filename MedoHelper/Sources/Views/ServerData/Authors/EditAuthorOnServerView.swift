@@ -101,15 +101,14 @@ struct EditAuthorOnServerView: View {
 
             HStack(spacing: 10) {
                 Button {
-                    self.selectedExternalLink = nil
+                    self.selectedExternalLink = .init()
                     self.showNewExternalLinkSheet = true
                 } label: {
                     Image(systemName: "plus")
                 }
-                .sheet(isPresented: $showNewExternalLinkSheet) {
+                .sheet(item: $selectedExternalLink) { link in
                     NewExternalLinkView(
-                        isBeingShown: $showNewExternalLinkSheet,
-                        externalLink: selectedExternalLink,
+                        externalLink: link,
                         saveAction: { newLink in
                             if let index = externalLinks.firstIndex(where: { $0.id == newLink.id }) {
                                 externalLinks[index] = newLink

@@ -11,8 +11,7 @@ struct NewExternalLinkView: View {
 
     // MARK: - State Variables
 
-    @Binding var isBeingShown: Bool
-    @State var externalLink: ExternalLink
+    @State private var externalLink: ExternalLink
     @State private var showRemoveAlert: Bool = false
 
     // MARK: - Private Variables
@@ -27,15 +26,17 @@ struct NewExternalLinkView: View {
         externalLink.symbol == "" || externalLink.title == "" || externalLink.link == ""
     }
 
+    // MARK: - Environment
+
+    @Environment(\.dismiss) var dismiss
+
     // MARK: - Initializers
 
     init(
-        isBeingShown: Binding<Bool>,
-        externalLink: ExternalLink? = nil,
+        externalLink: ExternalLink?,
         saveAction: @escaping (ExternalLink) -> Void,
         removeAction: @escaping (ExternalLink) -> Void
     ) {
-        _isBeingShown = isBeingShown
         self.isEditing = externalLink != nil
         self.externalLink = externalLink ?? ExternalLink()
         self.saveAction = saveAction
@@ -75,8 +76,8 @@ struct NewExternalLinkView: View {
                             title: Text("Remover \"\(externalLink.title)\"?"),
                             message: Text(""),
                             primaryButton: .destructive(Text("Remover"), action: {
-                                isBeingShown = false
                                 removeAction(externalLink)
+                                dismiss()
                             }),
                             secondaryButton: .cancel(Text("Cancelar"))
                         )
@@ -86,7 +87,7 @@ struct NewExternalLinkView: View {
                 Spacer()
 
                 Button {
-                    isBeingShown = false
+                    dismiss()
                 } label: {
                     Text("Cancelar")
                         .padding(.horizontal)
@@ -95,7 +96,7 @@ struct NewExternalLinkView: View {
 
                 Button {
                     saveAction(externalLink)
-                    isBeingShown = false
+                    dismiss()
                 } label: {
                     Text(isEditing ? "Atualizar" : "Criar")
                         .padding(.horizontal)
@@ -110,7 +111,7 @@ struct NewExternalLinkView: View {
 
 #Preview {
     NewExternalLinkView(
-        isBeingShown: .constant(true),
+        externalLink: nil,
         saveAction: { _ in },
         removeAction: { _ in }
     )
