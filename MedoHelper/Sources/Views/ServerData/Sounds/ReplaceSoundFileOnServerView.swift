@@ -8,8 +8,6 @@
 import SwiftUI
 
 struct ReplaceSoundFileOnServerView: View {
-
-    @Binding var isBeingShown: Bool
     
     @State private var showFilePicker = false
     @State private var selectedFile: URL? = nil
@@ -55,6 +53,10 @@ struct ReplaceSoundFileOnServerView: View {
         return selectedFile?.lastPathComponent ?? ""
     }
 
+    // MARK: - Environment
+
+    @Environment(\.dismiss) var dismiss
+
     // MARK: - View Body
 
     var body: some View {
@@ -89,7 +91,7 @@ struct ReplaceSoundFileOnServerView: View {
                 Spacer()
                 
                 Button {
-                    isBeingShown = false
+                    dismiss()
                 } label: {
                     Text("Cancelar")
                         .padding(.horizontal)
@@ -119,7 +121,7 @@ struct ReplaceSoundFileOnServerView: View {
                 
             case .singleOptionInformative:
                 return Alert(title: Text(alertTitle), message: Text(alertMessage), dismissButton: .default(Text("OK"), action: {
-                    isBeingShown = false
+                    dismiss()
                 }))
                 
             default:
@@ -209,7 +211,11 @@ struct ReplaceSoundFileOnServerView: View {
         let _: Bool = try await NetworkRabbit.put(in: url, data: content)
     }
     
-    private func renameFile(from fileURL: URL, with filename: String, saveTo destinationURL: URL) throws {
+    private func renameFile(
+        from fileURL: URL,
+        with filename: String,
+        saveTo destinationURL: URL
+    ) throws {
         let fileManager = FileManager.default
         
         if fileManager.fileExists(atPath: destinationURL.appending(path: filename).path(percentEncoded: false)) {

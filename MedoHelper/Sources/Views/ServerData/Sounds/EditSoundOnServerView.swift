@@ -10,8 +10,7 @@ import AppKit
 
 struct EditSoundOnServerView: View {
 
-    @Binding var isBeingShown: Bool
-    @State var sound: Sound
+    @State private var sound: Sound
     private let isEditing: Bool
     
     @State private var authors: [Author] = []
@@ -65,10 +64,8 @@ struct EditSoundOnServerView: View {
     // MARK: - Initializer
 
     init(
-        isBeingShown: Binding<Bool>,
         sound: Sound? = nil
     ) {
-        _isBeingShown = isBeingShown
         self.isEditing = sound != nil
         self._sound = State(initialValue: sound ?? Sound(title: ""))
     }
@@ -142,7 +139,7 @@ struct EditSoundOnServerView: View {
                 Spacer()
                 
                 Button {
-                    isBeingShown = false
+                    dismiss()
                 } label: {
                     Text("Cancelar")
                         .padding(.horizontal)
@@ -318,7 +315,7 @@ struct EditSoundOnServerView: View {
                 
                 DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(600)) {
                     showSendProgress = false
-                    isBeingShown = false
+                    dismiss()
                 }
             } catch {
                 alertType = .singleOptionInformative
@@ -346,7 +343,11 @@ struct EditSoundOnServerView: View {
         }
     }
     
-    private func renameFile(from fileURL: URL, with filename: String, saveTo destinationURL: URL) throws {
+    private func renameFile(
+        from fileURL: URL,
+        with filename: String,
+        saveTo destinationURL: URL
+    ) throws {
         let fileManager = FileManager.default
         
         if fileManager.fileExists(atPath: destinationURL.appending(path: filename).path(percentEncoded: false)) {
@@ -394,8 +395,10 @@ struct EditSoundOnServerView: View {
     }
 }
 
+// MARK: - Preview
+
 #Preview {
     EditSoundOnServerView(
-        isBeingShown: .constant(true), sound: Sound(title: "")
+        sound: Sound(title: "")
     )
 }

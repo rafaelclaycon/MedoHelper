@@ -97,11 +97,11 @@ struct ServerSoundsCRUDView: View {
                         Image(systemName: "plus")
                     }
                     .sheet(isPresented: $showEditSheet) {
-                        EditSoundOnServerView(isBeingShown: $showEditSheet, sound: sound)
+                        EditSoundOnServerView(sound: sound)
                             .frame(minWidth: 800, minHeight: 500)
                     }
                     .sheet(isPresented: $showReplaceSheet) {
-                        ReplaceSoundFileOnServerView(isBeingShown: $showReplaceSheet)
+                        ReplaceSoundFileOnServerView()
                             .frame(minWidth: 800, minHeight: 300)
                             .environmentObject(replaceSoundEnv)
                     }
