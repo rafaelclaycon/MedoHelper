@@ -110,12 +110,12 @@ struct SoundSearchView: View {
 
     private func allSounds() async throws -> [Sound] {
         let url = URL(string: serverPath + "v3/all-sounds")!
-        return try await NetworkRabbit.getArray(from: url)
+        return try await APIClient().getArray(from: url)
     }
 
     private func allAuthors() async throws -> [Author] {
         let url = URL(string: serverPath + "v3/all-authors")!
-        return try await NetworkRabbit.getArray(from: url)
+        return try await APIClient().getArray(from: url)
     }
 }
 

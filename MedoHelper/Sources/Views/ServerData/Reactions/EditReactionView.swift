@@ -64,6 +64,7 @@ struct EditReactionView: View {
         self.isEditing = reaction.title != ""
         self.reaction = reaction
         self.saveAction = saveAction
+        self.originalReaction = reaction
     }
 
     // MARK: - View Body
@@ -217,10 +218,10 @@ struct EditReactionView: View {
 
                 for reactionSound in reactSounds {
                     let soundDetailUrl = URL(string: serverPath + "v3/sound/\(reactionSound.soundId)")!
-                    let serverSound: SoundDTO = try await NetworkRabbit.get(from: soundDetailUrl)
+                    let serverSound: SoundDTO = try await APIClient().get(from: soundDetailUrl)
 
                     let auhtorDetailUrl = URL(string: serverPath + "v3/author/\(serverSound.authorId)")!
-                    let author: Author = try await NetworkRabbit.get(from: auhtorDetailUrl)
+                    let author: Author = try await APIClient().get(from: auhtorDetailUrl)
 
                     toBeSet.append(
                         .init(
@@ -272,7 +273,7 @@ struct EditReactionView: View {
 
             print("UPDATE REACTION - Update Reaction data")
             let updateUrl = URL(string: serverPath + "v4/reaction/\(reactionsPassword)")!
-            guard try await NetworkRabbit.put(in: updateUrl, data: newReaction) else {
+            guard try await APIClient().put(in: updateUrl, data: newReaction) else {
                 showAlert("Erro ao Atualizar Reação", "PUT")
                 return
             }
@@ -284,7 +285,7 @@ struct EditReactionView: View {
 
             print("UPDATE REACTION - Delete previous sounds of Reaction")
             let soundsDeleteUrl = URL(string: serverPath + "v4/delete-reaction-sounds/\(newReaction.id)/\(reactionsPassword)")!
-            guard try await NetworkRabbit.delete(in: soundsDeleteUrl) else {
+            guard try await APIClient().delete(in: soundsDeleteUrl) else {
                 showAlert("Erro ao Apagar os Sons da Reação", "DELETE")
                 return
             }
@@ -297,7 +298,7 @@ struct EditReactionView: View {
             print("UPDATE REACTION - Add new sounds to Reaction")
             let soundsAddUrl = URL(string: serverPath + "v4/add-sounds-to-reaction/\(reactionsPassword)")!
             let newSounds = reactionSounds.asServerCompatibleType(reactionId: reaction.id)
-            guard let _ = try await NetworkRabbit.post(data: newSounds, to: soundsAddUrl) else {
+            guard let _ = try await APIClient().post(data: newSounds, to: soundsAddUrl) else {
                 showAlert("Erro ao Inserir Novos Sons na Reação", "POST")
                 return
             }

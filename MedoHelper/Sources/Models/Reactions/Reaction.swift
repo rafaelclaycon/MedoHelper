@@ -9,10 +9,10 @@ import Foundation
 
 struct ReactionDTO: Codable, Identifiable {
 
-    let id: String
-    let title: String
+    var id: String
+    var title: String
     var position: Int
-    let image: String
+    var image: String
     var lastUpdate: String
     var sounds: [ReactionSound]?
 

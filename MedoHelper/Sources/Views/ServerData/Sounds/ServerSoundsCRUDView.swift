@@ -180,7 +180,7 @@ struct ServerSoundsCRUDView: View {
             do {
                 let url = URL(string: serverPath + "v3/all-sounds")!
                 
-                var fetchedSounds: [Sound] = try await NetworkRabbit.getArray(from: url)
+                var fetchedSounds: [Sound] = try await APIClient().getArray(from: url)
 //                for i in 0...(allSounds.count - 1) {
 //                    allSounds[i].authorName = authorData.first(where: { $0.id == allSounds[i].authorId })?.name ?? Shared.unknownAuthor
 //                }
@@ -226,7 +226,7 @@ struct ServerSoundsCRUDView: View {
         Task {
             do {
                 let url = URL(string: serverPath + "v3/sound/\(soundId)/\(assetOperationPassword)")!
-                let _ = try await NetworkRabbit.delete(in: url, data: nil as String?)
+                let _ = try await APIClient().delete(in: url, data: nil as String?)
                 alertType = .singleOptionInformative
                 showAlert = true
             } catch {

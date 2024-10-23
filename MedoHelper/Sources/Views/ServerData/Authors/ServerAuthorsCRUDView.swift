@@ -125,7 +125,7 @@ struct ServerAuthorsCRUDView: View {
             let url = URL(string: serverPath + "v3/all-authors")!
             
             do {
-                var fetchedAuthors: [Author] = try await NetworkRabbit.getArray(from: url)
+                var fetchedAuthors: [Author] = try await APIClient().getArray(from: url)
                 fetchedAuthors.sort(by: { $0.name.preparedForComparison() < $1.name.preparedForComparison() })
                 self.authors = fetchedAuthors
             } catch {
@@ -153,8 +153,8 @@ struct ServerAuthorsCRUDView: View {
         Task {
             do {
                 let url = URL(string: serverPath + "v3/author/\(authorId)/\(assetOperationPassword)")!
-                let response = try await NetworkRabbit.delete(in: url, data: nil as String?)
-                
+                let response = try await APIClient().delete(in: url, data: nil as String?)
+
                 print(response as Any)
                 
                 sleep(1)

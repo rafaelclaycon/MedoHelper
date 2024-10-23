@@ -96,7 +96,7 @@ struct MoveDataToServerView<T: Codable & CustomDebugStringConvertible & Identifi
             
             for chunk in chunks {
                 do {
-                    _ = try await NetworkRabbit.post(data: chunk, to: url)
+                    _ = try await APIClient().post(data: chunk, to: url)
                     sleep(1)
                 } catch {
                     errors.append("De \"\(chunk.first?.debugDescription ?? "")\" a \"\(chunk.last?.debugDescription ?? "")\": \(error.localizedDescription)")

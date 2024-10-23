@@ -9,41 +9,7 @@ import SwiftUI
 
 struct ReactionsCRUDView: View {
 
-    @State private var reactions: [ReactionDTO] = []
-
-    @State private var searchText = ""
-    @State private var selectedItem: ReactionDTO.ID?
-    @State private var reaction: ReactionDTO? = nil
-    @State private var showLoadingView: Bool = false
-
-    @State private var showEditSheet = false
-
-    @StateObject private var editReactionEnv = EditReactionHelper()
-
-    @State private var didChangeReactionOrder: Bool = false
-
-    // Progress View
-    @State private var showSendProgress = false
-    @State private var progressAmount = 0.0
-    @State private var totalAmount = 2.0
-    @State private var modalMessage = ""
-
-    // Alert
-    @State private var showAlert = false
-    @State private var alertType: AlertType = .singleOptionInformative
-    @State private var alertErrorMessage: String = ""
-
-    // MARK: - Computed Properties
-
-    private var searchResults: [ReactionDTO] {
-        if searchText.isEmpty {
-            return reactions
-        } else {
-            return reactions.filter { reaction in
-                return reaction.title.contains(searchText.preparedForComparison())
-            }
-        }
-    }
+    @StateObject private var viewModel = ViewModel(apiClient: APIClient())
 
     // MARK: - Environment
 
@@ -54,7 +20,7 @@ struct ReactionsCRUDView: View {
     var body: some View {
         VStack {
             VStack {
-                Table(searchResults, selection: $selectedItem) {
+                Table(viewModel.searchResults, selection: $viewModel.selectedItem) {
                     TableColumn("Posição") { reaction in
                         Text("\(reaction.position)")
                     }
@@ -76,28 +42,25 @@ struct ReactionsCRUDView: View {
                     Section {
                         Button("Editar Reação") {
                             guard let selectedItemId = items.first else { return }
-                            editReaction(withId: selectedItemId)
+                            viewModel.onEditReactionSelected(reactionId: selectedItemId)
                         }
                     }
                 } primaryAction: { items in
                     guard let selectedItemId = items.first else { return }
-                    editReaction(withId: selectedItemId)
+                    viewModel.onEditReactionSelected(reactionId: selectedItemId)
                 }
-                .searchable(text: $searchText)
+                .searchable(text: $viewModel.searchText)
 
                 HStack(spacing: 20) {
                     HStack(spacing: 10) {
                         Button {
-                            self.editReactionEnv.reaction = nil
-                            showEditSheet = true
+                            viewModel.onCreateNewReactionSelected()
                         } label: {
                             Image(systemName: "plus")
                         }
 
                         Button {
-                            // print((selectedItem ?? "") as String)
-//                            alertType = .twoOptionsOneDelete
-//                            showAlert = true
+                            viewModel.onRemoveReactionSelected()
                         } label: {
                             Image(systemName: "minus")
                         }
@@ -126,7 +89,7 @@ struct ReactionsCRUDView: View {
                     //                }
 
                     Button("Importar de Arquivo JSON") {
-                        importAndSendPreExistingReactions()
+                        viewModel.onImportAndSendPreExistingReactionsSelected()
                     }
 
 //                    Button("Importar das Pastas") {
@@ -152,212 +115,57 @@ struct ReactionsCRUDView: View {
                     //                }
 
                     Button {
-                        didChangeReactionOrder = true
-                        moveDown(selectedID: selectedItem)
+                        viewModel.onMoveReactionDownSelected()
                     } label: {
                         Label("Mover", systemImage: "chevron.down")
                     }
-                    .disabled(selectedItem == nil)
+                    .disabled(viewModel.selectedItem == nil)
 
                     Button {
-                        didChangeReactionOrder = true
-                        moveUp(selectedID: selectedItem)
+                        viewModel.onMoveReactionUpSelected()
                     } label: {
                         Label("Mover", systemImage: "chevron.up")
                     }
-                    .disabled(selectedItem == nil)
+                    .disabled(viewModel.selectedItem == nil)
 
-                    Text("\(reactions.count.formattedString) itens")
+                    Text("\(viewModel.reactions.count.formattedString) itens")
 
                     Button {
-                        print("TO IMPLEMENT")
+                        viewModel.onSendDataSelected()
                     } label: {
                         Text("Enviar Dados")
                             .padding(.horizontal)
                     }
                     .keyboardShortcut(.defaultAction)
-                    .disabled(didChangeReactionOrder)
+                    .disabled(viewModel.didChangeReactionOrder)
                 }
                 .frame(height: 40)
             }
             .navigationTitle("Reações")
             .padding()
-            .sheet(isPresented: $showSendProgress) {
+            .sheet(isPresented: $viewModel.showSendProgress) {
                 SendingProgressView(
-                    isBeingShown: $showSendProgress,
-                    message: $modalMessage,
-                    currentAmount: $progressAmount,
-                    totalAmount: $totalAmount
+                    isBeingShown: $viewModel.showSendProgress,
+                    message: $viewModel.modalMessage,
+                    currentAmount: $viewModel.progressAmount,
+                    totalAmount: $viewModel.totalAmount
                 )
             }
-            .sheet(isPresented: $showEditSheet) {
+            .sheet(item: $viewModel.reactionForEditing) { reaction in
                 EditReactionView(
-                    isBeingShown: $showEditSheet,
-                    onChangeAction: { loadReactions() }
+                    reaction: reaction,
+                    saveAction: { viewModel.onSaveReactionSelected(reaction: $0) }
                 )
                 .frame(minWidth: 1024, minHeight: 700)
-                .environmentObject(editReactionEnv)
             }
             .onAppear {
-                loadReactions()
+                viewModel.onViewAppear()
             }
         }
         .overlay {
-            if showLoadingView {
+            if viewModel.showLoadingView {
                 LoadingView()
             }
-        }
-    }
-
-    // MARK: - Functions
-
-    private func loadReactions() {
-        Task {
-            await MainActor.run {
-                showLoadingView = true
-            }
-
-            do {
-                let url = URL(string: serverPath + "v4/reactions")!
-
-                let serverReactions: [AppReaction] = try await NetworkRabbit.getArray(from: url)
-                var dtos = serverReactions.map { ReactionDTO(appReaction: $0) }
-                dtos.sort(by: { $0.position < $1.position })
-
-                guard !dtos.isEmpty else {
-                    await MainActor.run {
-                        showLoadingView = false
-                    }
-                    return
-                }
-
-                for i in 0...(dtos.count - 1) {
-                    let reactionUrl = URL(string: serverPath + "v4/reaction/\(dtos[i].id)")!
-                    dtos[i].sounds = try await NetworkRabbit.getArray(from: reactionUrl)
-                }
-
-                self.reactions = dtos
-            } catch {
-                print(error)
-            }
-
-            await MainActor.run {
-                showLoadingView = false
-            }
-        }
-    }
-
-    private func reaction(withId id: String) -> ReactionDTO? {
-        for reaction in reactions {
-            if reaction.id == id {
-                return reaction
-            }
-        }
-        return nil
-    }
-
-    private func editReaction(withId itemId: String) {
-        guard let item = reaction(withId: itemId) else { return }
-        self.editReactionEnv.reaction = item
-        showEditSheet = true
-    }
-
-    private func importAndSendPreExistingReactions() {
-        guard reactions.isEmpty else {
-            return print("TEM CERTEZA QUE QUER FAZER ISSO?")
-        }
-
-        reactions = Bundle.main.decodeJSON("reactions_data.json")
-        reactions.sort(by: { $0.position < $1.position })
-
-        for i in 0...(reactions.count-1) {
-            reactions[i].lastUpdate = Date.now.toISO8601String()
-            if let reactionSounds = reactions[i].sounds, !reactionSounds.isEmpty {
-                for j in 0...(reactions[i].sounds!.count-1) {
-                    reactions[i].sounds![j].dateAdded = Date.now.toISO8601String()
-                }
-            }
-        }
-
-        sendAll()
-    }
-
-    private func sendAll() {
-        Task {
-            totalAmount = Double(reactions.count)
-            showSendProgress = true
-            modalMessage = "Enviando Dados..."
-            progressAmount = 0
-
-            do {
-                let reactionsUrl = URL(string: serverPath + "v4/delete-all-reactions/\(reactionsPassword)")!
-                let soundsUrl = URL(string: serverPath + "v4/delete-all-reaction-sounds/\(reactionsPassword)")!
-                print(reactionsUrl.absoluteString)
-                print(soundsUrl.absoluteString)
-                guard try await NetworkRabbit.delete(in: reactionsUrl) else {
-                    print("Não foi possível apagar as Reações.")
-                    return
-                }
-                guard try await NetworkRabbit.delete(in: soundsUrl) else {
-                    print("Não foi possível apagar os sons das Reações.")
-                    return
-                }
-
-                print("Reactions count: \(reactions.count)")
-                for reaction in reactions {
-                    try await send(reaction: AppReaction(dto: reaction))
-
-                    if let sounds = reaction.sounds {
-                        let dtos = sounds.map { ReactionSoundDTO(reactionSound: $0, reactionId: reaction.id) }
-                        try await send(reactionSounds: dtos)
-                    }
-
-                    progressAmount += 1
-                }
-
-                DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(600)) {
-                    showSendProgress = false
-                }
-            } catch {
-                print(error)
-//                alertType = .singleOptionInformative
-//                alertTitle = "Falha ao Criar o Som"
-//                alertMessage = error.localizedDescription
-                showSendProgress = false
-                // return showingAlert = true
-            }
-        }
-    }
-
-    private func send(reaction: AppReaction) async throws {
-        let url = URL(string: serverPath + "v4/create-reaction/\(reactionsPassword)")!
-        let _ = try await NetworkRabbit.post(data: reaction, to: url)
-    }
-
-    private func send(reactionSounds: [ReactionSoundDTO]) async throws {
-        let url = URL(string: serverPath + "v4/add-sounds-to-reaction/\(reactionsPassword)")!
-        let _ = try await NetworkRabbit.post(data: reactionSounds, to: url)
-    }
-
-    private func moveUp(selectedID: ReactionSoundForDisplay.ID?) {
-        guard let selectedID = selectedID,
-              let index = reactions.firstIndex(where: { $0.id == selectedID }),
-              index > 0 else { return }
-        reactions.swapAt(index, index - 1)
-        updatePositions()
-    }
-
-    private func moveDown(selectedID: ReactionSoundForDisplay.ID?) {
-        guard let selectedID = selectedID,
-              let index = reactions.firstIndex(where: { $0.id == selectedID }),
-              index < reactions.count - 1 else { return }
-        reactions.swapAt(index, index + 1)
-        updatePositions()
-    }
-
-    private func updatePositions() {
-        for (index, _) in reactions.enumerated() {
-            reactions[index].position = index + 1
         }
     }
 }

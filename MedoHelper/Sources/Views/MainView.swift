@@ -106,7 +106,7 @@ struct MainView: View {
             do {
                 let url = URL(string: "http://170.187.145.233:8080/api/v2/current-test-version/")!
                 
-                let statusCode: Int = try await NetworkRabbit.getStatusCode(from: url)
+                let statusCode: Int = try await APIClient().getStatusCode(from: url)
                 
                 if (200...299).contains(statusCode) {
                     self.testVersionDotColor = .green

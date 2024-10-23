@@ -199,7 +199,7 @@ struct EditSoundOnServerView: View {
             let content = MedoContent(sound: sound, authorId: authorId, duration: duration)
             print(content)
             do {
-                let response: CreateContentResponse? = try await NetworkRabbit.post(data: content, to: url)
+                let response: CreateContentResponse? = try await APIClient().post(data: content, to: url)
                 
                 print(response as Any)
                 
@@ -281,7 +281,7 @@ struct EditSoundOnServerView: View {
             let content = MedoContent(sound: sound, authorId: authorId, duration: sound.duration)
             print(content)
             do {
-                let response = try await NetworkRabbit.put(in: url, data: content)
+                let response = try await APIClient().put(in: url, data: content)
                 
                 print(response as Any)
                 
@@ -331,7 +331,7 @@ struct EditSoundOnServerView: View {
         Task {
             let url = URL(string: serverPath + "v3/all-authors")!
             do {
-                authors = try await NetworkRabbit.get(from: url)
+                authors = try await APIClient().get(from: url)
                 authors.sort(by: { $0.name.preparedForComparison() < $1.name.preparedForComparison() })
                 
                 if !sound.authorId.isEmpty {
@@ -366,7 +366,7 @@ struct EditSoundOnServerView: View {
             let url = URL(string: serverPath + "v3/change-update-visibility/\(updateId)/\(newValue == true ? "1" : "0")/\(assetOperationPassword)")!
 
             do {
-                let response = try await NetworkRabbit.put(in: url, data: Optional<String>.none)
+                let response = try await APIClient().put(in: url, data: Optional<String>.none)
 
                 print(response as Any)
 

@@ -196,7 +196,7 @@ struct ReplaceSoundFileOnServerView: View {
     
     private func createFileUpdatedUpdateEvent() async throws {
         let url = URL(string: serverPath + "v3/update-content-file/sound/\(soundId)/\(assetOperationPassword)")!
-        _ = try await NetworkRabbit.post(data: nil as String?, to: url)
+        _ = try await APIClient().post(data: nil as String?, to: url)
     }
     
     private func createDurationChangedUpdateEvent() async throws {
@@ -208,7 +208,7 @@ struct ReplaceSoundFileOnServerView: View {
         guard let sound else { throw ReplaceSoundFileOnServerViewError.soundObjectNotAvailable }
 
         let content = MedoContent(sound: sound, authorId: sound.authorId, duration: newDuration)
-        let _: Bool = try await NetworkRabbit.put(in: url, data: content)
+        let _: Bool = try await APIClient().put(in: url, data: content)
     }
     
     private func renameFile(

@@ -188,7 +188,7 @@ struct EditAuthorOnServerView: View {
             }
             dump(author)
             do {
-                let response = try await NetworkRabbit.post(data: author, to: url)
+                let response = try await APIClient().post(data: author, to: url)
                 
                 print(response as Any)
                 
@@ -221,7 +221,7 @@ struct EditAuthorOnServerView: View {
             )
 
             do {
-                let response = try await NetworkRabbit.put(in: url, data: newAuthor)
+                let response = try await APIClient().put(in: url, data: newAuthor)
 
                 print(response as Any)
 

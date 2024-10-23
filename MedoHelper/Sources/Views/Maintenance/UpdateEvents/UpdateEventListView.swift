@@ -28,7 +28,7 @@ struct UpdateEventListView: View {
         Task {
             do {
                 let url = URL(string: serverPath + "v3/update-events/all")!
-                var fetchedUpdates: [UpdateEvent] = try await NetworkRabbit.getArray(from: url)
+                var fetchedUpdates: [UpdateEvent] = try await APIClient().getArray(from: url)
                 fetchedUpdates.sort(by: { $0.dateTime > $1.dateTime })
                 self.updates = fetchedUpdates
             } catch {

@@ -100,7 +100,7 @@ struct EditMusicGenreOnServerView: View {
             dump(genre)
 
             do {
-                let response = try await NetworkRabbit.post(data: genre, to: url)
+                let response = try await APIClient().post(data: genre, to: url)
 
                 print(response as Any)
 

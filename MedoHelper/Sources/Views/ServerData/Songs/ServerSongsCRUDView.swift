@@ -160,7 +160,7 @@ struct ServerSongsCRUDView: View {
             do {
                 let url = URL(string: serverPath + "v3/all-songs")!
                 
-                var fetchedItems: [Song] = try await NetworkRabbit.getArray(from: url)
+                var fetchedItems: [Song] = try await APIClient().getArray(from: url)
                 
                 fetchedItems.sort(by: { $0.dateAdded ?? Date() > $1.dateAdded ?? Date() })
                 
