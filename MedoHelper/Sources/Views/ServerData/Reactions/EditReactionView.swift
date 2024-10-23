@@ -9,9 +9,9 @@ import SwiftUI
 
 struct EditReactionView: View {
 
-    @Binding var isBeingShown: Bool
+    // MARK: - State Variables
 
-    let onChangeAction: () -> Void
+    @State private var reaction: ReactionDTO
 
     @State private var editableReactionTitle: String = ""
     @State private var editableImageUrl: String = ""
@@ -22,7 +22,6 @@ struct EditReactionView: View {
 
     @State private var showAddSheet: Bool = false
 
-    @State private var originalReaction: ReactionDTO?
     @State private var didChangeSoundOrder: Bool = false
 
     // Alert
@@ -37,46 +36,42 @@ struct EditReactionView: View {
     @State private var totalAmount = 2.0
     @State private var modalMessage = ""
 
+    // MARK: - Private Variables
+
+    private let isEditing: Bool
+    private let saveAction: (ReactionDTO) -> Void
+    private let originalReaction: ReactionDTO
+
     // MARK: - Computed Properties
 
-    private var isEditing: Bool {
-        return helper.reaction != nil
-    }
-
-    private var reactionTitle: String {
-        guard let reaction = helper.reaction else { return "" }
-        return reaction.title
-    }
-
-    private var reactionImageUrl: String {
-        guard let reaction = helper.reaction else { return "" }
-        return reaction.image
-    }
-
-    private var idText: String {
-        guard let reaction = helper.reaction else { return "" }
-        return "ID: \(reaction.id)"
-    }
-
     private var didChange: Bool {
-        guard let originalReac = helper.reaction else { return false }
-
-        let titleOrImageChanged = editableReactionTitle != originalReac.title || editableImageUrl != originalReac.image
-        let countChanged = reactionSounds.count != originalReac.sounds?.count
+        let titleOrImageChanged = editableReactionTitle != originalReaction.title || editableImageUrl != originalReaction.image
+        let countChanged = reactionSounds.count != originalReaction.sounds?.count
 
         return titleOrImageChanged || countChanged || didChangeSoundOrder
     }
 
     // MARK: - Environment
 
-    @EnvironmentObject var helper: EditReactionHelper
+    @Environment(\.dismiss) var dismiss
+
+    // MARK: - Initializer
+
+    init(
+        reaction: ReactionDTO,
+        saveAction: @escaping (ReactionDTO) -> Void
+    ) {
+        self.isEditing = reaction.title != ""
+        self.reaction = reaction
+        self.saveAction = saveAction
+    }
 
     // MARK: - View Body
 
     var body: some View {
         VStack(spacing: 30) {
             HStack {
-                Text(isEditing ? "Editando Reação \"\(reactionTitle)\"" : "Criando Nova Reação")
+                Text(isEditing ? "Editando Reação \"\(reaction.title)\"" : "Criando Nova Reação")
                     .font(.title)
                     .bold()
 
@@ -84,15 +79,15 @@ struct EditReactionView: View {
             }
 
             HStack {
-                Text(idText)
+                Text(reaction.id)
                     .foregroundColor(isEditing ? .primary : .gray)
 
                 Spacer()
             }
 
-            TextField("Título", text: $editableReactionTitle)
+            TextField("Título", text: $reaction.title)
 
-            TextField("URL da Imagem", text: $editableImageUrl)
+            TextField("URL da Imagem", text: $reaction.image)
 
             VStack {
                 Table(reactionSounds, selection: $selectedItem) {
@@ -169,7 +164,7 @@ struct EditReactionView: View {
                 Spacer()
 
                 Button {
-                    isBeingShown = false
+                    dismiss()
                 } label: {
                     Text("Cancelar")
                         .padding(.horizontal)
@@ -193,10 +188,7 @@ struct EditReactionView: View {
         }
         .padding(.all, 26)
         .onAppear {
-            originalReaction = helper.reaction
-            editableReactionTitle = reactionTitle
-            editableImageUrl = reactionImageUrl
-            populateSoundsWithInfo()
+            loadSoundList()
         }
         .alert(isPresented: $showingAlert) {
             Alert(
@@ -209,7 +201,7 @@ struct EditReactionView: View {
 
     // MARK: - Functions
 
-    private func populateSoundsWithInfo() {
+    private func loadSoundList() {
         Task {
             //totalAmount = Double(reactions.count)
             //showSendProgress = true
@@ -217,8 +209,7 @@ struct EditReactionView: View {
             //progressAmount = 0
 
             do {
-                guard helper.reaction != nil else { return }
-                guard let reactSounds = helper.reaction?.sounds else { return }
+                guard let reactSounds = reaction.sounds else { return }
 
                 print("Reactions count: \(reactSounds.count)")
 
@@ -270,17 +261,12 @@ struct EditReactionView: View {
                 progressAmount = 0
             }
 
-            guard let oldReaction = helper.reaction else {
-                showAlert("Incapaz de Obter ID", "Verifique se uma Reação válida foi selecionada.")
-                return
-            }
-
             print("UPDATE REACTION - Set .now as lastUpdate on Reaction")
             let newReaction = ReactionDTO(
-                id: oldReaction.id,
+                id: reaction.id,
                 title: editableReactionTitle,
-                position: originalReaction?.position ?? 0,
-                image: reactionImageUrl,
+                position: originalReaction.position,
+                image: reaction.image,
                 lastUpdate: Date.now.toISO8601String()
             )
 
@@ -310,7 +296,7 @@ struct EditReactionView: View {
 
             print("UPDATE REACTION - Add new sounds to Reaction")
             let soundsAddUrl = URL(string: serverPath + "v4/add-sounds-to-reaction/\(reactionsPassword)")!
-            let newSounds = reactionSounds.asServerCompatibleType(reactionId: oldReaction.id)
+            let newSounds = reactionSounds.asServerCompatibleType(reactionId: reaction.id)
             guard let _ = try await NetworkRabbit.post(data: newSounds, to: soundsAddUrl) else {
                 showAlert("Erro ao Inserir Novos Sons na Reação", "POST")
                 return
@@ -322,8 +308,8 @@ struct EditReactionView: View {
 
             DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(600)) {
                 showSendProgress = false
-                isBeingShown = false
-                onChangeAction()
+                saveAction(reaction)
+                dismiss()
             }
         }
     }
@@ -357,9 +343,11 @@ struct EditReactionView: View {
     }
 }
 
+// MARK: - Preview
+
 #Preview {
     EditReactionView(
-        isBeingShown: .constant(true),
-        onChangeAction: { }
+        reaction: .init(position: 1, title: "Exemplo"),
+        saveAction: { _ in }
     )
 }
