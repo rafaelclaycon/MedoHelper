@@ -14,6 +14,8 @@
 		D90449612BB4E9140023088B /* Color+.swift in Sources */ = {isa = PBXBuildFile; fileRef = D90449602BB4E9140023088B /* Color+.swift */; };
 		D90998CD2AA448800059CAE8 /* EditMusicGenreOnServerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D90998CC2AA448800059CAE8 /* EditMusicGenreOnServerView.swift */; };
 		D91298A42CC986C5003CC5E5 /* ReactionsCRUDView+ViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D91298A32CC986C5003CC5E5 /* ReactionsCRUDView+ViewModel.swift */; };
+		D91298AA2CCB3E1B003CC5E5 /* ReactionRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = D91298A92CCB3E1B003CC5E5 /* ReactionRepository.swift */; };
+		D91298AC2CCB49EC003CC5E5 /* ReactionRepositoryMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = D91298AB2CCB49EC003CC5E5 /* ReactionRepositoryMock.swift */; };
 		D91338A12A87F43D00C0502A /* CreateContentResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = D91338A02A87F43D00C0502A /* CreateContentResponse.swift */; };
 		D914C7212A0986AF0011EC5B /* Int+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = D914C7202A0986AF0011EC5B /* Int+Extensions.swift */; };
 		D914C7232A09AD6D0011EC5B /* MusicGenre.swift in Sources */ = {isa = PBXBuildFile; fileRef = D914C7222A09AD6D0011EC5B /* MusicGenre.swift */; };
@@ -21,7 +23,7 @@
 		D92693FA2A015048007872D9 /* MoveAuthorsToServerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D92693F92A015048007872D9 /* MoveAuthorsToServerView.swift */; };
 		D92693FC2A015608007872D9 /* author_data.json in Resources */ = {isa = PBXBuildFile; fileRef = D92693FB2A015608007872D9 /* author_data.json */; };
 		D92693FE2A015665007872D9 /* Bundle+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = D92693FD2A015665007872D9 /* Bundle+Extensions.swift */; };
-		D92694012A015C7E007872D9 /* NetworkRabbit.swift in Sources */ = {isa = PBXBuildFile; fileRef = D92694002A015C7E007872D9 /* NetworkRabbit.swift */; };
+		D92694012A015C7E007872D9 /* APIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = D92694002A015C7E007872D9 /* APIClient.swift */; };
 		D92694032A01A7F9007872D9 /* String+.swift in Sources */ = {isa = PBXBuildFile; fileRef = D92694022A01A7F9007872D9 /* String+.swift */; };
 		D92828712AA515AC009E5D37 /* EditSongOnServerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D92828702AA515AC009E5D37 /* EditSongOnServerView.swift */; };
 		D9310C292A0BDDDF006A3058 /* CreateAuthorAndSoundView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9310C282A0BDDDF006A3058 /* CreateAuthorAndSoundView.swift */; };
@@ -93,6 +95,9 @@
 		D90449602BB4E9140023088B /* Color+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Color+.swift"; sourceTree = "<group>"; };
 		D90998CC2AA448800059CAE8 /* EditMusicGenreOnServerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditMusicGenreOnServerView.swift; sourceTree = "<group>"; };
 		D91298A32CC986C5003CC5E5 /* ReactionsCRUDView+ViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ReactionsCRUDView+ViewModel.swift"; sourceTree = "<group>"; };
+		D91298A82CCB3B71003CC5E5 /* MedoHelper.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; name = MedoHelper.xctestplan; path = MedoHelperTests/MedoHelper.xctestplan; sourceTree = "<group>"; };
+		D91298A92CCB3E1B003CC5E5 /* ReactionRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReactionRepository.swift; sourceTree = "<group>"; };
+		D91298AB2CCB49EC003CC5E5 /* ReactionRepositoryMock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReactionRepositoryMock.swift; sourceTree = "<group>"; };
 		D91338A02A87F43D00C0502A /* CreateContentResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateContentResponse.swift; sourceTree = "<group>"; };
 		D914C7202A0986AF0011EC5B /* Int+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Int+Extensions.swift"; sourceTree = "<group>"; };
 		D914C7222A09AD6D0011EC5B /* MusicGenre.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MusicGenre.swift; sourceTree = "<group>"; };
@@ -100,7 +105,7 @@
 		D92693F92A015048007872D9 /* MoveAuthorsToServerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoveAuthorsToServerView.swift; sourceTree = "<group>"; };
 		D92693FB2A015608007872D9 /* author_data.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = author_data.json; sourceTree = "<group>"; };
 		D92693FD2A015665007872D9 /* Bundle+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Bundle+Extensions.swift"; sourceTree = "<group>"; };
-		D92694002A015C7E007872D9 /* NetworkRabbit.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkRabbit.swift; sourceTree = "<group>"; };
+		D92694002A015C7E007872D9 /* APIClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIClient.swift; sourceTree = "<group>"; };
 		D92694022A01A7F9007872D9 /* String+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+.swift"; sourceTree = "<group>"; };
 		D92828702AA515AC009E5D37 /* EditSongOnServerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditSongOnServerView.swift; sourceTree = "<group>"; };
 		D929E3D12AB499DE008D8B3C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
@@ -216,10 +221,19 @@
 			path = Reactions;
 			sourceTree = "<group>";
 		};
+		D91298A52CCB3750003CC5E5 /* Doubles */ = {
+			isa = PBXGroup;
+			children = (
+				D91298AB2CCB49EC003CC5E5 /* ReactionRepositoryMock.swift */,
+			);
+			path = Doubles;
+			sourceTree = "<group>";
+		};
 		D92693FF2A015C67007872D9 /* Networking */ = {
 			isa = PBXGroup;
 			children = (
-				D92694002A015C7E007872D9 /* NetworkRabbit.swift */,
+				D92694002A015C7E007872D9 /* APIClient.swift */,
+				D91298A92CCB3E1B003CC5E5 /* ReactionRepository.swift */,
 			);
 			path = Networking;
 			sourceTree = "<group>";
@@ -237,6 +251,7 @@
 		D94A4215283DC94B00A504BD = {
 			isa = PBXGroup;
 			children = (
+				D91298A82CCB3B71003CC5E5 /* MedoHelper.xctestplan */,
 				D94A4220283DC94B00A504BD /* MedoHelper */,
 				D94A4232283DC94D00A504BD /* MedoHelperTests */,
 				D94A421F283DC94B00A504BD /* Products */,
@@ -273,6 +288,7 @@
 		D94A4232283DC94D00A504BD /* MedoHelperTests */ = {
 			isa = PBXGroup;
 			children = (
+				D91298A52CCB3750003CC5E5 /* Doubles */,
 				D91298912CC98622003CC5E5 /* Sources */,
 			);
 			path = MedoHelperTests;
@@ -638,6 +654,7 @@
 				D9CA30282A05921200F1F23D /* ServerAuthorsCRUDView.swift in Sources */,
 				D982218E2A20E76A0076042D /* ReplaceSoundFileOnServerView.swift in Sources */,
 				D95FCB7129FF009500952868 /* MedoContent.swift in Sources */,
+				D91298AA2CCB3E1B003CC5E5 /* ReactionRepository.swift in Sources */,
 				D992E8242A17FF8700137469 /* EditAuthorOnServerView.swift in Sources */,
 				D95FCB6F29FEF75F00952868 /* EditSoundOnServerView.swift in Sources */,
 				D9B8784B28650F4E009CA7AD /* CSVParser.swift in Sources */,
@@ -655,7 +672,7 @@
 				D9B8784F2865324F009CA7AD /* RankItem.swift in Sources */,
 				D960F2282A1D27E7007D12D7 /* TestVersionView.swift in Sources */,
 				D92693FE2A015665007872D9 /* Bundle+Extensions.swift in Sources */,
-				D92694012A015C7E007872D9 /* NetworkRabbit.swift in Sources */,
+				D92694012A015C7E007872D9 /* APIClient.swift in Sources */,
 				D94A4224283DC94B00A504BD /* MainView.swift in Sources */,
 				D9FF96C02BF0E19F00803572 /* ReactionSound.swift in Sources */,
 				D9B87853286540E5009CA7AD /* Sound.swift in Sources */,
@@ -686,6 +703,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D91298AC2CCB49EC003CC5E5 /* ReactionRepositoryMock.swift in Sources */,
 				D94A4234283DC94D00A504BD /* ReactionsCRUDViewModelTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

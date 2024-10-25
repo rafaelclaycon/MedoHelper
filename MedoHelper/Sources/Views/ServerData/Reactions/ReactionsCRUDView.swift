@@ -9,7 +9,7 @@ import SwiftUI
 
 struct ReactionsCRUDView: View {
 
-    @StateObject private var viewModel = ViewModel(apiClient: APIClient())
+    @StateObject private var viewModel = ViewModel(reactionRepository: ReactionRepository())
 
     // MARK: - Environment
 
@@ -66,30 +66,10 @@ struct ReactionsCRUDView: View {
                         }
                     }
 
-                    //                .alert(isPresented: $showAlert) {
-                    //                    switch alertType {
-                    //                    case .singleOptionInformative:
-                    //                        return Alert(
-                    //                            title: Text("Som Removido Com Sucesso"),
-                    //                            message: Text("O som \"\(selectedSoundTitle)\" foi marcado como removido no servidor e a mudança será propagada para todos os clientes na próxima sincronização."),
-                    //                            dismissButton: .cancel(Text("OK")) {
-                    //                                fetchSounds()
-                    //                            }
-                    //                        )
-                    //
-                    //                    case .twoOptionsOneDelete:
-                    //                        return Alert(title: Text("Remover \"\(selectedSoundTitle)\""), message: Text("Tem certeza de que deseja remover o som \"\(selectedSoundTitle)\"? A mudança será sincronizada com o servidor e propagada para todos os clientes na próxima sincronização."), primaryButton: .destructive(Text("Remover"), action: {
-                    //                            guard let selectedItem else { return }
-                    //                            removeSound(withId: selectedItem)
-                    //                        }), secondaryButton: .cancel(Text("Cancelar")))
-                    //
-                    //                    default:
-                    //                        return Alert(title: Text("Houve um Problema Ao Tentar Marcar o Som como Removido"), message: Text(alertErrorMessage), dismissButton: .cancel(Text("OK")))
-                    //                    }
-                    //                }
-
                     Button("Importar de Arquivo JSON") {
-                        viewModel.onImportAndSendPreExistingReactionsSelected()
+                        Task {
+                            await viewModel.onImportAndSendPreExistingReactionsSelected()
+                        }
                     }
 
 //                    Button("Importar das Pastas") {
@@ -98,21 +78,6 @@ struct ReactionsCRUDView: View {
 //                    .disabled(!isInEditMode)
 
                     Spacer()
-
-                    //                Button("Copiar títulos") {
-                    //                    copyTitlesToClipboard()
-                    //                }
-
-                    //                Button("Enviar Sons Já no App") {
-                    //                    showMoveDataSheet()
-                    //                }
-                    //                .sheet(isPresented: $showAddAlreadyOnAppSheet) {
-                    //                    MoveDataToServerView(isBeingShown: $showAddAlreadyOnAppSheet,
-                    //                                         data: fixedData!,
-                    //                                         chunkSize: 10,
-                    //                                         endpointEnding: "v3/import-sounds/\(assetOperationPassword)")
-                    //                        .frame(minWidth: 800, minHeight: 500)
-                    //                }
 
                     Button {
                         viewModel.onMoveReactionDownSelected()
@@ -131,21 +96,23 @@ struct ReactionsCRUDView: View {
                     Text("\(viewModel.reactions.count.formattedString) itens")
 
                     Button {
-                        viewModel.onSendDataSelected()
+                        Task {
+                            await viewModel.onSendDataSelected()
+                        }
                     } label: {
                         Text("Enviar Dados")
                             .padding(.horizontal)
                     }
                     .keyboardShortcut(.defaultAction)
-                    .disabled(viewModel.didChangeReactionOrder)
+                    .disabled(viewModel.isSendDataButtonDisabled)
                 }
                 .frame(height: 40)
             }
             .navigationTitle("Reações")
             .padding()
-            .sheet(isPresented: $viewModel.showSendProgress) {
+            .sheet(isPresented: $viewModel.isSending) {
                 SendingProgressView(
-                    isBeingShown: $viewModel.showSendProgress,
+                    isBeingShown: $viewModel.isSending,
                     message: $viewModel.modalMessage,
                     currentAmount: $viewModel.progressAmount,
                     totalAmount: $viewModel.totalAmount
@@ -158,17 +125,46 @@ struct ReactionsCRUDView: View {
                 )
                 .frame(minWidth: 1024, minHeight: 700)
             }
+            .alert(isPresented: $viewModel.showAlert) {
+                switch viewModel.alertType {
+                case .twoOptionsOneDelete:
+                    return Alert(
+                        title: Text("Deseja Remover Reação '\(viewModel.selectedReactionName)'?"),
+                        message: Text("Tem certeza de que deseja remover essa Reação?"),
+                        primaryButton: .cancel(Text("Cancelar")),
+                        secondaryButton: .default(
+                            Text("Remover"),
+                            action: {
+                                Task {
+                                    await viewModel.onConfirmRemoveReactionSelected()
+                                }
+                            }
+                        )
+                    )
+
+                default:
+                    return Alert(
+                        title: Text(viewModel.alertTitle),
+                        message: Text(viewModel.alertMessage),
+                        dismissButton: .cancel(Text("OK"))
+                    )
+                }
+            }
             .onAppear {
-                viewModel.onViewAppear()
+                Task {
+                    await viewModel.onViewAppear()
+                }
             }
         }
         .overlay {
-            if viewModel.showLoadingView {
+            if viewModel.isLoading {
                 LoadingView()
             }
         }
     }
 }
+
+// MARK: - Preview
 
 #Preview {
     ReactionsCRUDView()

@@ -17,14 +17,14 @@ extension ReactionsCRUDView {
         @Published var searchText = ""
         @Published var selectedItem: ReactionDTO.ID?
         @Published var reaction: ReactionDTO? = nil
-        @Published var showLoadingView: Bool = false
+        @Published var isLoading: Bool = false
 
         @Published var reactionForEditing: ReactionDTO?
 
         @Published var didChangeReactionOrder: Bool = false
 
         // Progress View
-        @Published var showSendProgress = false
+        @Published var isSending = false
         @Published var progressAmount = 0.0
         @Published var totalAmount = 2.0
         @Published var modalMessage = ""
@@ -32,11 +32,12 @@ extension ReactionsCRUDView {
         // Alert
         @Published var showAlert = false
         @Published var alertType: AlertType = .singleOptionInformative
-        @Published var alertErrorMessage: String = ""
+        @Published var alertTitle: String = ""
+        @Published var alertMessage: String = ""
 
         // MARK: - Stored Properties
 
-        private let apiClient: APIClientProtocol
+        private let reactionRepository: ReactionRepositoryProtocol
 
         // MARK: - Computed Properties
 
@@ -50,12 +51,24 @@ extension ReactionsCRUDView {
             }
         }
 
+        var isSendDataButtonDisabled: Bool {
+            reactions.isEmpty || !didChangeReactionOrder
+        }
+
+        var selectedReactionName: String {
+            guard
+                let selectedItem,
+                let reaction = reaction(withId: selectedItem)
+            else { return "" }
+            return reaction.title
+        }
+
         // MARK: - Initializer
 
         init(
-            apiClient: APIClientProtocol
+            reactionRepository: ReactionRepositoryProtocol
         ) {
-            self.apiClient = apiClient
+            self.reactionRepository = reactionRepository
         }
     }
 }
@@ -64,8 +77,8 @@ extension ReactionsCRUDView {
 
 extension ReactionsCRUDView.ViewModel {
 
-    func onViewAppear() {
-        loadReactions()
+    func onViewAppear() async {
+        await loadReactions()
     }
 
     func onCreateNewReactionSelected() {
@@ -77,8 +90,8 @@ extension ReactionsCRUDView.ViewModel {
         showAlert = true
     }
 
-    func onImportAndSendPreExistingReactionsSelected() {
-        importAndSendPreExistingReactions()
+    func onImportAndSendPreExistingReactionsSelected() async {
+        await importAndSendPreExistingReactions()
     }
 
     func onEditReactionSelected(reactionId: String) {
@@ -96,8 +109,8 @@ extension ReactionsCRUDView.ViewModel {
         moveDown(selectedID: selectedItem)
     }
 
-    func onSendDataSelected() {
-
+    func onSendDataSelected() async {
+        await sendAll()
     }
 
     func onSaveReactionSelected(reaction: ReactionDTO) {
@@ -107,46 +120,31 @@ extension ReactionsCRUDView.ViewModel {
             reactions.append(reaction)
         }
     }
+
+    func onConfirmRemoveReactionSelected() async {
+
+    }
 }
 
-// MARK: - Internal Functions
+// MARK: - Internal Operations
 
 extension ReactionsCRUDView.ViewModel {
 
-    private func loadReactions() {
-        Task {
-            await MainActor.run {
-                showLoadingView = true
-            }
+    private func loadReactions() async {
+        isLoading = true
 
-            do {
-                let url = URL(string: serverPath + "v4/reactions")!
-
-                let serverReactions: [AppReaction] = try await apiClient.getArray(from: url)
-                var dtos = serverReactions.map { ReactionDTO(appReaction: $0) }
-                dtos.sort(by: { $0.position < $1.position })
-
-                guard !dtos.isEmpty else {
-                    await MainActor.run {
-                        showLoadingView = false
-                    }
-                    return
-                }
-
-                for i in 0...(dtos.count - 1) {
-                    let reactionUrl = URL(string: serverPath + "v4/reaction/\(dtos[i].id)")!
-                    dtos[i].sounds = try await apiClient.getArray(from: reactionUrl)
-                }
-
-                self.reactions = dtos
-            } catch {
-                print(error)
-            }
-
-            await MainActor.run {
-                showLoadingView = false
-            }
+        do {
+            self.reactions = try await reactionRepository.allReactions()
+        } catch {
+            print(error)
+            isLoading = false
+            alertType = .singleOptionError
+            alertTitle = "Não Foi Possível Carregar as Reações"
+            alertMessage = error.localizedDescription
+            showAlert = true
         }
+
+        isLoading = false
     }
 
     private func reaction(withId id: String) -> ReactionDTO? {
@@ -158,7 +156,7 @@ extension ReactionsCRUDView.ViewModel {
         return nil
     }
 
-    private func importAndSendPreExistingReactions() {
+    private func importAndSendPreExistingReactions() async {
         guard reactions.isEmpty else {
             return print("TEM CERTEZA QUE QUER FAZER ISSO?")
         }
@@ -175,65 +173,51 @@ extension ReactionsCRUDView.ViewModel {
             }
         }
 
-        sendAll()
+        await onSendDataSelected()
     }
 
-    private func sendAll() {
-        Task {
-            totalAmount = Double(reactions.count)
-            showSendProgress = true
-            modalMessage = "Enviando Dados..."
-            progressAmount = 0
+    private func sendAll() async {
+        totalAmount = Double(reactions.count)
+        isSending = true
+        modalMessage = "Enviando Dados..."
+        progressAmount = 0
 
-            do {
-                let reactionsUrl = URL(string: serverPath + "v4/delete-all-reactions/\(reactionsPassword)")!
-                let soundsUrl = URL(string: serverPath + "v4/delete-all-reaction-sounds/\(reactionsPassword)")!
-                print(reactionsUrl.absoluteString)
-                print(soundsUrl.absoluteString)
-                guard try await apiClient.delete(in: reactionsUrl) else {
-                    print("Não foi possível apagar as Reações.")
-                    return
-                }
-                guard try await apiClient.delete(in: soundsUrl) else {
-                    print("Não foi possível apagar os sons das Reações.")
-                    return
-                }
+        do {
+            try await reactionRepository.removeAllReactions()
 
-                print("Reactions count: \(reactions.count)")
-                for reaction in reactions {
-                    try await send(reaction: AppReaction(dto: reaction))
+            print("Reactions count: \(reactions.count)")
+            try await reactionRepository.save(
+                reactions: reactions,
+                onItemDidSend: { progressAmount += 1 }
+            )
 
-                    if let sounds = reaction.sounds {
-                        let dtos = sounds.map { ReactionSoundDTO(reactionSound: $0, reactionId: reaction.id) }
-                        try await send(reactionSounds: dtos)
-                    }
-
-                    progressAmount += 1
-                }
-
-                DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(600)) {
-                    self.showSendProgress = false
-                }
-            } catch {
-                print(error)
-//                alertType = .singleOptionInformative
-//                alertTitle = "Falha ao Criar o Som"
-//                alertMessage = error.localizedDescription
-                showSendProgress = false
-                // return showingAlert = true
-            }
+            isSending = false
+            didChangeReactionOrder = false
+        } catch ReactionRepositoryError.errorDeletingReactions {
+            afterSendingError(title: "Erro ao Tentar Remover as Reações")
+        } catch ReactionRepositoryError.errorDeletingReactionSounds {
+            afterSendingError(title: "Erro ao Tentar Remover os Sons das Reações")
+        } catch {
+            print(error)
+            afterSendingError(
+                title: "Erro Desconhecido ao Tentar Enviar Reações",
+                message: error.localizedDescription
+            )
         }
     }
 
-    private func send(reaction: AppReaction) async throws {
-        let url = URL(string: serverPath + "v4/create-reaction/\(reactionsPassword)")!
-        let _ = try await apiClient.post(data: reaction, to: url)
+    private func afterSendingError(title: String, message: String = "") {
+        isSending = false
+        alertType = .singleOptionError
+        alertTitle = title
+        alertMessage = message
+        showAlert = true
     }
+}
 
-    private func send(reactionSounds: [ReactionSoundDTO]) async throws {
-        let url = URL(string: serverPath + "v4/add-sounds-to-reaction/\(reactionsPassword)")!
-        let _ = try await apiClient.post(data: reactionSounds, to: url)
-    }
+// MARK: - List Item Moving
+
+extension ReactionsCRUDView.ViewModel {
 
     private func moveUp(selectedID: ReactionSoundForDisplay.ID?) {
         guard
