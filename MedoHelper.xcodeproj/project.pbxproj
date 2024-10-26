@@ -16,6 +16,7 @@
 		D91298A42CC986C5003CC5E5 /* ReactionsCRUDView+ViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D91298A32CC986C5003CC5E5 /* ReactionsCRUDView+ViewModel.swift */; };
 		D91298AA2CCB3E1B003CC5E5 /* ReactionRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = D91298A92CCB3E1B003CC5E5 /* ReactionRepository.swift */; };
 		D91298AC2CCB49EC003CC5E5 /* ReactionRepositoryMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = D91298AB2CCB49EC003CC5E5 /* ReactionRepositoryMock.swift */; };
+		D91298AE2CCC6728003CC5E5 /* EditReactionView+ViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D91298AD2CCC6728003CC5E5 /* EditReactionView+ViewModel.swift */; };
 		D91338A12A87F43D00C0502A /* CreateContentResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = D91338A02A87F43D00C0502A /* CreateContentResponse.swift */; };
 		D914C7212A0986AF0011EC5B /* Int+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = D914C7202A0986AF0011EC5B /* Int+Extensions.swift */; };
 		D914C7232A09AD6D0011EC5B /* MusicGenre.swift in Sources */ = {isa = PBXBuildFile; fileRef = D914C7222A09AD6D0011EC5B /* MusicGenre.swift */; };
@@ -98,6 +99,7 @@
 		D91298A82CCB3B71003CC5E5 /* MedoHelper.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; name = MedoHelper.xctestplan; path = MedoHelperTests/MedoHelper.xctestplan; sourceTree = "<group>"; };
 		D91298A92CCB3E1B003CC5E5 /* ReactionRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReactionRepository.swift; sourceTree = "<group>"; };
 		D91298AB2CCB49EC003CC5E5 /* ReactionRepositoryMock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReactionRepositoryMock.swift; sourceTree = "<group>"; };
+		D91298AD2CCC6728003CC5E5 /* EditReactionView+ViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "EditReactionView+ViewModel.swift"; sourceTree = "<group>"; };
 		D91338A02A87F43D00C0502A /* CreateContentResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateContentResponse.swift; sourceTree = "<group>"; };
 		D914C7202A0986AF0011EC5B /* Int+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Int+Extensions.swift"; sourceTree = "<group>"; };
 		D914C7222A09AD6D0011EC5B /* MusicGenre.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MusicGenre.swift; sourceTree = "<group>"; };
@@ -411,6 +413,7 @@
 				D99AEF2D2BE28FA100C4A8FA /* ReactionsCRUDView.swift */,
 				D91298A32CC986C5003CC5E5 /* ReactionsCRUDView+ViewModel.swift */,
 				D99AEF312BE294C900C4A8FA /* EditReactionView.swift */,
+				D91298AD2CCC6728003CC5E5 /* EditReactionView+ViewModel.swift */,
 				D99941F12C05553D00D16BCD /* SoundSearchView.swift */,
 			);
 			path = Reactions;
@@ -673,6 +676,7 @@
 				D960F2282A1D27E7007D12D7 /* TestVersionView.swift in Sources */,
 				D92693FE2A015665007872D9 /* Bundle+Extensions.swift in Sources */,
 				D92694012A015C7E007872D9 /* APIClient.swift in Sources */,
+				D91298AE2CCC6728003CC5E5 /* EditReactionView+ViewModel.swift in Sources */,
 				D94A4224283DC94B00A504BD /* MainView.swift in Sources */,
 				D9FF96C02BF0E19F00803572 /* ReactionSound.swift in Sources */,
 				D9B87853286540E5009CA7AD /* Sound.swift in Sources */,

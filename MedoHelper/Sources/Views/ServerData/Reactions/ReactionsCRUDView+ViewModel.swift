@@ -73,7 +73,7 @@ extension ReactionsCRUDView {
     }
 }
 
-// MARK: - User actions
+// MARK: - User Actions
 
 extension ReactionsCRUDView.ViewModel {
 
