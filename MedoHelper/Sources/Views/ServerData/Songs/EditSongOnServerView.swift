@@ -218,7 +218,7 @@ struct EditSongOnServerView: View {
                 
                 let documentsFolder = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
                 do {
-                    try renameFile(from: fileURL, with: "\(createdContentResponse.contentId).mp3", saveTo: documentsFolder)
+                    try FileHelper.renameFile(from: fileURL, with: "\(createdContentResponse.contentId).mp3", saveTo: documentsFolder)
                 } catch {
                     print(error)
                     alertType = .singleOptionInformative
@@ -286,7 +286,7 @@ struct EditSongOnServerView: View {
                     modalMessage = "Renomeando Arquivo..."
                     let documentsFolder = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
                     do {
-                        try renameFile(from: fileURL, with: "\(song.id).mp3", saveTo: documentsFolder)
+                        try FileHelper.renameFile(from: fileURL, with: "\(song.id).mp3", saveTo: documentsFolder)
                     } catch {
                         alertType = .singleOptionInformative
                         alertTitle = "Falha Ao Renomear Arquivo"
@@ -328,16 +328,6 @@ struct EditSongOnServerView: View {
                 print(error.localizedDescription)
             }
         }
-    }
-    
-    private func renameFile(from fileURL: URL, with filename: String, saveTo destinationURL: URL) throws {
-        let fileManager = FileManager.default
-        
-        if fileManager.fileExists(atPath: destinationURL.appending(path: filename).path(percentEncoded: false)) {
-            try fileManager.removeItem(at: destinationURL)
-        }
-        
-        try FileHelper.copyAndRenameFile(from: fileURL, to: destinationURL, with: filename)
     }
 
     private func setVisibility(ofUpdate updateId: String, to newValue: Bool) {

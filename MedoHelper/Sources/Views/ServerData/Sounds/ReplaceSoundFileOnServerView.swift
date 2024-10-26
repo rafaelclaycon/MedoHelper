@@ -141,7 +141,7 @@ struct ReplaceSoundFileOnServerView: View {
             
             let documentsFolder = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
             do {
-                try renameFile(from: fileURL, with: "\(soundId).mp3", saveTo: documentsFolder)
+                try FileHelper.renameFile(from: fileURL, with: "\(soundId).mp3", saveTo: documentsFolder)
             } catch {
                 print(error)
                 alertTitle = "Falha Ao Renomear Arquivo"
@@ -209,20 +209,6 @@ struct ReplaceSoundFileOnServerView: View {
 
         let content = MedoContent(sound: sound, authorId: sound.authorId, duration: newDuration)
         let _: Bool = try await APIClient().put(in: url, data: content)
-    }
-    
-    private func renameFile(
-        from fileURL: URL,
-        with filename: String,
-        saveTo destinationURL: URL
-    ) throws {
-        let fileManager = FileManager.default
-        
-        if fileManager.fileExists(atPath: destinationURL.appending(path: filename).path(percentEncoded: false)) {
-            try fileManager.removeItem(at: destinationURL)
-        }
-        
-        try FileHelper.copyAndRenameFile(from: fileURL, to: destinationURL, with: filename)
     }
 }
 
