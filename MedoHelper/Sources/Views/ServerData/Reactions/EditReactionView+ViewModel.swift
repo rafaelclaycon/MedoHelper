@@ -23,7 +23,7 @@ extension EditReactionView {
 
         @Published var showAddSheet: Bool = false
 
-        @Published var didChangeSoundOrder: Bool = false
+        @Published var didChangeSounds: Bool = false
 
         @Published var isLoading = false
         @Published var isSending = false
@@ -50,11 +50,11 @@ extension EditReactionView {
 
         // MARK: - Computed Properties
 
-        private var didChange: Bool {
+        var reactionDidChange: Bool {
             let titleOrImageChanged = editableReactionTitle != originalReaction.title || editableImageUrl != originalReaction.image
             let countChanged = reactionSounds.count != originalReaction.sounds?.count
 
-            return titleOrImageChanged || countChanged || didChangeSoundOrder
+            return titleOrImageChanged || countChanged || didChangeSounds
         }
 
         // MARK: - Initializer
@@ -102,12 +102,14 @@ extension EditReactionView.ViewModel {
         )
         reactionSounds.append(reactionSoundForDisplay)
         updatePositions()
+        didChangeSounds = true
     }
 
     public func onRemoveSoundSelected() {
         guard let selectedItem else { return }
         reactionSounds.removeAll(where: { $0.id == selectedItem })
         updatePositions()
+        didChangeSounds = true
     }
 
     public func onCreateOrUpdateSelected() async {
@@ -121,12 +123,12 @@ extension EditReactionView.ViewModel {
 
     public func onMoveSoundDownSelected() {
         moveDown(selectedID: selectedItem)
-        didChangeSoundOrder = true
+        didChangeSounds = true
     }
 
     public func onMoveSoundUpSelected() {
         moveUp(selectedID: selectedItem)
-        didChangeSoundOrder = true
+        didChangeSounds = true
     }
 }
 
@@ -176,7 +178,7 @@ extension EditReactionView.ViewModel {
             progressAmount = 2.0
             modalMessage = "Adicionando Sons Novos..."
 
-            let newSounds = reactionSounds.asServerCompatibleType(reactionId: reaction.id)
+            let newSounds = reactionSounds.serverCompatibleSounds(reactionId: reaction.id)
             try await reactionRepository.add(sounds: newSounds)
 
             progressAmount = 3.0

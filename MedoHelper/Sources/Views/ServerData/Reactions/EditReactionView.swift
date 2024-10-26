@@ -132,7 +132,7 @@ struct EditReactionView: View {
                         .padding(.horizontal)
                 }
                 .keyboardShortcut(.defaultAction)
-                .disabled(!viewModel.didChangeSoundOrder)
+                .disabled(!viewModel.reactionDidChange)
             }
         }
         .padding(.all, 26)

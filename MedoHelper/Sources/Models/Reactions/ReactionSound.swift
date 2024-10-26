@@ -134,7 +134,7 @@ extension Array where Element == ReactionSoundForDisplay {
         }
     }
 
-    func asServerCompatibleType(reactionId: String) -> [ServerReactionSoundForSending] {
+    func serverCompatibleSounds(reactionId: String) -> [ServerReactionSoundForSending] {
         return self.map { displayItem in
             ServerReactionSoundForSending(
                 soundId: displayItem.soundId,
