@@ -97,7 +97,7 @@ extension EditReactionView.ViewModel {
             soundId: newSound.id,
             title: newSound.title,
             authorName: newSound.authorName ?? "",
-            dateAdded: Date.now.toISO8601String(),
+            dateAdded: Date.now.iso8601String,
             position: reactionSounds.count + 1
         )
         reactionSounds.append(reactionSoundForDisplay)
@@ -164,7 +164,7 @@ extension EditReactionView.ViewModel {
             title: editableReactionTitle,
             position: originalReaction.position,
             image: reaction.image,
-            lastUpdate: Date.now.toISO8601String()
+            lastUpdate: Date.now.iso8601String
         )
 
         do {

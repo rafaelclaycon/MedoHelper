@@ -165,10 +165,10 @@ extension ReactionsCRUDView.ViewModel {
         reactions.sort(by: { $0.position < $1.position })
 
         for i in 0...(reactions.count-1) {
-            reactions[i].lastUpdate = Date.now.toISO8601String()
+            reactions[i].lastUpdate = Date.now.iso8601String
             if let reactionSounds = reactions[i].sounds, !reactionSounds.isEmpty {
                 for j in 0...(reactions[i].sounds!.count-1) {
-                    reactions[i].sounds![j].dateAdded = Date.now.toISO8601String()
+                    reactions[i].sounds![j].dateAdded = Date.now.iso8601String
                 }
             }
         }

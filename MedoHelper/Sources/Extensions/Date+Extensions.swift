@@ -13,7 +13,7 @@ extension Date {
 
 extension Date {
     
-    func toISO8601String() -> String {
+    var iso8601String: String {
         let formatter = ISO8601DateFormatter()
         formatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
         return formatter.string(from: self)
