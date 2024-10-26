@@ -49,6 +49,7 @@
 		D960F22A2A1D577A007D12D7 /* LoadingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D960F2292A1D577A007D12D7 /* LoadingView.swift */; };
 		D960F22C2A1D5D6D007D12D7 /* ServerSongsCRUDView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D960F22B2A1D5D6D007D12D7 /* ServerSongsCRUDView.swift */; };
 		D960F22E2A1D5DBA007D12D7 /* Song.swift in Sources */ = {isa = PBXBuildFile; fileRef = D960F22D2A1D5DBA007D12D7 /* Song.swift */; };
+		D972B7D12CCC7281005A2B83 /* ContentRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = D972B7D02CCC7281005A2B83 /* ContentRepository.swift */; };
 		D982218E2A20E76A0076042D /* ReplaceSoundFileOnServerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D982218D2A20E76A0076042D /* ReplaceSoundFileOnServerView.swift */; };
 		D98755072A9C366200B6E96A /* UpdateEventListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D98755062A9C366200B6E96A /* UpdateEventListView.swift */; };
 		D98755092A9C36F900B6E96A /* UpdateEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = D98755082A9C36F900B6E96A /* UpdateEvent.swift */; };
@@ -136,6 +137,7 @@
 		D960F2292A1D577A007D12D7 /* LoadingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadingView.swift; sourceTree = "<group>"; };
 		D960F22B2A1D5D6D007D12D7 /* ServerSongsCRUDView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerSongsCRUDView.swift; sourceTree = "<group>"; };
 		D960F22D2A1D5DBA007D12D7 /* Song.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Song.swift; sourceTree = "<group>"; };
+		D972B7D02CCC7281005A2B83 /* ContentRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentRepository.swift; sourceTree = "<group>"; };
 		D982218D2A20E76A0076042D /* ReplaceSoundFileOnServerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReplaceSoundFileOnServerView.swift; sourceTree = "<group>"; };
 		D98755062A9C366200B6E96A /* UpdateEventListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateEventListView.swift; sourceTree = "<group>"; };
 		D98755082A9C36F900B6E96A /* UpdateEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateEvent.swift; sourceTree = "<group>"; };
@@ -236,6 +238,7 @@
 			children = (
 				D92694002A015C7E007872D9 /* APIClient.swift */,
 				D91298A92CCB3E1B003CC5E5 /* ReactionRepository.swift */,
+				D972B7D02CCC7281005A2B83 /* ContentRepository.swift */,
 			);
 			path = Networking;
 			sourceTree = "<group>";
@@ -693,6 +696,7 @@
 				D9B878482864FA73009CA7AD /* ParseSoundRankingCSVView.swift in Sources */,
 				D9CA30202A0441A000F1F23D /* SendingProgressView.swift in Sources */,
 				D914C7252A09AD970011EC5B /* ContentType.swift in Sources */,
+				D972B7D12CCC7281005A2B83 /* ContentRepository.swift in Sources */,
 				D94A4222283DC94B00A504BD /* MedoHelperApp.swift in Sources */,
 				D987550B2A9C3EC800B6E96A /* UpdateEventRow.swift in Sources */,
 				D91298A42CC986C5003CC5E5 /* ReactionsCRUDView+ViewModel.swift in Sources */,

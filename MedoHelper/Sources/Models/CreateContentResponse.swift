@@ -8,6 +8,7 @@
 import Foundation
 
 struct CreateContentResponse: Decodable {
+
     let contentId: String
     let eventId: String
 }
