@@ -12,7 +12,7 @@ extension EditReactionView {
     @MainActor
     final class ViewModel: ObservableObject {
 
-        @Published var reaction: ReactionDTO
+        @Published var reaction: HelperReaction
 
         @Published var editableReactionTitle: String = ""
         @Published var editableImageUrl: String = ""
@@ -43,9 +43,9 @@ extension EditReactionView {
 
         public let isEditing: Bool
         private let reactionRepository: ReactionRepositoryProtocol
-        private let saveAction: (ReactionDTO) -> Void
+        private let saveAction: (HelperReaction) -> Void
         private let dismissSheet: () -> Void
-        private let originalReaction: ReactionDTO
+        private let originalReaction: HelperReaction
 
         // MARK: - Computed Properties
 
@@ -59,9 +59,9 @@ extension EditReactionView {
         // MARK: - Initializer
 
         init(
-            reaction: ReactionDTO,
+            reaction: HelperReaction,
             reactionRepository: ReactionRepositoryProtocol = ReactionRepository(),
-            saveAction: @escaping (ReactionDTO) -> Void,
+            saveAction: @escaping (HelperReaction) -> Void,
             dismissSheet: @escaping () -> Void
         ) {
             self.isEditing = reaction.title != ""
@@ -133,7 +133,7 @@ extension EditReactionView.ViewModel {
         modalMessage = "Atualizando Reação..."
         progressAmount = 0
 
-        let newReaction = ReactionDTO(
+        let newReaction = HelperReaction(
             id: reaction.id,
             title: editableReactionTitle,
             position: originalReaction.position,

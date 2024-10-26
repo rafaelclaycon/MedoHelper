@@ -12,24 +12,24 @@ protocol ReactionRepositoryProtocol {
     // Create
 
     func save(
-        reactions: [ReactionDTO],
+        reactions: [HelperReaction],
         onItemDidSend: () -> Void
     ) async throws
 
     /// Adds Reaction sounds.
     /// Reaction ID is set on each sound, so no need to pass here.
-    func add(sounds: [ReactionSoundDTO]) async throws
+    func add(sounds: [ServerReactionSoundForSending]) async throws
 
     // Read
 
-    func allReactions() async throws -> [ReactionDTO]
+    func allReactions() async throws -> [HelperReaction]
 
     /// Used to display Sound title and Author name on Reaction detail.
-    func reactionSoundsWithAllData(_ basicSounds: [ReactionSound]) async throws -> [ReactionSoundForDisplay]
+    func reactionSoundsWithAllData(_ basicSounds: [ServerReactionSound]) async throws -> [ReactionSoundForDisplay]
 
     // Update
 
-    func update(reaction: ReactionDTO) async throws
+    func update(reaction: HelperReaction) async throws
 
     // Delete
 
@@ -55,14 +55,14 @@ final class ReactionRepository: ReactionRepositoryProtocol {
 extension ReactionRepository {
 
     func save(
-        reactions: [ReactionDTO],
+        reactions: [HelperReaction],
         onItemDidSend: () -> Void
     ) async throws {
         for reaction in reactions {
-            try await send(reaction: AppReaction(dto: reaction))
+            try await send(reaction: ServerReaction(helperReaction: reaction))
 
             if let sounds = reaction.sounds {
-                let dtos = sounds.map { ReactionSoundDTO(reactionSound: $0, reactionId: reaction.id) }
+                let dtos = sounds.map { ServerReactionSoundForSending(reactionSound: $0, reactionId: reaction.id) }
                 try await send(reactionSounds: dtos)
             }
 
@@ -70,7 +70,7 @@ extension ReactionRepository {
         }
     }
 
-    func add(sounds: [ReactionSoundDTO]) async throws {
+    func add(sounds: [ServerReactionSoundForSending]) async throws {
         let url = URL(string: serverPath + "v4/add-sounds-to-reaction/\(reactionsPassword)")!
         let _ = try await apiClient.post(data: sounds, to: url)
     }
@@ -80,11 +80,11 @@ extension ReactionRepository {
 
 extension ReactionRepository {
 
-    func allReactions() async throws -> [ReactionDTO] {
+    func allReactions() async throws -> [HelperReaction] {
         let url = URL(string: serverPath + "v4/reactions")!
 
-        let serverReactions: [AppReaction] = try await apiClient.getArray(from: url)
-        var dtos = serverReactions.map { ReactionDTO(appReaction: $0) }
+        let serverReactions: [ServerReaction] = try await apiClient.getArray(from: url)
+        var dtos = serverReactions.map { HelperReaction(serverReaction: $0) }
         dtos.sort(by: { $0.position < $1.position })
 
         guard !dtos.isEmpty else { return [] }
@@ -97,7 +97,7 @@ extension ReactionRepository {
         return dtos
     }
 
-    func reactionSoundsWithAllData(_ basicSounds: [ReactionSound]) async throws -> [ReactionSoundForDisplay] {
+    func reactionSoundsWithAllData(_ basicSounds: [ServerReactionSound]) async throws -> [ReactionSoundForDisplay] {
         var sounds: [ReactionSoundForDisplay] = []
 
         for basicSound in basicSounds {
@@ -127,7 +127,7 @@ extension ReactionRepository {
 
 extension ReactionRepository {
 
-    func update(reaction: ReactionDTO) async throws {
+    func update(reaction: HelperReaction) async throws {
         let updateUrl = URL(string: serverPath + "v4/reaction/\(reactionsPassword)")!
         let _ = try await apiClient.put(in: updateUrl, data: reaction)
     }
@@ -158,12 +158,12 @@ extension ReactionRepository {
 
 extension ReactionRepository {
 
-    private func send(reaction: AppReaction) async throws {
+    private func send(reaction: ServerReaction) async throws {
         let url = URL(string: serverPath + "v4/create-reaction/\(reactionsPassword)")!
         let _ = try await apiClient.post(data: reaction, to: url)
     }
 
-    private func send(reactionSounds: [ReactionSoundDTO]) async throws {
+    private func send(reactionSounds: [ServerReactionSoundForSending]) async throws {
         let url = URL(string: serverPath + "v4/add-sounds-to-reaction/\(reactionsPassword)")!
         let _ = try await apiClient.post(data: reactionSounds, to: url)
     }

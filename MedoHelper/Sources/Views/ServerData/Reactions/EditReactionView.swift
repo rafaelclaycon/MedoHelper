@@ -14,8 +14,8 @@ struct EditReactionView: View {
     // MARK: - Initializer
 
     init(
-        reaction: ReactionDTO,
-        saveAction: @escaping (ReactionDTO) -> Void,
+        reaction: HelperReaction,
+        saveAction: @escaping (HelperReaction) -> Void,
         dismissSheet: @escaping () -> Void
     ) {
         self._viewModel = StateObject(

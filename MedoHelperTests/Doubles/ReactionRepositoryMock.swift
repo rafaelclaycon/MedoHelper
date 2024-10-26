@@ -10,13 +10,13 @@ import Foundation
 
 final class ReactionRepositoryMock: ReactionRepositoryProtocol {
 
-    var reactions = [ReactionDTO]()
+    var reactions = [HelperReaction]()
 
     var didCallAllReactions: Bool = false
     var didCallRemoveAllReactions: Bool = false
     var didCallSaveReactions: Bool = false
 
-    func allReactions() async throws -> [MedoHelper.ReactionDTO] {
+    func allReactions() async throws -> [MedoHelper.HelperReaction] {
         didCallAllReactions = true
         return reactions
     }
@@ -25,7 +25,7 @@ final class ReactionRepositoryMock: ReactionRepositoryProtocol {
         didCallRemoveAllReactions = true
     }
     
-    func save(reactions: [MedoHelper.ReactionDTO], onItemDidSend: () -> Void) async throws {
+    func save(reactions: [MedoHelper.HelperReaction], onItemDidSend: () -> Void) async throws {
         didCallSaveReactions = true
     }
 }

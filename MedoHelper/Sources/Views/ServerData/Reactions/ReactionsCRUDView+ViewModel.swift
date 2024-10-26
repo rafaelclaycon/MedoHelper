@@ -12,14 +12,14 @@ extension ReactionsCRUDView {
     @MainActor
     final class ViewModel: ObservableObject {
 
-        @Published var reactions: [ReactionDTO] = []
+        @Published var reactions: [HelperReaction] = []
 
         @Published var searchText = ""
-        @Published var selectedItem: ReactionDTO.ID?
-        @Published var reaction: ReactionDTO? = nil
+        @Published var selectedItem: HelperReaction.ID?
+        @Published var reaction: HelperReaction? = nil
         @Published var isLoading: Bool = false
 
-        @Published var reactionForEditing: ReactionDTO?
+        @Published var reactionForEditing: HelperReaction?
 
         @Published var didChangeReactionOrder: Bool = false
 
@@ -41,7 +41,7 @@ extension ReactionsCRUDView {
 
         // MARK: - Computed Properties
 
-        var searchResults: [ReactionDTO] {
+        var searchResults: [HelperReaction] {
             if searchText.isEmpty {
                 return reactions
             } else {
@@ -113,7 +113,7 @@ extension ReactionsCRUDView.ViewModel {
         await sendAll()
     }
 
-    func onSaveReactionSelected(reaction: ReactionDTO) {
+    func onSaveReactionSelected(reaction: HelperReaction) {
         if let index = reactions.firstIndex(where: { $0.id == reaction.id }) {
             reactions[index] = reaction
         } else {
@@ -147,7 +147,7 @@ extension ReactionsCRUDView.ViewModel {
         isLoading = false
     }
 
-    private func reaction(withId id: String) -> ReactionDTO? {
+    private func reaction(withId id: String) -> HelperReaction? {
         for reaction in reactions {
             if reaction.id == id {
                 return reaction
