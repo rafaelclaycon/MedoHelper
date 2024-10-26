@@ -19,7 +19,7 @@ extension Date {
         return formatter.string(from: self)
     }
 
-    internal func toScreenString() -> String {
+    internal var displayString: String {
         let dateFormatter = DateFormatter()
         dateFormatter.locale = Locale(identifier: "pt-BR")
         dateFormatter.dateFormat = "dd/MM/yyyy"

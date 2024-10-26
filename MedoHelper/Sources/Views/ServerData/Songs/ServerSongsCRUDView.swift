@@ -51,7 +51,7 @@ struct ServerSongsCRUDView: View {
                         .width(min: 50, max: 100)
                     
                     TableColumn("Adicionado em") { song in
-                        Text(song.dateAdded?.toScreenString() ?? "")
+                        Text(song.dateAdded?.displayString ?? "")
                     }
                     .width(min: 50, max: 100)
                     

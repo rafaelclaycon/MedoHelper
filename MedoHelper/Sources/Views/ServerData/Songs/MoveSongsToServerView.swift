@@ -45,7 +45,7 @@ struct MoveSongsToServerView: View {
                         TableColumn("ID", value: \.id)
                         TableColumn("Título", value: \.title)
                         TableColumn("Data de Criação") { sound in
-                            Text(sound.dateAdded?.toScreenString() ?? "")
+                            Text(sound.dateAdded?.displayString ?? "")
                                 .onTapGesture(count: 2) {
                                     print(sound.title)
                                 }

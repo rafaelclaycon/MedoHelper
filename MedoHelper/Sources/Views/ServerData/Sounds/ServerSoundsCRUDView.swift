@@ -55,7 +55,7 @@ struct ServerSoundsCRUDView: View {
                 Table(searchResults, selection: $selectedItem) {
                     TableColumn("Título", value: \.title)
                     TableColumn("Adicionado em") { sound in
-                        Text(sound.dateAdded?.toScreenString() ?? "")
+                        Text(sound.dateAdded?.displayString ?? "")
                     }
                     .width(min: 50, max: 100)
                     TableColumn("Duração") { sound in
