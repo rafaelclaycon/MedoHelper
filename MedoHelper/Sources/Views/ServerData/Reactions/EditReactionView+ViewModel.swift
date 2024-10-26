@@ -42,6 +42,7 @@ extension EditReactionView {
         // MARK: - Private Variables
 
         public let isEditing: Bool
+        private let reactionRepository: ReactionRepositoryProtocol
         private let saveAction: (ReactionDTO) -> Void
         private let dismissSheet: () -> Void
         private let originalReaction: ReactionDTO
@@ -59,11 +60,13 @@ extension EditReactionView {
 
         init(
             reaction: ReactionDTO,
+            reactionRepository: ReactionRepositoryProtocol = ReactionRepository(),
             saveAction: @escaping (ReactionDTO) -> Void,
             dismissSheet: @escaping () -> Void
         ) {
             self.isEditing = reaction.title != ""
             self.reaction = reaction
+            self.reactionRepository = reactionRepository
             self.saveAction = saveAction
             self.dismissSheet = dismissSheet
             self.originalReaction = reaction
@@ -108,49 +111,19 @@ extension EditReactionView.ViewModel {
 extension EditReactionView.ViewModel {
 
     private func loadSoundList() async {
-        //totalAmount = Double(reactions.count)
-        //showSendProgress = true
-        //modalMessage = "Enviando Dados..."
-        //progressAmount = 0
+        isLoading = true
 
         do {
             guard let reactSounds = reaction.sounds else { return }
+            print("Reaction sound count: \(reactSounds.count)")
 
-            print("Reactions count: \(reactSounds.count)")
+            self.reactionSounds = try await reactionRepository.reactionSoundsWithAllData(reactSounds)
 
-            var toBeSet: [ReactionSoundForDisplay] = []
-
-            for reactionSound in reactSounds {
-                let soundDetailUrl = URL(string: serverPath + "v3/sound/\(reactionSound.soundId)")!
-                let serverSound: SoundDTO = try await APIClient().get(from: soundDetailUrl)
-
-                let auhtorDetailUrl = URL(string: serverPath + "v3/author/\(serverSound.authorId)")!
-                let author: Author = try await APIClient().get(from: auhtorDetailUrl)
-
-                toBeSet.append(
-                    .init(
-                        id: reactionSound.id,
-                        soundId: reactionSound.soundId,
-                        title: serverSound.title,
-                        authorName: author.name,
-                        dateAdded: reactionSound.dateAdded,
-                        position: reactionSound.position
-                    )
-                )
-            }
-
-            self.reactionSounds = toBeSet
-
-//                DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(600)) {
-//                    showSendProgress = false
-//                }
+            isLoading = false
         } catch {
             print(error)
-//                alertType = .singleOptionInformative
-//                alertTitle = "Falha ao Criar o Som"
-//                alertMessage = error.localizedDescription
-            // showSendProgress = false
-            // return showingAlert = true
+            isLoading = false
+            showAlert("Erro Ao Carregar Sons", error.localizedDescription)
         }
     }
 
@@ -160,7 +133,6 @@ extension EditReactionView.ViewModel {
         modalMessage = "Atualizando Reação..."
         progressAmount = 0
 
-        print("UPDATE REACTION - Set .now as lastUpdate on Reaction")
         let newReaction = ReactionDTO(
             id: reaction.id,
             title: editableReactionTitle,
@@ -170,33 +142,18 @@ extension EditReactionView.ViewModel {
         )
 
         do {
-            print("UPDATE REACTION - Update Reaction data")
-            let updateUrl = URL(string: serverPath + "v4/reaction/\(reactionsPassword)")!
-            guard try await APIClient().put(in: updateUrl, data: newReaction) else {
-                showAlert("Erro ao Atualizar Reação", "PUT")
-                return
-            }
+            try await reactionRepository.update(reaction: newReaction)
 
             progressAmount = 1.0
             modalMessage = "Apagando Sons Antigos..."
 
-            print("UPDATE REACTION - Delete previous sounds of Reaction")
-            let soundsDeleteUrl = URL(string: serverPath + "v4/delete-reaction-sounds/\(newReaction.id)/\(reactionsPassword)")!
-            guard try await APIClient().delete(in: soundsDeleteUrl) else {
-                showAlert("Erro ao Apagar os Sons da Reação", "DELETE")
-                return
-            }
+            try await reactionRepository.removeAllSoundsOf(reactionId: reaction.id)
 
             progressAmount = 2.0
             modalMessage = "Adicionando Sons Novos..."
 
-            print("UPDATE REACTION - Add new sounds to Reaction")
-            let soundsAddUrl = URL(string: serverPath + "v4/add-sounds-to-reaction/\(reactionsPassword)")!
             let newSounds = reactionSounds.asServerCompatibleType(reactionId: reaction.id)
-            guard let _ = try await APIClient().post(data: newSounds, to: soundsAddUrl) else {
-                showAlert("Erro ao Inserir Novos Sons na Reação", "POST")
-                return
-            }
+            try await reactionRepository.add(sounds: newSounds)
 
             progressAmount = 3.0
 

@@ -71,6 +71,7 @@ struct ReactionsCRUDView: View {
                             await viewModel.onImportAndSendPreExistingReactionsSelected()
                         }
                     }
+                    .disabled(viewModel.reactions.count > 0)
 
 //                    Button("Importar das Pastas") {
 //                        print("")

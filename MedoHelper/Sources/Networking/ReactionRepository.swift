@@ -9,25 +9,76 @@ import Foundation
 
 protocol ReactionRepositoryProtocol {
 
-    func allReactions() async throws -> [ReactionDTO]
-
-    func removeAllReactions() async throws
+    // Create
 
     func save(
         reactions: [ReactionDTO],
         onItemDidSend: () -> Void
     ) async throws
+
+    /// Adds Reaction sounds.
+    /// Reaction ID is set on each sound, so no need to pass here.
+    func add(sounds: [ReactionSoundDTO]) async throws
+
+    // Read
+
+    func allReactions() async throws -> [ReactionDTO]
+
+    /// Used to display Sound title and Author name on Reaction detail.
+    func reactionSoundsWithAllData(_ basicSounds: [ReactionSound]) async throws -> [ReactionSoundForDisplay]
+
+    // Update
+
+    func update(reaction: ReactionDTO) async throws
+
+    // Delete
+
+    func removeAllReactions() async throws
+    func removeAllSoundsOf(reactionId: String) async throws
 }
 
 final class ReactionRepository: ReactionRepositoryProtocol {
 
     private let apiClient: APIClient
 
+    // MARK: - Initializer
+
     init(
         apiClient: APIClient = APIClient()
     ) {
         self.apiClient = apiClient
     }
+}
+
+// MARK: - Create
+
+extension ReactionRepository {
+
+    func save(
+        reactions: [ReactionDTO],
+        onItemDidSend: () -> Void
+    ) async throws {
+        for reaction in reactions {
+            try await send(reaction: AppReaction(dto: reaction))
+
+            if let sounds = reaction.sounds {
+                let dtos = sounds.map { ReactionSoundDTO(reactionSound: $0, reactionId: reaction.id) }
+                try await send(reactionSounds: dtos)
+            }
+
+            onItemDidSend()
+        }
+    }
+
+    func add(sounds: [ReactionSoundDTO]) async throws {
+        let url = URL(string: serverPath + "v4/add-sounds-to-reaction/\(reactionsPassword)")!
+        let _ = try await apiClient.post(data: sounds, to: url)
+    }
+}
+
+// MARK: - Read
+
+extension ReactionRepository {
 
     func allReactions() async throws -> [ReactionDTO] {
         let url = URL(string: serverPath + "v4/reactions")!
@@ -46,6 +97,46 @@ final class ReactionRepository: ReactionRepositoryProtocol {
         return dtos
     }
 
+    func reactionSoundsWithAllData(_ basicSounds: [ReactionSound]) async throws -> [ReactionSoundForDisplay] {
+        var sounds: [ReactionSoundForDisplay] = []
+
+        for basicSound in basicSounds {
+            let soundDetailUrl = URL(string: serverPath + "v3/sound/\(basicSound.soundId)")!
+            let serverSound: SoundDTO = try await apiClient.get(from: soundDetailUrl)
+
+            let auhtorDetailUrl = URL(string: serverPath + "v3/author/\(serverSound.authorId)")!
+            let author: Author = try await apiClient.get(from: auhtorDetailUrl)
+
+            sounds.append(
+                .init(
+                    id: basicSound.id,
+                    soundId: basicSound.soundId,
+                    title: serverSound.title,
+                    authorName: author.name,
+                    dateAdded: basicSound.dateAdded,
+                    position: basicSound.position
+                )
+            )
+        }
+
+        return sounds
+    }
+}
+
+// MARK: - Update
+
+extension ReactionRepository {
+
+    func update(reaction: ReactionDTO) async throws {
+        let updateUrl = URL(string: serverPath + "v4/reaction/\(reactionsPassword)")!
+        let _ = try await apiClient.put(in: updateUrl, data: reaction)
+    }
+}
+
+// MARK: - Delete
+
+extension ReactionRepository {
+
     func removeAllReactions() async throws {
         let reactionsUrl = URL(string: serverPath + "v4/delete-all-reactions/\(reactionsPassword)")!
         let soundsUrl = URL(string: serverPath + "v4/delete-all-reaction-sounds/\(reactionsPassword)")!
@@ -57,20 +148,9 @@ final class ReactionRepository: ReactionRepositoryProtocol {
         }
     }
 
-    func save(
-        reactions: [ReactionDTO],
-        onItemDidSend: () -> Void
-    ) async throws {
-        for reaction in reactions {
-            try await send(reaction: AppReaction(dto: reaction))
-
-            if let sounds = reaction.sounds {
-                let dtos = sounds.map { ReactionSoundDTO(reactionSound: $0, reactionId: reaction.id) }
-                try await send(reactionSounds: dtos)
-            }
-
-            onItemDidSend()
-        }
+    func removeAllSoundsOf(reactionId: String) async throws {
+        let url = URL(string: serverPath + "v4/delete-reaction-sounds/\(reactionId)/\(reactionsPassword)")!
+        let _ = try await apiClient.delete(in: url)
     }
 }
 
