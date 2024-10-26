@@ -7,6 +7,7 @@
 
 import Foundation
 
+/// For fetching Reaction Sounds.
 struct ServerReactionSound: Identifiable, Codable, Equatable {
 
     let id: String
@@ -50,7 +51,8 @@ struct ServerReactionSound: Identifiable, Codable, Equatable {
     }
 }
 
-/// Reaction Sounds as they exist on the server. Includes reactionId.
+/// Reaction Sounds as they exist on the server.
+/// Includes reactionId and excludes object id because that's how we guarantee new records are created on the server.
 struct ServerReactionSoundForSending: Codable {
 
     let soundId: String
@@ -81,7 +83,7 @@ struct ServerReactionSoundForSending: Codable {
     }
 }
 
-/// As the name says, useful for display inside the app since it has Sound title and Author name.
+/// Useful for display inside the app since it has Sound title and Author name.
 struct ReactionSoundForDisplay: Identifiable, Codable, Hashable {
 
     let id: String
