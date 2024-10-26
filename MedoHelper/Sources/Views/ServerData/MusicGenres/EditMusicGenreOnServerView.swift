@@ -86,7 +86,11 @@ struct EditMusicGenreOnServerView: View {
         .padding(.all, 26)
         .disabled(showSendProgress)
         .sheet(isPresented: $showSendProgress) {
-            SendingProgressView(isBeingShown: $showSendProgress, message: $modalMessage, currentAmount: $progressAmount, totalAmount: .constant(1))
+            SendingProgressView(
+                message: modalMessage,
+                currentAmount: progressAmount,
+                totalAmount: 1
+            )
         }
     }
 

@@ -69,28 +69,21 @@ struct EditReactionView: View {
                 HStack(spacing: 20) {
                     HStack(spacing: 10) {
                         Button {
-                            viewModel.showAddSheet = true
+                            viewModel.onAddSoundSelected()
                         } label: {
                             Image(systemName: "plus")
                         }
                         .sheet(isPresented: $viewModel.showAddSheet) {
-                            SoundSearchView(addAction: { sound in
-                                viewModel.reactionSounds.append(.init(
-                                    id: nil,
-                                    soundId: sound.id,
-                                    title: sound.title,
-                                    authorName: sound.authorName ?? "",
-                                    dateAdded: Date.now.toISO8601String(),
-                                    position: viewModel.reactionSounds.count + 1
-                                ))
-                            })
+                            SoundSearchView(
+                                addAction: { sound in
+                                    viewModel.onNewSoundAdded(newSound: sound)
+                                }
+                            )
                             .frame(minWidth: 800, minHeight: 500)
                         }
 
                         Button {
-                            // print((selectedItem ?? "") as String)
-                            //                        alertType = .twoOptionsOneDelete
-                            //                        showAlert = true
+                            viewModel.onRemoveSoundSelected()
                         } label: {
                             Image(systemName: "minus")
                         }
@@ -147,6 +140,13 @@ struct EditReactionView: View {
             Task {
                 await viewModel.onViewLoad()
             }
+        }
+        .sheet(isPresented: $viewModel.isSending) {
+            SendingProgressView(
+                message: viewModel.modalMessage,
+                currentAmount: viewModel.progressAmount,
+                totalAmount: viewModel.totalAmount
+            )
         }
         .alert(isPresented: $viewModel.showingAlert) {
             Alert(

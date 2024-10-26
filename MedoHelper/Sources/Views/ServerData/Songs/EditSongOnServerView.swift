@@ -153,7 +153,11 @@ struct EditSongOnServerView: View {
         }
         .disabled(showSendProgress)
         .sheet(isPresented: $showSendProgress) {
-            SendingProgressView(isBeingShown: $showSendProgress, message: $modalMessage, currentAmount: $progressAmount, totalAmount: $totalAmount)
+            SendingProgressView(
+                message: modalMessage,
+                currentAmount: progressAmount,
+                totalAmount: totalAmount
+            )
         }
         .alert(isPresented: $showingAlert) {
             switch alertType {

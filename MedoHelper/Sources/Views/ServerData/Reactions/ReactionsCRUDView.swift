@@ -113,10 +113,9 @@ struct ReactionsCRUDView: View {
             .padding()
             .sheet(isPresented: $viewModel.isSending) {
                 SendingProgressView(
-                    isBeingShown: $viewModel.isSending,
-                    message: $viewModel.modalMessage,
-                    currentAmount: $viewModel.progressAmount,
-                    totalAmount: $viewModel.totalAmount
+                    message: viewModel.modalMessage,
+                    currentAmount: viewModel.progressAmount,
+                    totalAmount: viewModel.totalAmount
                 )
             }
             .sheet(item: $viewModel.reactionForEditing) { reaction in

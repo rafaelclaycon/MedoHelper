@@ -26,6 +26,7 @@ extension EditReactionView {
         @Published var didChangeSoundOrder: Bool = false
 
         @Published var isLoading = false
+        @Published var isSending = false
 
         // Alert
         @Published var showingAlert = false
@@ -86,6 +87,29 @@ extension EditReactionView.ViewModel {
         dismissSheet()
     }
 
+    public func onAddSoundSelected() {
+        showAddSheet = true
+    }
+
+    public func onNewSoundAdded(newSound: Sound) {
+        let reactionSoundForDisplay = ReactionSoundForDisplay(
+            id: nil,
+            soundId: newSound.id,
+            title: newSound.title,
+            authorName: newSound.authorName ?? "",
+            dateAdded: Date.now.toISO8601String(),
+            position: reactionSounds.count + 1
+        )
+        reactionSounds.append(reactionSoundForDisplay)
+        updatePositions()
+    }
+
+    public func onRemoveSoundSelected() {
+        guard let selectedItem else { return }
+        reactionSounds.removeAll(where: { $0.id == selectedItem })
+        updatePositions()
+    }
+
     public func onCreateOrUpdateSelected() async {
         if isEditing {
             await updateReaction()
@@ -129,7 +153,7 @@ extension EditReactionView.ViewModel {
 
     private func updateReaction() async {
         totalAmount = 3.0
-        showSendProgress = true
+        isSending = true
         modalMessage = "Atualizando Reação..."
         progressAmount = 0
 
@@ -158,12 +182,14 @@ extension EditReactionView.ViewModel {
             progressAmount = 3.0
 
             DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(600)) {
-                self.showSendProgress = false
+                self.isSending = false
                 self.saveAction(self.reaction)
                 self.dismissSheet()
             }
         } catch {
             print(error)
+            self.isSending = false
+            showAlert("Erro Ao Atualizar Reação", error.localizedDescription)
         }
     }
 
