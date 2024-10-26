@@ -8,13 +8,19 @@
 import SwiftUI
 
 struct LoadingView: View {
-    
+
+    let message: String
+
     @Environment(\.colorScheme) var colorScheme
     
     private var backgroundColor: Color {
         colorScheme == .dark ? .black : .white
     }
-    
+
+    init(message: String = "Carregando...") {
+        self.message = message
+    }
+
     var body: some View {
         ZStack {
             backgroundColor
@@ -27,7 +33,7 @@ struct LoadingView: View {
                 ProgressView()
                     .scaleEffect(0.7)
                 
-                Text("Carregando...")
+                Text(message)
             }
             .padding()
         }
