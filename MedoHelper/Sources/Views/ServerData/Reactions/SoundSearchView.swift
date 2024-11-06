@@ -10,11 +10,16 @@ import SwiftUI
 struct SoundSearchView: View {
 
     let addAction: (Sound) -> Void
+    let soundExistsOnReaction: (String) -> Bool
 
     @State private var sounds: [Sound] = []
 
     @State private var searchText = ""
     @State private var selectedItem: Sound.ID?
+    @State private var isLoading: Bool = false
+
+    // Alert
+    @State private var showAlert = false
 
     // MARK: - Computed Properties
 
@@ -23,7 +28,9 @@ struct SoundSearchView: View {
             return sounds
         } else {
             return sounds.filter { sound in
-                return sound.title.contains(searchText.preparedForComparison())
+                return sound.title
+                    .preparedForComparison()
+                    .contains(searchText.preparedForComparison())
             }
         }
     }
@@ -36,8 +43,6 @@ struct SoundSearchView: View {
 
     var body: some View {
         VStack {
-            TextField("Pesquisar", text: $searchText)
-
             Table(searchResults, selection: $selectedItem) {
                 TableColumn("Título", value: \.title)
 
@@ -60,9 +65,16 @@ struct SoundSearchView: View {
                 .keyboardShortcut(.cancelAction)
 
                 Button {
-                    guard let selectedItemId = selectedItem else { return }
-                    print("SELECTED SOUND ID: \(selectedItemId)")
-                    guard let sound = sounds.first(where: { $0.id == selectedItemId }) else { return }
+                    guard
+                        let selectedItem,
+                        let sound = sounds.first(where: { $0.id == selectedItem })
+                    else { return }
+
+                    guard !soundExistsOnReaction(sound.id) else {
+                        showAlert = true
+                        return
+                    }
+
                     addAction(sound)
                     dismiss()
                 } label: {
@@ -77,15 +89,26 @@ struct SoundSearchView: View {
         .onAppear {
             loadSounds()
         }
+        .overlay {
+            if isLoading {
+                LoadingView(message: "Carregando sons...")
+            }
+        }
+        .alert(
+            "O Som Selecionado Já Existe na Reação",
+            isPresented: $showAlert,
+            actions: {
+                Button("OK", role: .cancel) {}
+            },
+            message: { Text("Não é permitido ter o mesmo som 2 vezes na mesma Reação. Selecione outro som.") }
+        )
     }
 
     // MARK: - Functions
 
     private func loadSounds() {
         Task {
-//            await MainActor.run {
-//                showLoadingView = true
-//            }
+            isLoading = true
 
             do {
                 var fetchedSounds = try await allSounds()
@@ -102,9 +125,7 @@ struct SoundSearchView: View {
                 print(error)
             }
 
-//            await MainActor.run {
-//                showLoadingView = false
-//            }
+            isLoading = false
         }
     }
 
@@ -119,6 +140,13 @@ struct SoundSearchView: View {
     }
 }
 
+// MARK: - Preview
+
 #Preview {
-    SoundSearchView(addAction: { _ in })
+    SoundSearchView(
+        addAction: { _ in },
+        soundExistsOnReaction: { _ in
+            return false
+        }
+    )
 }
