@@ -27,12 +27,14 @@ class ReactionsCRUDViewModelTests: XCTestCase {
     }
 
     @MainActor
-    func testSendData_whenNoReactions_shouldMakeSendButtonDisabled() async throws {
+    func testOnViewAppear_whenNoReactions_shouldMakeSendButtonDisabled() async throws {
         // Given that I've opened the Reactions tab
         await viewModel.onViewAppear()
 
         // And there are no Reactions in the server yet
         // Then I see that the tab is empty
+        XCTAssertTrue(viewModel.reactions.isEmpty)
+        
         // And the `Send Data` button is disabled
         XCTAssertTrue(viewModel.isSendDataButtonDisabled)
     }

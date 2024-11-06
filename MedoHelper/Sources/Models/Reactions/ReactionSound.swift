@@ -123,7 +123,7 @@ struct ReactionSoundForDisplay: Identifiable, Codable, Hashable {
 
 extension Array where Element == ReactionSoundForDisplay {
 
-    var asBasicType: [ServerReactionSound] {
+    var basicServerSounds: [ServerReactionSound] {
         return self.map { displayItem in
             ServerReactionSound(
                 id: displayItem.id,

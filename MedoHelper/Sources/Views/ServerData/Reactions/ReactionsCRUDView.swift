@@ -121,8 +121,9 @@ struct ReactionsCRUDView: View {
             .sheet(item: $viewModel.reactionForEditing) { reaction in
                 EditReactionView(
                     reaction: reaction,
-                    saveAction: { viewModel.onSaveReactionSelected(reaction: $0) },
-                    dismissSheet: { viewModel.reactionForEditing = nil }
+                    saveAction: { Task { await viewModel.onSaveReactionSelected() } },
+                    dismissSheet: { viewModel.reactionForEditing = nil },
+                    lastPosition: viewModel.reactions.count
                 )
                 .frame(minWidth: 1024, minHeight: 700)
             }

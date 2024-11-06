@@ -113,16 +113,32 @@ extension ReactionsCRUDView.ViewModel {
         await sendAll()
     }
 
-    func onSaveReactionSelected(reaction: HelperReaction) {
-        if let index = reactions.firstIndex(where: { $0.id == reaction.id }) {
-            reactions[index] = reaction
-        } else {
-            reactions.append(reaction)
-        }
+    func onSaveReactionSelected() async {
+        await loadReactions()
     }
 
     func onConfirmRemoveReactionSelected() async {
+        guard
+            let selectedItem,
+            let reaction = reaction(withId: selectedItem)
+        else {
+            alertType = .singleOptionError
+            alertTitle = "Nenhuma Reação Selecionada"
+            alertMessage = "Selecione uma Reação para remover."
+            showAlert = true
+            return
+        }
 
+        do {
+            try await reactionRepository.removeReaction(withId: reaction.id)
+            await loadReactions()
+        } catch {
+            print(error)
+            alertType = .singleOptionError
+            alertTitle = "Não Foi Possível Carregar as Reações"
+            alertMessage = error.localizedDescription
+            showAlert = true
+        }
     }
 }
 

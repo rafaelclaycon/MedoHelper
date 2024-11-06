@@ -15,14 +15,16 @@ struct EditReactionView: View {
 
     init(
         reaction: HelperReaction,
-        saveAction: @escaping (HelperReaction) -> Void,
-        dismissSheet: @escaping () -> Void
+        saveAction: @escaping () -> Void,
+        dismissSheet: @escaping () -> Void,
+        lastPosition: Int
     ) {
         self._viewModel = StateObject(
             wrappedValue: ViewModel(
                 reaction: reaction,
                 saveAction: saveAction,
-                dismissSheet: dismissSheet
+                dismissSheet: dismissSheet,
+                lastPosition: lastPosition
             )
         )
     }
@@ -77,6 +79,9 @@ struct EditReactionView: View {
                             SoundSearchView(
                                 addAction: { sound in
                                     viewModel.onNewSoundAdded(newSound: sound)
+                                },
+                                soundExistsOnReaction: { soundId in
+                                    viewModel.doesSoundIdExist(soundId)
                                 }
                             )
                             .frame(minWidth: 800, minHeight: 500)
@@ -168,7 +173,8 @@ struct EditReactionView: View {
 #Preview {
     EditReactionView(
         reaction: .init(position: 1, title: "Exemplo"),
-        saveAction: { _ in },
-        dismissSheet: {}
+        saveAction: {},
+        dismissSheet: {},
+        lastPosition: 1
     )
 }

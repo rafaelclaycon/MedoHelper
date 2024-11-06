@@ -16,7 +16,7 @@ final class ReactionRepositoryMock: ReactionRepositoryProtocol {
     var didCallRemoveAllReactions: Bool = false
     var didCallSaveReactions: Bool = false
 
-    func allReactions() async throws -> [MedoHelper.HelperReaction] {
+    func allReactions() async throws -> [HelperReaction] {
         didCallAllReactions = true
         return reactions
     }
@@ -25,7 +25,27 @@ final class ReactionRepositoryMock: ReactionRepositoryProtocol {
         didCallRemoveAllReactions = true
     }
     
-    func save(reactions: [MedoHelper.HelperReaction], onItemDidSend: () -> Void) async throws {
+    func save(reactions: [HelperReaction], onItemDidSend: () -> Void) async throws {
         didCallSaveReactions = true
+    }
+
+    func add(reaction: HelperReaction) async throws {
+        reactions.append(reaction)
+    }
+
+    func add(sounds: [ServerReactionSoundForSending]) async throws {
+    }
+
+    func reactionSoundsWithAllData(_ basicSounds: [ServerReactionSound]) async throws -> [ReactionSoundForDisplay] {
+        return []
+    }
+
+    func update(reaction: HelperReaction) async throws {
+    }
+
+    func removeAllSoundsOf(reactionId: String) async throws {
+    }
+
+    func removeReaction(withId reactionId: String) async throws {
     }
 }

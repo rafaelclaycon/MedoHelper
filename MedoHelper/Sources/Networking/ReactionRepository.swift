@@ -11,6 +11,8 @@ protocol ReactionRepositoryProtocol {
 
     // Create
 
+    func add(reaction: HelperReaction) async throws
+
     func save(
         reactions: [HelperReaction],
         onItemDidSend: () -> Void
@@ -35,6 +37,7 @@ protocol ReactionRepositoryProtocol {
 
     func removeAllReactions() async throws
     func removeAllSoundsOf(reactionId: String) async throws
+    func removeReaction(withId reactionId: String) async throws
 }
 
 final class ReactionRepository: ReactionRepositoryProtocol {
@@ -53,6 +56,10 @@ final class ReactionRepository: ReactionRepositoryProtocol {
 // MARK: - Create
 
 extension ReactionRepository {
+
+    func add(reaction: HelperReaction) async throws {
+        try await send(reaction: ServerReaction(helperReaction: reaction))
+    }
 
     func save(
         reactions: [HelperReaction],
@@ -150,6 +157,11 @@ extension ReactionRepository {
 
     func removeAllSoundsOf(reactionId: String) async throws {
         let url = URL(string: serverPath + "v4/delete-reaction-sounds/\(reactionId)/\(reactionsPassword)")!
+        let _ = try await apiClient.delete(in: url)
+    }
+
+    func removeReaction(withId reactionId: String) async throws {
+        let url = URL(string: serverPath + "v4/delete-reaction/\(reactionId)/\(reactionsPassword)")!
         let _ = try await apiClient.delete(in: url)
     }
 }
