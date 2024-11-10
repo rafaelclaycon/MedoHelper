@@ -28,8 +28,8 @@ struct SoundSearchView: View {
             return sounds
         } else {
             return sounds.filter { sound in
-                return sound.title
-                    .preparedForComparison()
+                let searchString = "\(sound.title.preparedForComparison()) \(sound.authorName?.preparedForComparison() ?? "")"
+                return searchString
                     .contains(searchText.preparedForComparison())
             }
         }
