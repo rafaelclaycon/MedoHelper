@@ -73,6 +73,11 @@ struct ReactionsCRUDView: View {
                     }
                     .disabled(viewModel.reactions.count > 0)
 
+                    Button("Exportar p/ JSON") {
+                        viewModel.onExportReactionsSelected()
+                    }
+                    .disabled(viewModel.reactions.count == 0)
+
 //                    Button("Importar das Pastas") {
 //                        print("")
 //                    }

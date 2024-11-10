@@ -5,7 +5,7 @@
 //  Created by Rafael Schmitt on 23/10/24.
 //
 
-import Foundation
+import SwiftUI
 
 extension ReactionsCRUDView {
 
@@ -92,6 +92,10 @@ extension ReactionsCRUDView.ViewModel {
 
     func onImportAndSendPreExistingReactionsSelected() async {
         await importAndSendPreExistingReactions()
+    }
+
+    func onExportReactionsSelected() {
+        copyReactionsToClipboard()
     }
 
     func onEditReactionSelected(reactionId: String) {
@@ -228,6 +232,23 @@ extension ReactionsCRUDView.ViewModel {
         alertTitle = title
         alertMessage = message
         showAlert = true
+    }
+
+    private func copyReactionsToClipboard() {
+        let encoder = JSONEncoder()
+        encoder.outputFormatting = .prettyPrinted
+
+        do {
+            let jsonData = try encoder.encode(reactions)
+            if let jsonString = String(data: jsonData, encoding: .utf8) {
+                let pasteboard = NSPasteboard.general
+                pasteboard.clearContents()
+                pasteboard.setString(jsonString, forType: .string)
+                afterSendingError(title: "Reações Copiadas para a Área de Transferência com Sucesso!")
+            }
+        } catch {
+            afterSendingError(title: "Erro ao Tentar Exportar as Reações", message: error.localizedDescription)
+        }
     }
 }
 
