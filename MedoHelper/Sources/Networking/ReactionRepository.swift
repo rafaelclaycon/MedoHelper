@@ -97,8 +97,8 @@ extension ReactionRepository {
         guard !dtos.isEmpty else { return [] }
 
         for i in 0...(dtos.count - 1) {
-            let reactionUrl = URL(string: serverPath + "v4/reaction/\(dtos[i].id)")!
-            dtos[i].sounds = try await apiClient.getArray(from: reactionUrl)
+            let reactionUrl = URL(string: serverPath + "v4/reaction-sounds/\(dtos[i].id)")!
+            dtos[i].sounds = try await apiClient.get(from: reactionUrl)
         }
 
         return dtos
@@ -161,6 +161,7 @@ extension ReactionRepository {
     }
 
     func removeReaction(withId reactionId: String) async throws {
+        try await removeAllSoundsOf(reactionId: reactionId)
         let url = URL(string: serverPath + "v4/delete-reaction/\(reactionId)/\(reactionsPassword)")!
         let _ = try await apiClient.delete(in: url)
     }
