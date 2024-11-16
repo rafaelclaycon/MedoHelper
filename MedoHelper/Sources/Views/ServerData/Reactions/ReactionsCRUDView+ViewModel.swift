@@ -19,6 +19,7 @@ extension ReactionsCRUDView {
         @Published var selectedItem: HelperReaction.ID?
         @Published var reaction: HelperReaction? = nil
         @Published var isLoading: Bool = false
+        @Published var loadingMessage: String = ""
 
         @Published var reactionForEditing: HelperReaction?
 
@@ -80,7 +81,7 @@ extension ReactionsCRUDView.ViewModel {
 
     func onViewAppear() async {
         await loadReactions()
-        loadSounds()
+        await loadSounds()
     }
 
     func onCreateNewReactionSelected() {
@@ -153,6 +154,7 @@ extension ReactionsCRUDView.ViewModel {
 extension ReactionsCRUDView.ViewModel {
 
     private func loadReactions() async {
+        loadingMessage = "Carregando Reações..."
         isLoading = true
 
         do {
@@ -169,27 +171,26 @@ extension ReactionsCRUDView.ViewModel {
         isLoading = false
     }
 
-    private func loadSounds() {
-        Task {
-            isLoading = true
+    private func loadSounds() async {
+        loadingMessage = "Carregando Sons..."
+        isLoading = true
 
-            do {
-                var fetchedSounds = try await allSounds()
-                let allAuthors = try await allAuthors()
+        do {
+            var fetchedSounds = try await allSounds()
+            let allAuthors = try await allAuthors()
 
-                for i in 0...(fetchedSounds.count - 1) {
-                    fetchedSounds[i].authorName = allAuthors.first(where: { $0.id == fetchedSounds[i].authorId })?.name ?? ""
-                }
-
-                fetchedSounds.sort(by: { $0.dateAdded ?? Date() > $1.dateAdded ?? Date() })
-
-                self.sounds = fetchedSounds
-            } catch {
-                print(error)
+            for i in 0...(fetchedSounds.count - 1) {
+                fetchedSounds[i].authorName = allAuthors.first(where: { $0.id == fetchedSounds[i].authorId })?.name ?? ""
             }
 
-            isLoading = false
+            fetchedSounds.sort(by: { $0.dateAdded ?? Date() > $1.dateAdded ?? Date() })
+
+            self.sounds = fetchedSounds
+        } catch {
+            print(error)
         }
+
+        isLoading = false
     }
 
     private func reaction(withId id: String) -> HelperReaction? {

@@ -11,8 +11,6 @@ struct EditReactionView: View {
 
     @StateObject private var viewModel: ViewModel
 
-    private let sounds: [Sound]
-
     // MARK: - Initializer
 
     init(
@@ -25,12 +23,12 @@ struct EditReactionView: View {
         self._viewModel = StateObject(
             wrappedValue: ViewModel(
                 reaction: reaction,
+                sounds: sounds,
                 saveAction: saveAction,
                 dismissSheet: dismissSheet,
                 lastPosition: lastPosition
             )
         )
-        self.sounds = sounds
     }
 
     // MARK: - View Body
@@ -81,7 +79,7 @@ struct EditReactionView: View {
                         }
                         .sheet(isPresented: $viewModel.showAddSheet) {
                             SoundSearchView(
-                                sounds: sounds,
+                                sounds: viewModel.allSounds,
                                 addAction: { sound in
                                     viewModel.onNewSoundAdded(newSound: sound)
                                 },
@@ -148,7 +146,7 @@ struct EditReactionView: View {
         .padding(.all, 26)
         .onAppear {
             Task {
-                await viewModel.onViewLoad()
+                await viewModel.onViewLoaded()
             }
         }
         .sheet(isPresented: $viewModel.isSending) {
@@ -167,7 +165,7 @@ struct EditReactionView: View {
         }
         .overlay {
             if viewModel.isLoading {
-                LoadingView(message: "Carregando sons...")
+                LoadingView(message: "Carregando sons da Reação...")
             }
         }
     }

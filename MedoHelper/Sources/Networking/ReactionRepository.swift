@@ -27,7 +27,10 @@ protocol ReactionRepositoryProtocol {
     func allReactions() async throws -> [HelperReaction]
 
     /// Used to display Sound title and Author name on Reaction detail.
-    func reactionSoundsWithAllData(_ basicSounds: [ServerReactionSound]) async throws -> [ReactionSoundForDisplay]
+    func reactionSoundsWithAllData(
+        _ basicSounds: [ServerReactionSound],
+        _ fullyFormedSounds: [Sound]
+    ) async throws -> [ReactionSoundForDisplay]
 
     // Update
 
@@ -104,22 +107,21 @@ extension ReactionRepository {
         return dtos
     }
 
-    func reactionSoundsWithAllData(_ basicSounds: [ServerReactionSound]) async throws -> [ReactionSoundForDisplay] {
+    func reactionSoundsWithAllData(
+        _ basicSounds: [ServerReactionSound],
+        _ fullyFormedSounds: [Sound]
+    ) async throws -> [ReactionSoundForDisplay] {
         var sounds: [ReactionSoundForDisplay] = []
 
-        for basicSound in basicSounds {
-            let soundDetailUrl = URL(string: serverPath + "v3/sound/\(basicSound.soundId)")!
-            let serverSound: SoundDTO = try await apiClient.get(from: soundDetailUrl)
-
-            let auhtorDetailUrl = URL(string: serverPath + "v3/author/\(serverSound.authorId)")!
-            let author: Author = try await apiClient.get(from: auhtorDetailUrl)
+        basicSounds.forEach { basicSound in
+            guard let fullSound = fullyFormedSounds.first(where: { $0.id == basicSound.soundId }) else { return }
 
             sounds.append(
                 .init(
                     id: basicSound.id,
                     soundId: basicSound.soundId,
-                    title: serverSound.title,
-                    authorName: author.name,
+                    title: fullSound.title,
+                    authorName: fullSound.authorName ?? "",
                     dateAdded: basicSound.dateAdded,
                     position: basicSound.position
                 )

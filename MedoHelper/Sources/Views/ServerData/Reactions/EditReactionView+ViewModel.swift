@@ -13,6 +13,7 @@ extension EditReactionView {
     final class ViewModel: ObservableObject {
 
         @Published var reaction: HelperReaction
+        @Published var allSounds: [Sound]
         @Published var reactionSounds: [ReactionSoundForDisplay] = []
 
         @Published var selectedItem: ReactionSoundForDisplay.ID?
@@ -57,6 +58,7 @@ extension EditReactionView {
         init(
             reaction: HelperReaction,
             reactionRepository: ReactionRepositoryProtocol = ReactionRepository(),
+            sounds: [Sound],
             saveAction: @escaping () -> Void,
             dismissSheet: @escaping () -> Void,
             lastPosition: Int
@@ -64,6 +66,7 @@ extension EditReactionView {
             self.isEditing = reaction.title != ""
             self.reaction = reaction
             self.reactionRepository = reactionRepository
+            self.allSounds = sounds
             self.saveAction = saveAction
             self.dismissSheet = dismissSheet
             self.originalReaction = reaction
@@ -76,7 +79,7 @@ extension EditReactionView {
 
 extension EditReactionView.ViewModel {
 
-    public func onViewLoad() async {
+    public func onViewLoaded() async {
         if isEditing {
             await loadSoundList()
         }
@@ -154,7 +157,7 @@ extension EditReactionView.ViewModel {
             }
             print("Reaction sound count: \(reactSounds.count)")
 
-            self.reactionSounds = try await reactionRepository.reactionSoundsWithAllData(reactSounds)
+            self.reactionSounds = try await reactionRepository.reactionSoundsWithAllData(reactSounds, allSounds)
 
             isLoading = false
         } catch {

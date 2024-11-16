@@ -50,6 +50,7 @@ struct ReactionsCRUDView: View {
                     viewModel.onEditReactionSelected(reactionId: selectedItemId)
                 }
                 .searchable(text: $viewModel.searchText)
+                .disabled(viewModel.isLoading)
 
                 HStack(spacing: 20) {
                     HStack(spacing: 10) {
@@ -65,6 +66,7 @@ struct ReactionsCRUDView: View {
                             Image(systemName: "minus")
                         }
                     }
+                    .disabled(viewModel.isLoading)
 
                     Button("Importar de Arquivo JSON") {
                         Task {
@@ -166,7 +168,7 @@ struct ReactionsCRUDView: View {
         }
         .overlay {
             if viewModel.isLoading {
-                LoadingView()
+                LoadingView(message: viewModel.loadingMessage)
             }
         }
     }
