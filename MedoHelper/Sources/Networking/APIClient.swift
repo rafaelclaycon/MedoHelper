@@ -1,5 +1,5 @@
 //
-//  NetworkRabbit.swift
+//  APIClient.swift
 //  MedoHelper
 //
 //  Created by Rafael Schmitt on 02/05/23.
@@ -7,9 +7,25 @@
 
 import Foundation
 
-class NetworkRabbit {
+protocol APIClientProtocol {
 
-    static func `get`<T: Codable>(from url: URL) async throws -> T {
+    func `get`<T: Codable>(from url: URL) async throws -> T
+    func `getArray`<T: Codable>(from url: URL) async throws -> [T]
+    func getStatusCode(from url: URL) async throws -> Int
+
+    func post<T: Codable>(data: T?, to url: URL) async throws -> String?
+    func post<T: Encodable, U: Decodable>(data: T?, to url: URL) async throws -> U?
+    func post(to url: URL) async throws -> Bool
+
+    func put<T: Encodable>(in url: URL, data: T?) async throws -> Bool
+
+    func delete(in url: URL) async throws -> Bool
+    func delete<T: Encodable>(in url: URL, data: T?) async throws -> Bool
+}
+
+final class APIClient: APIClientProtocol {
+
+    func `get`<T: Codable>(from url: URL) async throws -> T {
         let (data, _) = try await URLSession.shared.data(from: url)
         
         let decoder = JSONDecoder()
@@ -18,7 +34,7 @@ class NetworkRabbit {
         return try decoder.decode(T.self, from: data)
     }
     
-    static func `getArray`<T: Codable>(from url: URL) async throws -> [T] {
+    func `getArray`<T: Codable>(from url: URL) async throws -> [T] {
         let (data, _) = try await URLSession.shared.data(from: url)
         
         let decoder = JSONDecoder()
@@ -28,15 +44,15 @@ class NetworkRabbit {
         return try decoder.decode([T].self, from: data)
     }
     
-    static func getStatusCode(from url: URL) async throws -> Int {
+    func getStatusCode(from url: URL) async throws -> Int {
         let (_, response) = try await URLSession.shared.data(from: url)
         guard let response = response as? HTTPURLResponse else {
-            throw NetworkError.badResponse
+            throw APIClientError.badResponse
         }
         return response.statusCode
     }
     
-    static func post<T: Codable>(data: T?, to url: URL) async throws -> String? {
+    func post<T: Codable>(data: T?, to url: URL) async throws -> String? {
         // Create the URL request
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
@@ -56,18 +72,18 @@ class NetworkRabbit {
         
         // Check for a successful response
         guard let httpResponse = response as? HTTPURLResponse else {
-            throw NetworkError.badResponse
+            throw APIClientError.badResponse
         }
         guard (200...299).contains(httpResponse.statusCode) else {
             print(url.absoluteString + " - Response: \(httpResponse.statusCode)")
-            throw NetworkError.badResponse
+            throw APIClientError.badResponse
         }
         
         // Handle the response data (if needed)
         return String(data: data, encoding: .utf8)
     }
 
-    static func post<T: Encodable, U: Decodable>(data: T?, to url: URL) async throws -> U? {
+    func post<T: Encodable, U: Decodable>(data: T?, to url: URL) async throws -> U? {
         // Create the URLRequest
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
@@ -86,11 +102,11 @@ class NetworkRabbit {
 
         // Check for a successful response
         guard let httpResponse = response as? HTTPURLResponse else {
-            throw NetworkError.badResponse
+            throw APIClientError.badResponse
         }
         guard (200...299).contains(httpResponse.statusCode) else {
             print(url.absoluteString + " - Response: \(httpResponse.statusCode)")
-            throw NetworkError.badResponse
+            throw APIClientError.badResponse
         }
 
         // Decode the response data
@@ -101,26 +117,26 @@ class NetworkRabbit {
         return decodedData
     }
 
-    static func post(to url: URL) async throws -> Bool {
+    func post(to url: URL) async throws -> Bool {
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
         request.addValue("application/json", forHTTPHeaderField: "Content-Type")
 
         let session = URLSession.shared
-        let (data, response) = try await session.data(for: request)
+        let (_, response) = try await session.data(for: request)
 
         guard let httpResponse = response as? HTTPURLResponse else {
-            throw NetworkError.badResponse
+            throw APIClientError.badResponse
         }
         guard (200...299).contains(httpResponse.statusCode) else {
             print(url.absoluteString + " - Response: \(httpResponse.statusCode)")
-            throw NetworkError.badResponse
+            throw APIClientError.badResponse
         }
 
         return true
     }
 
-    static func put<T: Encodable>(in url: URL, data: T? = nil) async throws -> Bool {
+    func put<T: Encodable>(in url: URL, data: T? = nil) async throws -> Bool {
         var request = URLRequest(url: url)
         request.httpMethod = "PUT"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
@@ -134,17 +150,17 @@ class NetworkRabbit {
         let (_, response) = try await URLSession.shared.data(for: request)
 
         guard let httpResponse = response as? HTTPURLResponse else {
-            throw NetworkError.badResponse
+            throw APIClientError.badResponse
         }
         guard (200...299).contains(httpResponse.statusCode) else {
             print(httpResponse.statusCode)
-            throw NetworkError.badResponse
+            throw APIClientError.badResponse
         }
 
         return true
     }
 
-    static func delete(in url: URL) async throws -> Bool {
+    func delete(in url: URL) async throws -> Bool {
         var request = URLRequest(url: url)
         request.httpMethod = "DELETE"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
@@ -152,17 +168,17 @@ class NetworkRabbit {
         let (_, response) = try await URLSession.shared.data(for: request)
 
         guard let httpResponse = response as? HTTPURLResponse else {
-            throw NetworkError.badResponse
+            throw APIClientError.badResponse
         }
         guard (200...299).contains(httpResponse.statusCode) else {
             print(httpResponse.statusCode)
-            throw NetworkError.badResponse
+            throw APIClientError.badResponse
         }
 
         return true
     }
 
-    static func delete<T: Encodable>(in url: URL, data: T?) async throws -> Bool {
+    func delete<T: Encodable>(in url: URL, data: T?) async throws -> Bool {
         var request = URLRequest(url: url)
         request.httpMethod = "DELETE"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
@@ -176,22 +192,24 @@ class NetworkRabbit {
         let (_, response) = try await URLSession.shared.data(for: request)
 
         guard let httpResponse = response as? HTTPURLResponse else {
-            throw NetworkError.badResponse
+            throw APIClientError.badResponse
         }
         guard (200...299).contains(httpResponse.statusCode) else {
             print(httpResponse.statusCode)
-            throw NetworkError.badResponse
+            throw APIClientError.badResponse
         }
 
         return true
     }
 }
 
-enum NetworkError: Error {
+enum APIClientError: Error {
+
     case badResponse
 }
 
-extension NetworkError: LocalizedError {
+extension APIClientError: LocalizedError {
+
     public var errorDescription: String? {
         switch self {
         case .badResponse:

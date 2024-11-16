@@ -7,7 +7,8 @@
 
 import Foundation
 
-struct ReactionSound: Identifiable, Codable, Equatable {
+/// For fetching Reaction Sounds.
+struct ServerReactionSound: Identifiable, Codable, Equatable {
 
     let id: String
     let soundId: String
@@ -50,7 +51,9 @@ struct ReactionSound: Identifiable, Codable, Equatable {
     }
 }
 
-struct ReactionSoundDTO: Codable {
+/// Reaction Sounds as they exist on the server.
+/// Includes reactionId and excludes object id because that's how we guarantee new records are created on the server.
+struct ServerReactionSoundForSending: Codable {
 
     let soundId: String
     let dateAdded: String
@@ -70,7 +73,7 @@ struct ReactionSoundDTO: Codable {
     }
 
     init(
-        reactionSound: ReactionSound,
+        reactionSound: ServerReactionSound,
         reactionId: String
     ) {
         self.soundId = reactionSound.soundId
@@ -80,6 +83,7 @@ struct ReactionSoundDTO: Codable {
     }
 }
 
+/// Useful for display inside the app since it has Sound title and Author name.
 struct ReactionSoundForDisplay: Identifiable, Codable, Hashable {
 
     let id: String
@@ -106,7 +110,7 @@ struct ReactionSoundForDisplay: Identifiable, Codable, Hashable {
     }
 
     init(
-        reactionSound: ReactionSound
+        reactionSound: ServerReactionSound
     ) {
         self.id = reactionSound.id
         self.soundId = reactionSound.soundId
@@ -119,9 +123,9 @@ struct ReactionSoundForDisplay: Identifiable, Codable, Hashable {
 
 extension Array where Element == ReactionSoundForDisplay {
 
-    var asBasicType: [ReactionSound] {
+    var basicServerSounds: [ServerReactionSound] {
         return self.map { displayItem in
-            ReactionSound(
+            ServerReactionSound(
                 id: displayItem.id,
                 soundId: displayItem.soundId,
                 dateAdded: displayItem.dateAdded,
@@ -130,9 +134,9 @@ extension Array where Element == ReactionSoundForDisplay {
         }
     }
 
-    func asServerCompatibleType(reactionId: String) -> [ReactionSoundDTO] {
+    func serverCompatibleSounds(reactionId: String) -> [ServerReactionSoundForSending] {
         return self.map { displayItem in
-            ReactionSoundDTO(
+            ServerReactionSoundForSending(
                 soundId: displayItem.soundId,
                 dateAdded: displayItem.dateAdded,
                 position: displayItem.position,

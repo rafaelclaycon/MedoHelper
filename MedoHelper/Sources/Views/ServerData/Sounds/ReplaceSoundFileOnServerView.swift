@@ -110,7 +110,11 @@ struct ReplaceSoundFileOnServerView: View {
         }
         .padding(.all, 26)
         .sheet(isPresented: $showSendProgress) {
-            SendingProgressView(isBeingShown: $showSendProgress, message: $modalMessage, currentAmount: $progressAmount, totalAmount: .constant(1))
+            SendingProgressView(
+                message: modalMessage,
+                currentAmount: progressAmount,
+                totalAmount: 1
+            )
         }
         .alert(isPresented: $showingAlert) {
             switch alertType {
@@ -141,7 +145,7 @@ struct ReplaceSoundFileOnServerView: View {
             
             let documentsFolder = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
             do {
-                try renameFile(from: fileURL, with: "\(soundId).mp3", saveTo: documentsFolder)
+                try FileHelper.renameFile(from: fileURL, with: "\(soundId).mp3", saveTo: documentsFolder)
             } catch {
                 print(error)
                 alertTitle = "Falha Ao Renomear Arquivo"
@@ -196,7 +200,7 @@ struct ReplaceSoundFileOnServerView: View {
     
     private func createFileUpdatedUpdateEvent() async throws {
         let url = URL(string: serverPath + "v3/update-content-file/sound/\(soundId)/\(assetOperationPassword)")!
-        _ = try await NetworkRabbit.post(data: nil as String?, to: url)
+        _ = try await APIClient().post(data: nil as String?, to: url)
     }
     
     private func createDurationChangedUpdateEvent() async throws {
@@ -208,21 +212,7 @@ struct ReplaceSoundFileOnServerView: View {
         guard let sound else { throw ReplaceSoundFileOnServerViewError.soundObjectNotAvailable }
 
         let content = MedoContent(sound: sound, authorId: sound.authorId, duration: newDuration)
-        let _: Bool = try await NetworkRabbit.put(in: url, data: content)
-    }
-    
-    private func renameFile(
-        from fileURL: URL,
-        with filename: String,
-        saveTo destinationURL: URL
-    ) throws {
-        let fileManager = FileManager.default
-        
-        if fileManager.fileExists(atPath: destinationURL.appending(path: filename).path(percentEncoded: false)) {
-            try fileManager.removeItem(at: destinationURL)
-        }
-        
-        try FileHelper.copyAndRenameFile(from: fileURL, to: destinationURL, with: filename)
+        let _: Bool = try await APIClient().put(in: url, data: content)
     }
 }
 

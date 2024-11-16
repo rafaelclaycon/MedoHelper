@@ -45,7 +45,7 @@ struct MoveSongsToServerView: View {
                         TableColumn("ID", value: \.id)
                         TableColumn("Título", value: \.title)
                         TableColumn("Data de Criação") { sound in
-                            Text(sound.dateAdded?.toScreenString() ?? "")
+                            Text(sound.dateAdded?.displayString ?? "")
                                 .onTapGesture(count: 2) {
                                     print(sound.title)
                                 }
@@ -109,7 +109,7 @@ struct MoveSongsToServerView: View {
             
             for chunk in chunks {
                 do {
-                    _ = try await NetworkRabbit.post(data: chunk, to: url)
+                    _ = try await APIClient().post(data: chunk, to: url)
                     sleep(1)
                 } catch {
                     errors.append("De \"\(chunk.first?.title ?? "")\" a \"\(chunk.last?.title ?? "")\": \(error.localizedDescription)")

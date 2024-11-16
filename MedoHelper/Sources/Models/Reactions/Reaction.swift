@@ -7,14 +7,14 @@
 
 import Foundation
 
-struct ReactionDTO: Codable, Identifiable {
+struct HelperReaction: Codable, Identifiable {
 
-    let id: String
-    let title: String
+    var id: String
+    var title: String
     var position: Int
-    let image: String
+    var image: String
     var lastUpdate: String
-    var sounds: [ReactionSound]?
+    var sounds: [ServerReactionSound]?
 
     init(
         id: String,
@@ -22,7 +22,7 @@ struct ReactionDTO: Codable, Identifiable {
         position: Int,
         image: String,
         lastUpdate: String,
-        sounds: [ReactionSound]? = nil
+        sounds: [ServerReactionSound]? = nil
     ) {
         self.id = id
         self.title = title
@@ -45,18 +45,18 @@ struct ReactionDTO: Codable, Identifiable {
     }
 
     init(
-        appReaction: AppReaction
+        serverReaction: ServerReaction
     ) {
-        self.id = appReaction.id
-        self.title = appReaction.title
-        self.position = appReaction.position
-        self.image = appReaction.image
-        self.lastUpdate = appReaction.lastUpdate
+        self.id = serverReaction.id
+        self.title = serverReaction.title
+        self.position = serverReaction.position
+        self.image = serverReaction.image
+        self.lastUpdate = serverReaction.lastUpdate
         self.sounds = nil
     }
 }
 
-struct AppReaction: Codable, Identifiable {
+struct ServerReaction: Codable, Identifiable {
 
     let id: String
     let title: String
@@ -90,12 +90,12 @@ struct AppReaction: Codable, Identifiable {
     }
 
     init(
-        dto: ReactionDTO
+        helperReaction: HelperReaction
     ) {
-        self.id = dto.id
-        self.title = dto.title
-        self.position = dto.position
-        self.image = dto.image
-        self.lastUpdate = dto.lastUpdate
+        self.id = helperReaction.id
+        self.title = helperReaction.title
+        self.position = helperReaction.position
+        self.image = helperReaction.image
+        self.lastUpdate = helperReaction.lastUpdate
     }
 }

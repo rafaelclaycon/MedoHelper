@@ -153,7 +153,11 @@ struct EditSongOnServerView: View {
         }
         .disabled(showSendProgress)
         .sheet(isPresented: $showSendProgress) {
-            SendingProgressView(isBeingShown: $showSendProgress, message: $modalMessage, currentAmount: $progressAmount, totalAmount: $totalAmount)
+            SendingProgressView(
+                message: modalMessage,
+                currentAmount: progressAmount,
+                totalAmount: totalAmount
+            )
         }
         .alert(isPresented: $showingAlert) {
             switch alertType {
@@ -186,7 +190,7 @@ struct EditSongOnServerView: View {
             let content = MedoContent(song: song, genreId: genreId, duration: duration)
             print(content)
             do {
-                let response: CreateContentResponse? = try await NetworkRabbit.post(data: content, to: url)
+                let response: CreateContentResponse? = try await APIClient().post(data: content, to: url)
                 
                 print(response as Any)
                 
@@ -218,7 +222,7 @@ struct EditSongOnServerView: View {
                 
                 let documentsFolder = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
                 do {
-                    try renameFile(from: fileURL, with: "\(createdContentResponse.contentId).mp3", saveTo: documentsFolder)
+                    try FileHelper.renameFile(from: fileURL, with: "\(createdContentResponse.contentId).mp3", saveTo: documentsFolder)
                 } catch {
                     print(error)
                     alertType = .singleOptionInformative
@@ -268,7 +272,7 @@ struct EditSongOnServerView: View {
             let content = MedoContent(song: song, genreId: genreId, duration: song.duration)
             print(content)
             do {
-                let response = try await NetworkRabbit.put(in: url, data: content)
+                let response = try await APIClient().put(in: url, data: content)
 
                 print(response as Any)
 
@@ -286,7 +290,7 @@ struct EditSongOnServerView: View {
                     modalMessage = "Renomeando Arquivo..."
                     let documentsFolder = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
                     do {
-                        try renameFile(from: fileURL, with: "\(song.id).mp3", saveTo: documentsFolder)
+                        try FileHelper.renameFile(from: fileURL, with: "\(song.id).mp3", saveTo: documentsFolder)
                     } catch {
                         alertType = .singleOptionInformative
                         alertTitle = "Falha Ao Renomear Arquivo"
@@ -318,7 +322,7 @@ struct EditSongOnServerView: View {
         Task {
             let url = URL(string: serverPath + "v3/all-music-genres")!
             do {
-                genres = try await NetworkRabbit.get(from: url)
+                genres = try await APIClient().get(from: url)
                 genres.sort(by: { $0.name.preparedForComparison() < $1.name.preparedForComparison() })
                 
                 if !song.genreId.isEmpty {
@@ -328,16 +332,6 @@ struct EditSongOnServerView: View {
                 print(error.localizedDescription)
             }
         }
-    }
-    
-    private func renameFile(from fileURL: URL, with filename: String, saveTo destinationURL: URL) throws {
-        let fileManager = FileManager.default
-        
-        if fileManager.fileExists(atPath: destinationURL.appending(path: filename).path(percentEncoded: false)) {
-            try fileManager.removeItem(at: destinationURL)
-        }
-        
-        try FileHelper.copyAndRenameFile(from: fileURL, to: destinationURL, with: filename)
     }
 
     private func setVisibility(ofUpdate updateId: String, to newValue: Bool) {
@@ -349,7 +343,7 @@ struct EditSongOnServerView: View {
             let url = URL(string: serverPath + "v3/change-update-visibility/\(updateId)/\(newValue == true ? "1" : "0")/\(assetOperationPassword)")!
 
             do {
-                let response = try await NetworkRabbit.put(in: url, data: Optional<String>.none)
+                let response = try await APIClient().put(in: url, data: Optional<String>.none)
 
                 print(response as Any)
 

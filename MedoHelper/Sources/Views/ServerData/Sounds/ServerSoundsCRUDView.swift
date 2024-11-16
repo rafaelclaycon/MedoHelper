@@ -55,7 +55,7 @@ struct ServerSoundsCRUDView: View {
                 Table(searchResults, selection: $selectedItem) {
                     TableColumn("Título", value: \.title)
                     TableColumn("Adicionado em") { sound in
-                        Text(sound.dateAdded?.toScreenString() ?? "")
+                        Text(sound.dateAdded?.displayString ?? "")
                     }
                     .width(min: 50, max: 100)
                     TableColumn("Duração") { sound in
@@ -97,8 +97,11 @@ struct ServerSoundsCRUDView: View {
                         Image(systemName: "plus")
                     }
                     .sheet(isPresented: $showEditSheet) {
-                        EditSoundOnServerView(sound: sound)
-                            .frame(minWidth: 800, minHeight: 500)
+                        EditSoundOnServerView(
+                            sound: sound,
+                            contentRepository: ContentRepository()
+                        )
+                        .frame(minWidth: 800, minHeight: 500)
                     }
                     .sheet(isPresented: $showReplaceSheet) {
                         ReplaceSoundFileOnServerView()
@@ -180,7 +183,7 @@ struct ServerSoundsCRUDView: View {
             do {
                 let url = URL(string: serverPath + "v3/all-sounds")!
                 
-                var fetchedSounds: [Sound] = try await NetworkRabbit.getArray(from: url)
+                var fetchedSounds: [Sound] = try await APIClient().getArray(from: url)
 //                for i in 0...(allSounds.count - 1) {
 //                    allSounds[i].authorName = authorData.first(where: { $0.id == allSounds[i].authorId })?.name ?? Shared.unknownAuthor
 //                }
@@ -226,7 +229,7 @@ struct ServerSoundsCRUDView: View {
         Task {
             do {
                 let url = URL(string: serverPath + "v3/sound/\(soundId)/\(assetOperationPassword)")!
-                let _ = try await NetworkRabbit.delete(in: url, data: nil as String?)
+                let _ = try await APIClient().delete(in: url, data: nil as String?)
                 alertType = .singleOptionInformative
                 showAlert = true
             } catch {

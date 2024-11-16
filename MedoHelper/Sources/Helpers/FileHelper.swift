@@ -35,8 +35,26 @@ class FileHelper {
             return nil
         }
     }
-    
-    static func copyAndRenameFile(from sourceURL: URL, to destinationURL: URL, with newName: String) throws {
+
+    static public func renameFile(
+        from fileURL: URL,
+        with filename: String,
+        saveTo destinationURL: URL
+    ) throws {
+        let fileManager = FileManager.default
+
+        if fileManager.fileExists(atPath: destinationURL.appending(path: filename).path(percentEncoded: false)) {
+            try fileManager.removeItem(at: destinationURL)
+        }
+
+        if !fileManager.fileExists(atPath: destinationURL.path) {
+            try FileManager.default.createDirectory(at: destinationURL, withIntermediateDirectories: true)
+        }
+
+        try FileHelper.copyAndRenameFile(from: fileURL, to: destinationURL, with: filename)
+    }
+
+    static private func copyAndRenameFile(from sourceURL: URL, to destinationURL: URL, with newName: String) throws {
         let fileManager = FileManager.default
         let destinationFileURL = destinationURL.appendingPathComponent(newName)
         guard fileManager.fileExists(atPath: sourceURL.path(percentEncoded: false)) else { throw FileError.sourceFileDoesNotExist }

@@ -99,7 +99,7 @@ import SwiftUI
 //            
 //            for chunk in chunks {
 //                do {
-//                    _ = try await NetworkRabbit.post(data: chunk, to: url)
+//                    _ = try await APIClient().post(data: chunk, to: url)
 //                    if Int(currentChunk) < chunks.count {
 //                        currentChunk += 1
 //                    }

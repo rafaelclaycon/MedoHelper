@@ -158,7 +158,11 @@ struct EditAuthorOnServerView: View {
         .padding(.all, 26)
         .disabled(showSendProgress)
         .sheet(isPresented: $showSendProgress) {
-            SendingProgressView(isBeingShown: $showSendProgress, message: $modalMessage, currentAmount: $progressAmount, totalAmount: .constant(1))
+            SendingProgressView(
+                message: modalMessage,
+                currentAmount: progressAmount,
+                totalAmount: 1
+            )
         }
         .alert(isPresented: $showingAlert) {
             Alert(title: Text(alertTitle), message: Text(alertMessage), dismissButton: .default(Text("OK")))
@@ -188,7 +192,7 @@ struct EditAuthorOnServerView: View {
             }
             dump(author)
             do {
-                let response = try await NetworkRabbit.post(data: author, to: url)
+                let response = try await APIClient().post(data: author, to: url)
                 
                 print(response as Any)
                 
@@ -221,7 +225,7 @@ struct EditAuthorOnServerView: View {
             )
 
             do {
-                let response = try await NetworkRabbit.put(in: url, data: newAuthor)
+                let response = try await APIClient().put(in: url, data: newAuthor)
 
                 print(response as Any)
 

@@ -57,7 +57,7 @@ struct MedoContent: Codable {
         self.authorId = authorId
         self.description = sound.description
         self.fileId = sound.filename
-        self.creationDate = Date.now.toISO8601String()
+        self.creationDate = Date.now.iso8601String
         self.duration = duration
         self.isOffensive = sound.isOffensive
         self.musicGenre = nil
@@ -75,7 +75,7 @@ struct MedoContent: Codable {
         self.authorId = ""
         self.description = song.description
         self.fileId = song.filename
-        self.creationDate = Date.now.toISO8601String()
+        self.creationDate = Date.now.iso8601String
         self.duration = duration
         self.isOffensive = song.isOffensive
         self.musicGenre = genreId

@@ -1,0 +1,34 @@
+{
+  "configurations" : [
+    {
+      "id" : "1C74F26A-185A-43E1-AE18-AC2F53548BFF",
+      "name" : "Test Scheme Action",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "commandLineArgumentEntries" : [
+      {
+        "argument" : "-USE_LOCAL_SERVER"
+      }
+    ],
+    "targetForVariableExpansion" : {
+      "containerPath" : "container:MedoHelper.xcodeproj",
+      "identifier" : "D94A421D283DC94B00A504BD",
+      "name" : "MedoHelper"
+    },
+    "testExecutionOrdering" : "random"
+  },
+  "testTargets" : [
+    {
+      "target" : {
+        "containerPath" : "container:MedoHelper.xcodeproj",
+        "identifier" : "D94A422E283DC94D00A504BD",
+        "name" : "MedoHelperTests"
+      }
+    }
+  ],
+  "version" : 1
+}

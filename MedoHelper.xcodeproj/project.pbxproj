@@ -13,6 +13,10 @@
 		D904495F2BB486F80023088B /* NewExternalLinkView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D904495E2BB486F80023088B /* NewExternalLinkView.swift */; };
 		D90449612BB4E9140023088B /* Color+.swift in Sources */ = {isa = PBXBuildFile; fileRef = D90449602BB4E9140023088B /* Color+.swift */; };
 		D90998CD2AA448800059CAE8 /* EditMusicGenreOnServerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D90998CC2AA448800059CAE8 /* EditMusicGenreOnServerView.swift */; };
+		D91298A42CC986C5003CC5E5 /* ReactionsCRUDView+ViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D91298A32CC986C5003CC5E5 /* ReactionsCRUDView+ViewModel.swift */; };
+		D91298AA2CCB3E1B003CC5E5 /* ReactionRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = D91298A92CCB3E1B003CC5E5 /* ReactionRepository.swift */; };
+		D91298AC2CCB49EC003CC5E5 /* ReactionRepositoryMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = D91298AB2CCB49EC003CC5E5 /* ReactionRepositoryMock.swift */; };
+		D91298AE2CCC6728003CC5E5 /* EditReactionView+ViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D91298AD2CCC6728003CC5E5 /* EditReactionView+ViewModel.swift */; };
 		D91338A12A87F43D00C0502A /* CreateContentResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = D91338A02A87F43D00C0502A /* CreateContentResponse.swift */; };
 		D914C7212A0986AF0011EC5B /* Int+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = D914C7202A0986AF0011EC5B /* Int+Extensions.swift */; };
 		D914C7232A09AD6D0011EC5B /* MusicGenre.swift in Sources */ = {isa = PBXBuildFile; fileRef = D914C7222A09AD6D0011EC5B /* MusicGenre.swift */; };
@@ -20,7 +24,7 @@
 		D92693FA2A015048007872D9 /* MoveAuthorsToServerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D92693F92A015048007872D9 /* MoveAuthorsToServerView.swift */; };
 		D92693FC2A015608007872D9 /* author_data.json in Resources */ = {isa = PBXBuildFile; fileRef = D92693FB2A015608007872D9 /* author_data.json */; };
 		D92693FE2A015665007872D9 /* Bundle+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = D92693FD2A015665007872D9 /* Bundle+Extensions.swift */; };
-		D92694012A015C7E007872D9 /* NetworkRabbit.swift in Sources */ = {isa = PBXBuildFile; fileRef = D92694002A015C7E007872D9 /* NetworkRabbit.swift */; };
+		D92694012A015C7E007872D9 /* APIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = D92694002A015C7E007872D9 /* APIClient.swift */; };
 		D92694032A01A7F9007872D9 /* String+.swift in Sources */ = {isa = PBXBuildFile; fileRef = D92694022A01A7F9007872D9 /* String+.swift */; };
 		D92828712AA515AC009E5D37 /* EditSongOnServerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D92828702AA515AC009E5D37 /* EditSongOnServerView.swift */; };
 		D9310C292A0BDDDF006A3058 /* CreateAuthorAndSoundView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9310C282A0BDDDF006A3058 /* CreateAuthorAndSoundView.swift */; };
@@ -29,7 +33,7 @@
 		D94A4224283DC94B00A504BD /* MainView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D94A4223283DC94B00A504BD /* MainView.swift */; };
 		D94A4226283DC94D00A504BD /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D94A4225283DC94D00A504BD /* Assets.xcassets */; };
 		D94A4229283DC94D00A504BD /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D94A4228283DC94D00A504BD /* Preview Assets.xcassets */; };
-		D94A4234283DC94D00A504BD /* MedoHelperTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D94A4233283DC94D00A504BD /* MedoHelperTests.swift */; };
+		D94A4234283DC94D00A504BD /* ReactionsCRUDViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D94A4233283DC94D00A504BD /* ReactionsCRUDViewModelTests.swift */; };
 		D94A424F283E704300A504BD /* AuthorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D94A424E283E704300A504BD /* AuthorView.swift */; };
 		D94A4251283E705100A504BD /* SoundView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D94A4250283E705100A504BD /* SoundView.swift */; };
 		D94A4254283E7E5B00A504BD /* Date+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = D94A4253283E7E5B00A504BD /* Date+Extensions.swift */; };
@@ -45,13 +49,13 @@
 		D960F22A2A1D577A007D12D7 /* LoadingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D960F2292A1D577A007D12D7 /* LoadingView.swift */; };
 		D960F22C2A1D5D6D007D12D7 /* ServerSongsCRUDView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D960F22B2A1D5D6D007D12D7 /* ServerSongsCRUDView.swift */; };
 		D960F22E2A1D5DBA007D12D7 /* Song.swift in Sources */ = {isa = PBXBuildFile; fileRef = D960F22D2A1D5DBA007D12D7 /* Song.swift */; };
+		D972B7D12CCC7281005A2B83 /* ContentRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = D972B7D02CCC7281005A2B83 /* ContentRepository.swift */; };
 		D982218E2A20E76A0076042D /* ReplaceSoundFileOnServerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D982218D2A20E76A0076042D /* ReplaceSoundFileOnServerView.swift */; };
 		D98755072A9C366200B6E96A /* UpdateEventListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D98755062A9C366200B6E96A /* UpdateEventListView.swift */; };
 		D98755092A9C36F900B6E96A /* UpdateEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = D98755082A9C36F900B6E96A /* UpdateEvent.swift */; };
 		D987550B2A9C3EC800B6E96A /* UpdateEventRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = D987550A2A9C3EC800B6E96A /* UpdateEventRow.swift */; };
 		D98B60B42BFE7E8A0093321A /* ReplaceSoundHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = D98B60B32BFE7E8A0093321A /* ReplaceSoundHelper.swift */; };
 		D992E8242A17FF8700137469 /* EditAuthorOnServerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D992E8232A17FF8700137469 /* EditAuthorOnServerView.swift */; };
-		D99941F02C0502DA00D16BCD /* EditReactionHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = D99941EF2C0502DA00D16BCD /* EditReactionHelper.swift */; };
 		D99941F22C05553D00D16BCD /* SoundSearchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D99941F12C05553D00D16BCD /* SoundSearchView.swift */; };
 		D99AEF2E2BE28FA100C4A8FA /* ReactionsCRUDView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D99AEF2D2BE28FA100C4A8FA /* ReactionsCRUDView.swift */; };
 		D99AEF302BE2900F00C4A8FA /* Reaction.swift in Sources */ = {isa = PBXBuildFile; fileRef = D99AEF2F2BE2900F00C4A8FA /* Reaction.swift */; };
@@ -92,6 +96,11 @@
 		D904495E2BB486F80023088B /* NewExternalLinkView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewExternalLinkView.swift; sourceTree = "<group>"; };
 		D90449602BB4E9140023088B /* Color+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Color+.swift"; sourceTree = "<group>"; };
 		D90998CC2AA448800059CAE8 /* EditMusicGenreOnServerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditMusicGenreOnServerView.swift; sourceTree = "<group>"; };
+		D91298A32CC986C5003CC5E5 /* ReactionsCRUDView+ViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ReactionsCRUDView+ViewModel.swift"; sourceTree = "<group>"; };
+		D91298A82CCB3B71003CC5E5 /* MedoHelper.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; name = MedoHelper.xctestplan; path = MedoHelperTests/MedoHelper.xctestplan; sourceTree = "<group>"; };
+		D91298A92CCB3E1B003CC5E5 /* ReactionRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReactionRepository.swift; sourceTree = "<group>"; };
+		D91298AB2CCB49EC003CC5E5 /* ReactionRepositoryMock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReactionRepositoryMock.swift; sourceTree = "<group>"; };
+		D91298AD2CCC6728003CC5E5 /* EditReactionView+ViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "EditReactionView+ViewModel.swift"; sourceTree = "<group>"; };
 		D91338A02A87F43D00C0502A /* CreateContentResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateContentResponse.swift; sourceTree = "<group>"; };
 		D914C7202A0986AF0011EC5B /* Int+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Int+Extensions.swift"; sourceTree = "<group>"; };
 		D914C7222A09AD6D0011EC5B /* MusicGenre.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MusicGenre.swift; sourceTree = "<group>"; };
@@ -99,7 +108,7 @@
 		D92693F92A015048007872D9 /* MoveAuthorsToServerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoveAuthorsToServerView.swift; sourceTree = "<group>"; };
 		D92693FB2A015608007872D9 /* author_data.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = author_data.json; sourceTree = "<group>"; };
 		D92693FD2A015665007872D9 /* Bundle+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Bundle+Extensions.swift"; sourceTree = "<group>"; };
-		D92694002A015C7E007872D9 /* NetworkRabbit.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkRabbit.swift; sourceTree = "<group>"; };
+		D92694002A015C7E007872D9 /* APIClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIClient.swift; sourceTree = "<group>"; };
 		D92694022A01A7F9007872D9 /* String+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+.swift"; sourceTree = "<group>"; };
 		D92828702AA515AC009E5D37 /* EditSongOnServerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditSongOnServerView.swift; sourceTree = "<group>"; };
 		D929E3D12AB499DE008D8B3C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
@@ -112,7 +121,7 @@
 		D94A4228283DC94D00A504BD /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		D94A422A283DC94D00A504BD /* MedoHelper.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = MedoHelper.entitlements; sourceTree = "<group>"; };
 		D94A422F283DC94D00A504BD /* MedoHelperTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MedoHelperTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		D94A4233283DC94D00A504BD /* MedoHelperTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MedoHelperTests.swift; sourceTree = "<group>"; };
+		D94A4233283DC94D00A504BD /* ReactionsCRUDViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReactionsCRUDViewModelTests.swift; sourceTree = "<group>"; };
 		D94A424E283E704300A504BD /* AuthorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthorView.swift; sourceTree = "<group>"; };
 		D94A4250283E705100A504BD /* SoundView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SoundView.swift; sourceTree = "<group>"; };
 		D94A4253283E7E5B00A504BD /* Date+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Date+Extensions.swift"; sourceTree = "<group>"; };
@@ -128,13 +137,13 @@
 		D960F2292A1D577A007D12D7 /* LoadingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadingView.swift; sourceTree = "<group>"; };
 		D960F22B2A1D5D6D007D12D7 /* ServerSongsCRUDView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerSongsCRUDView.swift; sourceTree = "<group>"; };
 		D960F22D2A1D5DBA007D12D7 /* Song.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Song.swift; sourceTree = "<group>"; };
+		D972B7D02CCC7281005A2B83 /* ContentRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentRepository.swift; sourceTree = "<group>"; };
 		D982218D2A20E76A0076042D /* ReplaceSoundFileOnServerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReplaceSoundFileOnServerView.swift; sourceTree = "<group>"; };
 		D98755062A9C366200B6E96A /* UpdateEventListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateEventListView.swift; sourceTree = "<group>"; };
 		D98755082A9C36F900B6E96A /* UpdateEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateEvent.swift; sourceTree = "<group>"; };
 		D987550A2A9C3EC800B6E96A /* UpdateEventRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateEventRow.swift; sourceTree = "<group>"; };
 		D98B60B32BFE7E8A0093321A /* ReplaceSoundHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReplaceSoundHelper.swift; sourceTree = "<group>"; };
 		D992E8232A17FF8700137469 /* EditAuthorOnServerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditAuthorOnServerView.swift; sourceTree = "<group>"; };
-		D99941EF2C0502DA00D16BCD /* EditReactionHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditReactionHelper.swift; sourceTree = "<group>"; };
 		D99941F12C05553D00D16BCD /* SoundSearchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SoundSearchView.swift; sourceTree = "<group>"; };
 		D99AEF2D2BE28FA100C4A8FA /* ReactionsCRUDView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReactionsCRUDView.swift; sourceTree = "<group>"; };
 		D99AEF2F2BE2900F00C4A8FA /* Reaction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Reaction.swift; sourceTree = "<group>"; };
@@ -184,10 +193,52 @@
 			path = Modifiers;
 			sourceTree = "<group>";
 		};
+		D91298912CC98622003CC5E5 /* Sources */ = {
+			isa = PBXGroup;
+			children = (
+				D91298922CC98629003CC5E5 /* Views */,
+			);
+			path = Sources;
+			sourceTree = "<group>";
+		};
+		D91298922CC98629003CC5E5 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				D91298932CC98636003CC5E5 /* ServerData */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		D91298932CC98636003CC5E5 /* ServerData */ = {
+			isa = PBXGroup;
+			children = (
+				D91298942CC9863D003CC5E5 /* Reactions */,
+			);
+			path = ServerData;
+			sourceTree = "<group>";
+		};
+		D91298942CC9863D003CC5E5 /* Reactions */ = {
+			isa = PBXGroup;
+			children = (
+				D94A4233283DC94D00A504BD /* ReactionsCRUDViewModelTests.swift */,
+			);
+			path = Reactions;
+			sourceTree = "<group>";
+		};
+		D91298A52CCB3750003CC5E5 /* Doubles */ = {
+			isa = PBXGroup;
+			children = (
+				D91298AB2CCB49EC003CC5E5 /* ReactionRepositoryMock.swift */,
+			);
+			path = Doubles;
+			sourceTree = "<group>";
+		};
 		D92693FF2A015C67007872D9 /* Networking */ = {
 			isa = PBXGroup;
 			children = (
-				D92694002A015C7E007872D9 /* NetworkRabbit.swift */,
+				D92694002A015C7E007872D9 /* APIClient.swift */,
+				D91298A92CCB3E1B003CC5E5 /* ReactionRepository.swift */,
+				D972B7D02CCC7281005A2B83 /* ContentRepository.swift */,
 			);
 			path = Networking;
 			sourceTree = "<group>";
@@ -205,6 +256,7 @@
 		D94A4215283DC94B00A504BD = {
 			isa = PBXGroup;
 			children = (
+				D91298A82CCB3B71003CC5E5 /* MedoHelper.xctestplan */,
 				D94A4220283DC94B00A504BD /* MedoHelper */,
 				D94A4232283DC94D00A504BD /* MedoHelperTests */,
 				D94A421F283DC94B00A504BD /* Products */,
@@ -241,7 +293,8 @@
 		D94A4232283DC94D00A504BD /* MedoHelperTests */ = {
 			isa = PBXGroup;
 			children = (
-				D94A4233283DC94D00A504BD /* MedoHelperTests.swift */,
+				D91298A52CCB3750003CC5E5 /* Doubles */,
+				D91298912CC98622003CC5E5 /* Sources */,
 			);
 			path = MedoHelperTests;
 			sourceTree = "<group>";
@@ -353,7 +406,6 @@
 			isa = PBXGroup;
 			children = (
 				D98B60B32BFE7E8A0093321A /* ReplaceSoundHelper.swift */,
-				D99941EF2C0502DA00D16BCD /* EditReactionHelper.swift */,
 			);
 			path = EnvObjs;
 			sourceTree = "<group>";
@@ -362,7 +414,9 @@
 			isa = PBXGroup;
 			children = (
 				D99AEF2D2BE28FA100C4A8FA /* ReactionsCRUDView.swift */,
+				D91298A32CC986C5003CC5E5 /* ReactionsCRUDView+ViewModel.swift */,
 				D99AEF312BE294C900C4A8FA /* EditReactionView.swift */,
+				D91298AD2CCC6728003CC5E5 /* EditReactionView+ViewModel.swift */,
 				D99941F12C05553D00D16BCD /* SoundSearchView.swift */,
 			);
 			path = Reactions;
@@ -606,6 +660,7 @@
 				D9CA30282A05921200F1F23D /* ServerAuthorsCRUDView.swift in Sources */,
 				D982218E2A20E76A0076042D /* ReplaceSoundFileOnServerView.swift in Sources */,
 				D95FCB7129FF009500952868 /* MedoContent.swift in Sources */,
+				D91298AA2CCB3E1B003CC5E5 /* ReactionRepository.swift in Sources */,
 				D992E8242A17FF8700137469 /* EditAuthorOnServerView.swift in Sources */,
 				D95FCB6F29FEF75F00952868 /* EditSoundOnServerView.swift in Sources */,
 				D9B8784B28650F4E009CA7AD /* CSVParser.swift in Sources */,
@@ -623,8 +678,8 @@
 				D9B8784F2865324F009CA7AD /* RankItem.swift in Sources */,
 				D960F2282A1D27E7007D12D7 /* TestVersionView.swift in Sources */,
 				D92693FE2A015665007872D9 /* Bundle+Extensions.swift in Sources */,
-				D99941F02C0502DA00D16BCD /* EditReactionHelper.swift in Sources */,
-				D92694012A015C7E007872D9 /* NetworkRabbit.swift in Sources */,
+				D92694012A015C7E007872D9 /* APIClient.swift in Sources */,
+				D91298AE2CCC6728003CC5E5 /* EditReactionView+ViewModel.swift in Sources */,
 				D94A4224283DC94B00A504BD /* MainView.swift in Sources */,
 				D9FF96C02BF0E19F00803572 /* ReactionSound.swift in Sources */,
 				D9B87853286540E5009CA7AD /* Sound.swift in Sources */,
@@ -641,8 +696,10 @@
 				D9B878482864FA73009CA7AD /* ParseSoundRankingCSVView.swift in Sources */,
 				D9CA30202A0441A000F1F23D /* SendingProgressView.swift in Sources */,
 				D914C7252A09AD970011EC5B /* ContentType.swift in Sources */,
+				D972B7D12CCC7281005A2B83 /* ContentRepository.swift in Sources */,
 				D94A4222283DC94B00A504BD /* MedoHelperApp.swift in Sources */,
 				D987550B2A9C3EC800B6E96A /* UpdateEventRow.swift in Sources */,
+				D91298A42CC986C5003CC5E5 /* ReactionsCRUDView+ViewModel.swift in Sources */,
 				D9310C292A0BDDDF006A3058 /* CreateAuthorAndSoundView.swift in Sources */,
 				D960F22C2A1D5D6D007D12D7 /* ServerSongsCRUDView.swift in Sources */,
 				D9CA302A2A05975900F1F23D /* MoveSoundsToServerView.swift in Sources */,
@@ -654,7 +711,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D94A4234283DC94D00A504BD /* MedoHelperTests.swift in Sources */,
+				D91298AC2CCB49EC003CC5E5 /* ReactionRepositoryMock.swift in Sources */,
+				D94A4234283DC94D00A504BD /* ReactionsCRUDViewModelTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -860,7 +918,7 @@
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_TEAM = L8X3H5XA82;
 				GENERATE_INFOPLIST_FILE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 12.3;
+				MACOSX_DEPLOYMENT_TARGET = 14.2;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.rafaelschmitt.MedoHelperTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -880,7 +938,7 @@
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_TEAM = L8X3H5XA82;
 				GENERATE_INFOPLIST_FILE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 12.3;
+				MACOSX_DEPLOYMENT_TARGET = 14.2;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.rafaelschmitt.MedoHelperTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";

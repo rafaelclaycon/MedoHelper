@@ -61,13 +61,17 @@ struct EditSoundOnServerView: View {
         isEditing ? "edição" : "criação"
     }
 
+    private let contentRepository: ContentRepositoryProtocol
+
     // MARK: - Initializer
 
     init(
-        sound: Sound? = nil
+        sound: Sound? = nil,
+        contentRepository: ContentRepositoryProtocol
     ) {
         self.isEditing = sound != nil
         self._sound = State(initialValue: sound ?? Sound(title: ""))
+        self.contentRepository = contentRepository
     }
 
     // MARK: - View Body
@@ -147,10 +151,12 @@ struct EditSoundOnServerView: View {
                 .keyboardShortcut(.cancelAction)
                 
                 Button {
-                    if isEditing {
-                        updateContent()
-                    } else {
-                        createContent()
+                    Task {
+                        if isEditing {
+                            await updateContent()
+                        } else {
+                            await createContent()
+                        }
                     }
                 } label: {
                     Text(isEditing ? "Atualizar" : "Criar")
@@ -166,7 +172,11 @@ struct EditSoundOnServerView: View {
         }
         .disabled(showSendProgress)
         .sheet(isPresented: $showSendProgress) {
-            SendingProgressView(isBeingShown: $showSendProgress, message: $modalMessage, currentAmount: $progressAmount, totalAmount: $totalAmount)
+            SendingProgressView(
+                message: modalMessage,
+                currentAmount: progressAmount,
+                totalAmount: totalAmount
+            )
         }
         .alert(isPresented: $showingAlert) {
             switch alertType {
@@ -180,150 +190,130 @@ struct EditSoundOnServerView: View {
         }
     }
     
-    private func createContent() {
-        Task {
-            totalAmount = 2
-            showSendProgress = true
-            modalMessage = "Enviando Dados..."
-            
-            let url = URL(string: serverPath + "v3/create-sound/\(assetOperationPassword)")!
-            guard let authorId = selectedAuthor else {
+    private func createContent() async {
+        totalAmount = 2
+        showSendProgress = true
+        modalMessage = "Enviando Dados..."
+
+        guard let authorId = selectedAuthor else {
+            alertType = .singleOptionInformative
+            alertTitle = "Dados Incompletos"
+            alertMessage = "Selecione um Autor."
+            showSendProgress = false
+            return showingAlert = true
+        }
+        guard let fileURL = selectedFile else { return }
+        guard let duration = await FileHelper.getDuration(of: fileURL) else { return }
+        let content = MedoContent(sound: sound, authorId: authorId, duration: duration)
+        print(content)
+        do {
+            guard let response = try await contentRepository.create(content: content) else {
                 alertType = .singleOptionInformative
-                alertTitle = "Dados Incompletos"
-                alertMessage = "Selecione um Autor."
+                alertTitle = "Falha ao Criar Som"
+                alertMessage = "O servidor não retornou a resposta esperada."
+                return showingAlert = true
+            }
+
+            guard !response.eventId.isEmpty else {
+                alertType = .singleOptionInformative
+                alertTitle = "Falha ao Criar Som"
+                alertMessage = "O eventId retornado pelo servidor está vazio. Sem um eventId válido não é possível definir o UpdateEvent como visível mais para frente."
+                return showingAlert = true
+            }
+
+            guard !response.contentId.isEmpty else {
+                alertType = .singleOptionInformative
+                alertTitle = "Falha ao Criar Som"
+                alertMessage = "O contentId retornado pelo servidor está vazio. Sem um contentId válido não é possível renomear o arquivo de som."
+                return showingAlert = true
+            }
+
+            soundUpdateEventId = response.eventId
+
+            progressAmount = 1
+            modalMessage = "Renomeando Arquivo..."
+
+            let documentsFolder = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
+            do {
+                try FileHelper.renameFile(from: fileURL, with: "\(response.contentId).mp3", saveTo: documentsFolder)
+            } catch {
+                print(error)
+                alertType = .singleOptionInformative
+                alertTitle = "Falha Ao Renomear Arquivo"
+                alertMessage = error.localizedDescription
                 showSendProgress = false
                 return showingAlert = true
             }
-            guard let fileURL = selectedFile else { return }
-            guard let duration = await FileHelper.getDuration(of: fileURL) else { return }
-            let content = MedoContent(sound: sound, authorId: authorId, duration: duration)
-            print(content)
-            do {
-                let response: CreateContentResponse? = try await NetworkRabbit.post(data: content, to: url)
-                
-                print(response as Any)
-                
-                guard let createdContentResponse = response else {
-                    alertType = .singleOptionInformative
-                    alertTitle = "Falha ao Criar Som"
-                    alertMessage = "O servidor não retornou a resposta esperada."
-                    return showingAlert = true
-                }
 
-                guard !createdContentResponse.eventId.isEmpty else {
-                    alertType = .singleOptionInformative
-                    alertTitle = "Falha ao Criar Som"
-                    alertMessage = "O eventId retornado pelo servidor está vazio. Sem um eventId válido não é possível definir o UpdateEvent como visível mais para frente."
-                    return showingAlert = true
-                }
+            FileHelper.openFolderInFinder(documentsFolder)
 
-                guard !createdContentResponse.contentId.isEmpty else {
-                    alertType = .singleOptionInformative
-                    alertTitle = "Falha ao Criar Som"
-                    alertMessage = "O contentId retornado pelo servidor está vazio. Sem um contentId válido não é possível renomear o arquivo de som."
-                    return showingAlert = true
-                }
+            progressAmount = 2
 
-                soundUpdateEventId = createdContentResponse.eventId
-                
-                progressAmount = 1
+            DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(600)) {
+                showSendProgress = false
+            }
+
+            alertType = .twoOptionsOneContinue
+            alertTitle = "Aguardando Subida do Arquivo para o Servidor"
+            alertMessage = "Coloque o arquivo recém gerado em /Public/sounds/ e clique em Continuar."
+            showingAlert = true
+        } catch {
+            print(error)
+            alertType = .singleOptionInformative
+            alertTitle = "Falha ao Criar o Som"
+            alertMessage = error.localizedDescription
+            showSendProgress = false
+            return showingAlert = true
+        }
+    }
+    
+    private func updateContent() async {
+        totalAmount = 2
+        showSendProgress = true
+        modalMessage = "Enviando Dados..."
+
+        guard let authorId = selectedAuthor else {
+            alertType = .singleOptionInformative
+            alertTitle = "Dados Incompletos"
+            alertMessage = "Selecione um Autor."
+            return showingAlert = true
+        }
+        // File and duration here
+        let content = MedoContent(sound: sound, authorId: authorId, duration: sound.duration)
+        print(content)
+        do {
+            try await contentRepository.update(content: content)
+
+            progressAmount = 1
+
+            if let fileURL = selectedFile {
                 modalMessage = "Renomeando Arquivo..."
-                
                 let documentsFolder = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
                 do {
-                    try renameFile(from: fileURL, with: "\(createdContentResponse.contentId).mp3", saveTo: documentsFolder)
+                    try FileHelper.renameFile(from: fileURL, with: "\(sound.id).mp3", saveTo: documentsFolder)
                 } catch {
-                    print(error)
                     alertType = .singleOptionInformative
                     alertTitle = "Falha Ao Renomear Arquivo"
                     alertMessage = error.localizedDescription
                     showSendProgress = false
                     return showingAlert = true
                 }
-                
-                FileHelper.openFolderInFinder(documentsFolder)
-                
-                progressAmount = 2
-                
-                DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(600)) {
-                    showSendProgress = false
-                }
 
-                alertType = .twoOptionsOneContinue
-                alertTitle = "Aguardando Subida do Arquivo para o Servidor"
-                alertMessage = "Coloque o arquivo recém gerado em /Public/sounds/ e clique em Continuar."
-                showingAlert = true
-            } catch {
-                print(error)
-                alertType = .singleOptionInformative
-                alertTitle = "Falha ao Criar o Som"
-                alertMessage = error.localizedDescription
+                FileHelper.openFolderInFinder(documentsFolder)
+            }
+
+            progressAmount = 2
+
+            DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(600)) {
                 showSendProgress = false
-                return showingAlert = true
+                dismiss()
             }
-        }
-    }
-    
-    private func updateContent() {
-        Task {
-            totalAmount = 2
-            showSendProgress = true
-            modalMessage = "Enviando Dados..."
-            
-            let url = URL(string: serverPath + "v3/update-content/\(assetOperationPassword)")!
-            guard let authorId = selectedAuthor else {
-                alertType = .singleOptionInformative
-                alertTitle = "Dados Incompletos"
-                alertMessage = "Selecione um Autor."
-                return showingAlert = true
-            }
-            // File and duration here
-            let content = MedoContent(sound: sound, authorId: authorId, duration: sound.duration)
-            print(content)
-            do {
-                let response = try await NetworkRabbit.put(in: url, data: content)
-                
-                print(response as Any)
-                
-                guard response else {
-                    alertType = .singleOptionInformative
-                    alertTitle = "Falha ao Atualizar o Som"
-                    alertMessage = "Houve uma falha."
-                    showSendProgress = false
-                    return showingAlert = true
-                }
-                
-                progressAmount = 1
-                
-                if let fileURL = selectedFile {
-                    modalMessage = "Renomeando Arquivo..."
-                    let documentsFolder = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
-                    do {
-                        try renameFile(from: fileURL, with: "\(sound.id).mp3", saveTo: documentsFolder)
-                    } catch {
-                        alertType = .singleOptionInformative
-                        alertTitle = "Falha Ao Renomear Arquivo"
-                        alertMessage = error.localizedDescription
-                        showSendProgress = false
-                        return showingAlert = true
-                    }
-                    
-                    FileHelper.openFolderInFinder(documentsFolder)
-                }
-                
-                progressAmount = 2
-                
-                DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(600)) {
-                    showSendProgress = false
-                    dismiss()
-                }
-            } catch {
-                alertType = .singleOptionInformative
-                alertTitle = "Falha ao Atualizar o Som"
-                alertMessage = error.localizedDescription
-                showSendProgress = false
-                return showingAlert = true
-            }
+        } catch {
+            alertType = .singleOptionInformative
+            alertTitle = "Falha ao Atualizar o Som"
+            alertMessage = error.localizedDescription
+            showSendProgress = false
+            return showingAlert = true
         }
     }
     
@@ -331,7 +321,7 @@ struct EditSoundOnServerView: View {
         Task {
             let url = URL(string: serverPath + "v3/all-authors")!
             do {
-                authors = try await NetworkRabbit.get(from: url)
+                authors = try await APIClient().get(from: url)
                 authors.sort(by: { $0.name.preparedForComparison() < $1.name.preparedForComparison() })
                 
                 if !sound.authorId.isEmpty {
@@ -341,20 +331,6 @@ struct EditSoundOnServerView: View {
                 print(error.localizedDescription)
             }
         }
-    }
-    
-    private func renameFile(
-        from fileURL: URL,
-        with filename: String,
-        saveTo destinationURL: URL
-    ) throws {
-        let fileManager = FileManager.default
-        
-        if fileManager.fileExists(atPath: destinationURL.appending(path: filename).path(percentEncoded: false)) {
-            try fileManager.removeItem(at: destinationURL)
-        }
-        
-        try FileHelper.copyAndRenameFile(from: fileURL, to: destinationURL, with: filename)
     }
 
     private func setVisibility(ofUpdate updateId: String, to newValue: Bool) {
@@ -366,7 +342,7 @@ struct EditSoundOnServerView: View {
             let url = URL(string: serverPath + "v3/change-update-visibility/\(updateId)/\(newValue == true ? "1" : "0")/\(assetOperationPassword)")!
 
             do {
-                let response = try await NetworkRabbit.put(in: url, data: Optional<String>.none)
+                let response = try await APIClient().put(in: url, data: Optional<String>.none)
 
                 print(response as Any)
 
@@ -397,8 +373,9 @@ struct EditSoundOnServerView: View {
 
 // MARK: - Preview
 
-#Preview {
-    EditSoundOnServerView(
-        sound: Sound(title: "")
-    )
-}
+//#Preview {
+//    EditSoundOnServerView(
+//        sound: Sound(title: ""),
+//        contentRepository: content
+//    )
+//}

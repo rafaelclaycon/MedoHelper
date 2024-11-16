@@ -136,7 +136,7 @@ struct ServerMusicGenreCRUDView: View {
             do {
                 let url = URL(string: serverPath + "v3/all-music-genres")!
 
-                var fetchedItems: [MusicGenre] = try await NetworkRabbit.getArray(from: url)
+                var fetchedItems: [MusicGenre] = try await APIClient().getArray(from: url)
 
                 fetchedItems.sort(by: { $0.name.preparedForComparison() < $1.name.preparedForComparison() })
 

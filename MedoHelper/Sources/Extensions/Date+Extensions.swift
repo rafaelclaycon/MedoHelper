@@ -13,13 +13,13 @@ extension Date {
 
 extension Date {
     
-    func toISO8601String() -> String {
+    var iso8601String: String {
         let formatter = ISO8601DateFormatter()
         formatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
         return formatter.string(from: self)
     }
 
-    internal func toScreenString() -> String {
+    internal var displayString: String {
         let dateFormatter = DateFormatter()
         dateFormatter.locale = Locale(identifier: "pt-BR")
         dateFormatter.dateFormat = "dd/MM/yyyy"
