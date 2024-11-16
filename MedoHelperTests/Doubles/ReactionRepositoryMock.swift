@@ -36,7 +36,10 @@ final class ReactionRepositoryMock: ReactionRepositoryProtocol {
     func add(sounds: [ServerReactionSoundForSending]) async throws {
     }
 
-    func reactionSoundsWithAllData(_ basicSounds: [ServerReactionSound]) async throws -> [ReactionSoundForDisplay] {
+    func reactionSoundsWithAllData(
+        _ basicSounds: [ServerReactionSound],
+        _ fullyFormedSounds: [Sound]
+    ) async throws -> [ReactionSoundForDisplay] {
         return []
     }
 

@@ -54,7 +54,7 @@ class ReactionsCRUDViewModelTests: XCTestCase {
         // And I see the populated list
         XCTAssertFalse(viewModel.isLoading)
         XCTAssertFalse(viewModel.isSending)
-        XCTAssertEqual(viewModel.reactions.count, 22)
+        XCTAssertEqual(viewModel.reactions.count, 23)
     }
 
     @MainActor
