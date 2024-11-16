@@ -13,6 +13,7 @@ extension ReactionsCRUDView {
     final class ViewModel: ObservableObject {
 
         @Published var reactions: [HelperReaction] = []
+        @Published var sounds: [Sound] = []
 
         @Published var searchText = ""
         @Published var selectedItem: HelperReaction.ID?
@@ -79,6 +80,7 @@ extension ReactionsCRUDView.ViewModel {
 
     func onViewAppear() async {
         await loadReactions()
+        loadSounds()
     }
 
     func onCreateNewReactionSelected() {
@@ -165,6 +167,29 @@ extension ReactionsCRUDView.ViewModel {
         }
 
         isLoading = false
+    }
+
+    private func loadSounds() {
+        Task {
+            isLoading = true
+
+            do {
+                var fetchedSounds = try await allSounds()
+                let allAuthors = try await allAuthors()
+
+                for i in 0...(fetchedSounds.count - 1) {
+                    fetchedSounds[i].authorName = allAuthors.first(where: { $0.id == fetchedSounds[i].authorId })?.name ?? ""
+                }
+
+                fetchedSounds.sort(by: { $0.dateAdded ?? Date() > $1.dateAdded ?? Date() })
+
+                self.sounds = fetchedSounds
+            } catch {
+                print(error)
+            }
+
+            isLoading = false
+        }
     }
 
     private func reaction(withId id: String) -> HelperReaction? {
@@ -280,5 +305,20 @@ extension ReactionsCRUDView.ViewModel {
         for (index, _) in reactions.enumerated() {
             reactions[index].position = index + 1
         }
+    }
+}
+
+// MARK: - Load Sounds Aux
+
+extension ReactionsCRUDView.ViewModel {
+
+    private func allSounds() async throws -> [Sound] {
+        let url = URL(string: serverPath + "v3/all-sounds")!
+        return try await APIClient().getArray(from: url)
+    }
+
+    private func allAuthors() async throws -> [Author] {
+        let url = URL(string: serverPath + "v3/all-authors")!
+        return try await APIClient().getArray(from: url)
     }
 }

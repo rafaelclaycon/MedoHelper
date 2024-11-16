@@ -11,10 +11,13 @@ struct EditReactionView: View {
 
     @StateObject private var viewModel: ViewModel
 
+    private let sounds: [Sound]
+
     // MARK: - Initializer
 
     init(
         reaction: HelperReaction,
+        sounds: [Sound],
         saveAction: @escaping () -> Void,
         dismissSheet: @escaping () -> Void,
         lastPosition: Int
@@ -27,6 +30,7 @@ struct EditReactionView: View {
                 lastPosition: lastPosition
             )
         )
+        self.sounds = sounds
     }
 
     // MARK: - View Body
@@ -77,6 +81,7 @@ struct EditReactionView: View {
                         }
                         .sheet(isPresented: $viewModel.showAddSheet) {
                             SoundSearchView(
+                                sounds: sounds,
                                 addAction: { sound in
                                     viewModel.onNewSoundAdded(newSound: sound)
                                 },
@@ -173,6 +178,7 @@ struct EditReactionView: View {
 #Preview {
     EditReactionView(
         reaction: .init(position: 1, title: "Exemplo"),
+        sounds: [.init(title: "Que isso")],
         saveAction: {},
         dismissSheet: {},
         lastPosition: 1

@@ -9,14 +9,12 @@ import SwiftUI
 
 struct SoundSearchView: View {
 
+    let sounds: [Sound]
     let addAction: (Sound) -> Void
     let soundExistsOnReaction: (String) -> Bool
 
-    @State private var sounds: [Sound] = []
-
     @State private var searchText = ""
     @State private var selectedItem: Sound.ID?
-    @State private var isLoading: Bool = false
 
     // Alert
     @State private var showAlert = false
@@ -86,14 +84,6 @@ struct SoundSearchView: View {
             }
         }
         .padding(.all, 26)
-        .onAppear {
-            loadSounds()
-        }
-        .overlay {
-            if isLoading {
-                LoadingView(message: "Carregando sons...")
-            }
-        }
         .alert(
             "O Som Selecionado Já Existe na Reação",
             isPresented: $showAlert,
@@ -103,47 +93,13 @@ struct SoundSearchView: View {
             message: { Text("Não é permitido ter o mesmo som 2 vezes na mesma Reação. Selecione outro som.") }
         )
     }
-
-    // MARK: - Functions
-
-    private func loadSounds() {
-        Task {
-            isLoading = true
-
-            do {
-                var fetchedSounds = try await allSounds()
-                let allAuthors = try await allAuthors()
-
-                for i in 0...(fetchedSounds.count - 1) {
-                    fetchedSounds[i].authorName = allAuthors.first(where: { $0.id == fetchedSounds[i].authorId })?.name ?? ""
-                }
-
-                fetchedSounds.sort(by: { $0.dateAdded ?? Date() > $1.dateAdded ?? Date() })
-
-                self.sounds = fetchedSounds
-            } catch {
-                print(error)
-            }
-
-            isLoading = false
-        }
-    }
-
-    private func allSounds() async throws -> [Sound] {
-        let url = URL(string: serverPath + "v3/all-sounds")!
-        return try await APIClient().getArray(from: url)
-    }
-
-    private func allAuthors() async throws -> [Author] {
-        let url = URL(string: serverPath + "v3/all-authors")!
-        return try await APIClient().getArray(from: url)
-    }
 }
 
 // MARK: - Preview
 
 #Preview {
     SoundSearchView(
+        sounds: [.init(title: "Teste")],
         addAction: { _ in },
         soundExistsOnReaction: { _ in
             return false

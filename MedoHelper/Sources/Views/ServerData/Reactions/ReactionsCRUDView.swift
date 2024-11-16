@@ -126,6 +126,7 @@ struct ReactionsCRUDView: View {
             .sheet(item: $viewModel.reactionForEditing) { reaction in
                 EditReactionView(
                     reaction: reaction,
+                    sounds: viewModel.sounds,
                     saveAction: { Task { await viewModel.onSaveReactionSelected() } },
                     dismissSheet: { viewModel.reactionForEditing = nil },
                     lastPosition: viewModel.reactions.count
