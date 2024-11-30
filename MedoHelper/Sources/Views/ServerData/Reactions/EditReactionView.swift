@@ -54,6 +54,15 @@ struct EditReactionView: View {
 
             TextField("URL da Imagem", text: $viewModel.reaction.image)
 
+            HStack(spacing: 15) {
+                Text("📸")
+
+                TextField("Texto de Crédito ao Autor da Imagem", text: $viewModel.reaction.attributionText)
+                    .textCase(.uppercase)
+
+                TextField("URL de Crédito ao Autor da Imagem", text: $viewModel.reaction.attributionURL)
+            }
+
             VStack {
                 Table(viewModel.reactionSounds, selection: $viewModel.selectedItem) {
                     TableColumn("Posição") { reaction in

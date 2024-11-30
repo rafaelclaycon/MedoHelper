@@ -14,6 +14,8 @@ struct HelperReaction: Codable, Identifiable {
     var position: Int
     var image: String
     var lastUpdate: String
+    var attributionText: String
+    var attributionURL: String
     var sounds: [ServerReactionSound]?
 
     init(
@@ -22,6 +24,8 @@ struct HelperReaction: Codable, Identifiable {
         position: Int,
         image: String,
         lastUpdate: String,
+        attributionText: String,
+        attributionURL: String,
         sounds: [ServerReactionSound]? = nil
     ) {
         self.id = id
@@ -29,6 +33,8 @@ struct HelperReaction: Codable, Identifiable {
         self.position = position
         self.image = image
         self.lastUpdate = lastUpdate
+        self.attributionText = attributionText
+        self.attributionURL = attributionURL
         self.sounds = sounds
     }
 
@@ -41,6 +47,8 @@ struct HelperReaction: Codable, Identifiable {
         self.position = position
         self.image = ""
         self.lastUpdate = ""
+        self.attributionText = ""
+        self.attributionURL = ""
         self.sounds = nil
     }
 
@@ -52,6 +60,8 @@ struct HelperReaction: Codable, Identifiable {
         self.position = serverReaction.position
         self.image = serverReaction.image
         self.lastUpdate = serverReaction.lastUpdate
+        self.attributionText = serverReaction.attributionText ?? ""
+        self.attributionURL = serverReaction.attributionURL ?? ""
         self.sounds = nil
     }
 }
@@ -63,19 +73,25 @@ struct ServerReaction: Codable, Identifiable {
     let position: Int
     let image: String
     let lastUpdate: String
+    let attributionText: String?
+    let attributionURL: String?
 
     init(
         id: String,
         title: String,
         position: Int,
         image: String,
-        lastUpdate: String
+        lastUpdate: String,
+        attributionText: String?,
+        attributionURL: String?
     ) {
         self.id = id
         self.title = title
         self.position = position
         self.image = image
         self.lastUpdate = lastUpdate
+        self.attributionText = attributionText
+        self.attributionURL = attributionURL
     }
 
     init(
@@ -87,6 +103,8 @@ struct ServerReaction: Codable, Identifiable {
         self.position = position
         self.image = ""
         self.lastUpdate = ""
+        self.attributionText = nil
+        self.attributionURL = nil
     }
 
     init(
@@ -97,5 +115,7 @@ struct ServerReaction: Codable, Identifiable {
         self.position = helperReaction.position
         self.image = helperReaction.image
         self.lastUpdate = helperReaction.lastUpdate
+        self.attributionText = helperReaction.attributionText
+        self.attributionURL = helperReaction.attributionURL
     }
 }

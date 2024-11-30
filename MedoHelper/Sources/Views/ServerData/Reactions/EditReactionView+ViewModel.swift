@@ -49,8 +49,9 @@ extension EditReactionView {
 
         var reactionDidChange: Bool {
             let titleOrImageChanged = reaction.title != originalReaction.title || reaction.image != originalReaction.image
+            let imageAttributionChanged = reaction.attributionText != originalReaction.attributionText || reaction.attributionURL != originalReaction.attributionURL
             let countChanged = reactionSounds.count != originalReaction.sounds?.count
-            return titleOrImageChanged || countChanged || didChangeSounds
+            return titleOrImageChanged || imageAttributionChanged || countChanged || didChangeSounds
         }
 
         // MARK: - Initializer
@@ -179,6 +180,8 @@ extension EditReactionView.ViewModel {
             position: lastPosition + 1,
             image: reaction.image,
             lastUpdate: Date.now.iso8601String,
+            attributionText: reaction.attributionText,
+            attributionURL: reaction.attributionURL,
             sounds: reactionSounds.basicServerSounds // Here so the CRUD list knows sounds exist.
         )
 
@@ -216,7 +219,9 @@ extension EditReactionView.ViewModel {
             title: reaction.title,
             position: originalReaction.position,
             image: reaction.image,
-            lastUpdate: Date.now.iso8601String
+            lastUpdate: Date.now.iso8601String,
+            attributionText: reaction.attributionText,
+            attributionURL: reaction.attributionURL
         )
 
         do {
