@@ -546,7 +546,7 @@
       "position" : 6
     },
     {
-      "image" : "http:\/\/medodelirioios.online:8080\/images\/reactions\/virais.png",
+      "image" : "http:\/\/medodelirioios.com:8080\/images\/reactions\/virais.png",
       "position" : 7,
       "title" : "virais",
       "id" : "B7C3FAB6-AE98-41E4-8774-387C50BFC1C3",
@@ -648,7 +648,7 @@
       ]
     },
     {
-      "image" : "http:\/\/medodelirioios.online:8080\/images\/reactions\/anistia.png",
+      "image" : "http:\/\/medodelirioios.com:8080\/images\/reactions\/anistia.png",
       "sounds" : [
         {
           "id" : "5C324765-79E9-44DC-9F02-A0E0E29BC226",
