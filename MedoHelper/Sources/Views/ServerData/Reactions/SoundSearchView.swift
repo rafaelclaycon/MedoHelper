@@ -41,6 +41,13 @@ struct SoundSearchView: View {
 
     var body: some View {
         VStack {
+            HStack {
+                Spacer()
+
+                TextField("Pesquisar", text: $searchText)
+                    .frame(width: 300)
+            }
+
             Table(searchResults, selection: $selectedItem) {
                 TableColumn("Título", value: \.title)
 
@@ -49,7 +56,7 @@ struct SoundSearchView: View {
                     return Text(authorName)
                 }
             }
-            .searchable(text: $searchText)
+            //.searchable(text: $searchText) - Bug não abre mais a sheet. Abrir Feedback.
 
             HStack(spacing: 15) {
                 Spacer()
