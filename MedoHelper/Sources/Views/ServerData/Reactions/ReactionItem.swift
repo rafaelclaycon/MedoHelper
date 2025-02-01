@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import Kingfisher
 
 struct ReactionItem: View {
 
@@ -51,8 +52,4 @@ struct ReactionItem: View {
             }
             .contentShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
     }
-}
-
-#Preview {
-    ReactionItem()
 }

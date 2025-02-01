@@ -33,32 +33,25 @@ struct ReactionsCRUDView: View {
                     if data.reactions.isEmpty {
                         Text("Nenhuma Reação para exibir.")
                     } else {
-                        LazyVGrid(
-                            columns: columns,
-                            spacing: 20
-                        ) {
-                            ForEach(data.reactions) { reaction in
-                                InteractibleReactionItem(
-                                    reaction: reaction,
-                                    isPinned: true,
-                                    button:
-                                        Button {
-                                            unpinAction(reaction)
-                                        } label: {
-                                            Label("Desafixar", systemImage: "pin.slash")
-                                        },
-                                    reactionRemovedAction: {
-                                        print("Reaction removed: \($0.title)")
-                                        removedReaction = $0
-                                        showReactionRemovedAlert = true
-                                    }
-                                )
+                        ScrollView {
+                            LazyVGrid(
+                                columns: columns,
+                                spacing: 20
+                            ) {
+                                ForEach(data.reactions) { reaction in
+                                    ReactionItem(
+                                        title: reaction.title,
+                                        image: URL(string: reaction.image),
+                                        itemHeight: 120,
+                                        reduceTextSize: false
+                                    )
+                                }
                             }
                         }
                     }
 
                 case .error(let errorString):
-                    Text("Erro")
+                    Text("Erro: \(errorString)")
                 }
 
 //                Table(viewModel.searchResults, selection: $viewModel.selectedItem) {
