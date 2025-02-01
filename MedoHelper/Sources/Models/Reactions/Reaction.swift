@@ -7,7 +7,8 @@
 
 import Foundation
 
-struct HelperReaction: Codable, Identifiable {
+/// Helper in the sense that it is not the same model as on the app. It has fields that help this app display data.
+struct HelperReaction: Codable, Identifiable, Equatable {
 
     var id: String
     var title: String
@@ -117,5 +118,17 @@ struct ServerReaction: Codable, Identifiable {
         self.lastUpdate = helperReaction.lastUpdate
         self.attributionText = helperReaction.attributionText
         self.attributionURL = helperReaction.attributionURL
+    }
+}
+
+struct ReactionsCRUDModel: Codable, Identifiable, Equatable {
+
+    let reactions: [HelperReaction]
+    let sounds: [Sound]
+
+    var id: String {
+        let reactionIDs = reactions.map { $0.id }.joined(separator: "-")
+        let soundIDs = sounds.map { $0.id }.joined(separator: "-")
+        return "\(reactionIDs)_\(soundIDs)"
     }
 }

@@ -12,8 +12,10 @@ extension ReactionsCRUDView {
     @MainActor
     final class ViewModel: ObservableObject {
 
-        @Published var reactions: [HelperReaction] = []
-        @Published var sounds: [Sound] = []
+        @Published var state: LoadingState<ReactionsCRUDModel> = .loading
+
+        private var reactions: [HelperReaction] = []
+        private var sounds: [Sound] = []
 
         @Published var searchText = ""
         @Published var selectedItem: HelperReaction.ID?
@@ -44,17 +46,24 @@ extension ReactionsCRUDView {
         // MARK: - Computed Properties
 
         var searchResults: [HelperReaction] {
-            if searchText.isEmpty {
-                return reactions
-            } else {
-                return reactions.filter { reaction in
-                    return reaction.title.contains(searchText.preparedForComparison())
-                }
+            guard case .loaded(let data) = state else {
+                return []
             }
+            return data.reactions
+//            if searchText.isEmpty {
+//                return reactions
+//            } else {
+//                return reactions.filter { reaction in
+//                    return reaction.title.contains(searchText.preparedForComparison())
+//                }
+//            }
         }
 
         var isSendDataButtonDisabled: Bool {
-            reactions.isEmpty || !didChangeReactionOrder
+            guard case .loaded(let data) = state else {
+                return true
+            }
+            return data.reactions.isEmpty || !didChangeReactionOrder
         }
 
         var selectedReactionName: String {
@@ -158,7 +167,9 @@ extension ReactionsCRUDView.ViewModel {
         isLoading = true
 
         do {
-            self.reactions = try await reactionRepository.allReactions()
+            let reactions = try await reactionRepository.allReactions()
+            self.reactions = reactions
+            state = .loaded(ReactionsCRUDModel(reactions: self.reactions, sounds: self.sounds))
         } catch {
             print(error)
             isLoading = false
@@ -186,6 +197,7 @@ extension ReactionsCRUDView.ViewModel {
             fetchedSounds.sort(by: { $0.dateAdded ?? Date() > $1.dateAdded ?? Date() })
 
             self.sounds = fetchedSounds
+            state = .loaded(ReactionsCRUDModel(reactions: self.reactions, sounds: self.sounds))
         } catch {
             print(error)
         }
