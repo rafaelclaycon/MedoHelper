@@ -14,8 +14,8 @@ extension ReactionsCRUDView {
 
         @Published var state: LoadingState<ReactionsCRUDModel> = .loading
 
-        private var reactions: [HelperReaction] = []
-        private var sounds: [Sound] = []
+        @Published var reactions: [HelperReaction] = []
+        @Published var sounds: [Sound] = []
 
         @Published var searchText = ""
         @Published var selectedItem: HelperReaction.ID?
@@ -72,6 +72,13 @@ extension ReactionsCRUDView {
                 let reaction = reaction(withId: selectedItem)
             else { return "" }
             return reaction.title
+        }
+
+        var lastReactionPosition: Int {
+            guard case .loaded(let data) = state else {
+                return 0
+            }
+            return data.reactions.count
         }
 
         // MARK: - Initializer

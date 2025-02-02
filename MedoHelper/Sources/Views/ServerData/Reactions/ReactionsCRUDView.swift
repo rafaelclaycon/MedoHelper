@@ -12,8 +12,8 @@ struct ReactionsCRUDView: View {
     @StateObject private var viewModel = ViewModel(reactionRepository: ReactionRepository())
 
     private let columns: [GridItem] = [
-        GridItem(.flexible(), spacing: 20),
-        GridItem(.flexible(), spacing: 20)
+        GridItem(.flexible(), spacing: 12),
+        GridItem(.flexible(), spacing: 12)
     ]
 
     // MARK: - Environment
@@ -36,42 +36,27 @@ struct ReactionsCRUDView: View {
                         ScrollView {
                             LazyVGrid(
                                 columns: columns,
-                                spacing: 20
+                                spacing: 12
                             ) {
                                 ForEach(data.reactions) { reaction in
                                     ReactionItem(
                                         title: reaction.title,
                                         image: URL(string: reaction.image),
-                                        itemHeight: 120,
+                                        itemHeight: 100,
                                         reduceTextSize: false
                                     )
                                 }
                             }
                         }
+                        .frame(width: 390)
+                        .disabled(viewModel.isLoading)
                     }
 
                 case .error(let errorString):
                     Text("Erro: \(errorString)")
                 }
 
-//                Table(viewModel.searchResults, selection: $viewModel.selectedItem) {
-//                    TableColumn("Posição") { reaction in
-//                        Text("\(reaction.position)")
-//                    }
-//                    .width(min: 50, max: 50)
-//
-//                    TableColumn("Título", value: \.title)
-//
-//                    TableColumn("Sons") { reaction in
-//                        guard let sounds = reaction.sounds else { return Text("0") }
-//                        return Text("\(sounds.count)")
-//                    }
-//                    .width(min: 50, max: 50)
-//
-//                    TableColumn("Data de última atualização") { reaction in
-//                        return Text(reaction.lastUpdate.formattedDate)
-//                    }
-//                }
+
 //                .contextMenu(forSelectionType: Sound.ID.self) { items in
 //                    Section {
 //                        Button("Editar Reação") {
@@ -79,20 +64,11 @@ struct ReactionsCRUDView: View {
 //                            viewModel.onEditReactionSelected(reactionId: selectedItemId)
 //                        }
 //                    }
-//                } primaryAction: { items in
-//                    guard let selectedItemId = items.first else { return }
-//                    viewModel.onEditReactionSelected(reactionId: selectedItemId)
-//                }
-//                .searchable(text: $viewModel.searchText)
-//                .disabled(viewModel.isLoading)
+
 //
 //                HStack(spacing: 20) {
 //                    HStack(spacing: 10) {
-//                        Button {
-//                            viewModel.onCreateNewReactionSelected()
-//                        } label: {
-//                            Image(systemName: "plus")
-//                        }
+
 //
 //                        Button {
 //                            viewModel.onRemoveReactionSelected()
@@ -101,57 +77,51 @@ struct ReactionsCRUDView: View {
 //                        }
 //                    }
 //                    .disabled(viewModel.isLoading)
-//
-//                    Button("Importar de Arquivo JSON") {
-//                        Task {
-//                            await viewModel.onImportAndSendPreExistingReactionsSelected()
-//                        }
-//                    }
-//                    .disabled(viewModel.reactions.count > 0)
-//
-//                    Button("Exportar p/ JSON") {
-//                        viewModel.onExportReactionsSelected()
-//                    }
-//                    .disabled(viewModel.reactions.count == 0)
-//
-////                    Button("Importar das Pastas") {
-////                        print("")
-////                    }
-////                    .disabled(!isInEditMode)
-//
-//                    Spacer()
-//
-//                    Button {
-//                        viewModel.onMoveReactionDownSelected()
-//                    } label: {
-//                        Label("Mover", systemImage: "chevron.down")
-//                    }
-//                    .disabled(viewModel.selectedItem == nil)
-//
-//                    Button {
-//                        viewModel.onMoveReactionUpSelected()
-//                    } label: {
-//                        Label("Mover", systemImage: "chevron.up")
-//                    }
-//                    .disabled(viewModel.selectedItem == nil)
-//
-//                    Text("\(viewModel.reactions.count.formattedString) itens")
-//
-//                    Button {
-//                        Task {
-//                            await viewModel.onSendDataSelected()
-//                        }
-//                    } label: {
-//                        Text("Enviar Dados")
-//                            .padding(.horizontal)
-//                    }
-//                    .keyboardShortcut(.defaultAction)
-//                    .disabled(viewModel.isSendDataButtonDisabled)
-//                }
-//                .frame(height: 40)
             }
             .navigationTitle("Reações")
-            .padding()
+            .padding([.top, .leading, .trailing])
+            .toolbar {
+                ToolbarItem(placement: .primaryAction) {
+                    Button {
+                        viewModel.onCreateNewReactionSelected()
+                    } label: {
+                        Image(systemName: "plus")
+                    }
+                }
+
+                ToolbarItemGroup(placement: .secondaryAction) {
+                    HStack(spacing: 20) {
+                        Spacer()
+
+                        Button("Importar de Arquivo JSON") {
+                            Task {
+                                await viewModel.onImportAndSendPreExistingReactionsSelected()
+                            }
+                        }
+                        .disabled(viewModel.reactions.count > 0)
+
+                        Button("Exportar p/ JSON") {
+                            viewModel.onExportReactionsSelected()
+                        }
+                        .disabled(viewModel.reactions.count == 0)
+
+                        Spacer()
+                            .frame(width: 40)
+
+                        Button {
+                            Task {
+                                await viewModel.onSendDataSelected()
+                            }
+                        } label: {
+                            Text("Enviar Dados")
+                                .padding(.horizontal)
+                        }
+                        .keyboardShortcut(.defaultAction)
+                        .disabled(viewModel.isSendDataButtonDisabled)
+                    }
+                    .padding(.all, 20)
+                }
+            }
             .sheet(isPresented: $viewModel.isSending) {
                 SendingProgressView(
                     message: viewModel.modalMessage,
@@ -159,16 +129,16 @@ struct ReactionsCRUDView: View {
                     totalAmount: viewModel.totalAmount
                 )
             }
-//            .sheet(item: $viewModel.reactionForEditing) { reaction in
-//                EditReactionView(
-//                    reaction: reaction,
-//                    sounds: viewModel.sounds,
-//                    saveAction: { Task { await viewModel.onSaveReactionSelected() } },
-//                    dismissSheet: { viewModel.reactionForEditing = nil },
-//                    lastPosition: viewModel.reactions.count
-//                )
-//                .frame(minWidth: 1024, minHeight: 700)
-//            }
+            .sheet(item: $viewModel.reactionForEditing) { reaction in
+                EditReactionView(
+                    reaction: reaction,
+                    sounds: viewModel.sounds,
+                    saveAction: { Task { await viewModel.onSaveReactionSelected() } },
+                    dismissSheet: { viewModel.reactionForEditing = nil },
+                    lastPosition: viewModel.lastReactionPosition
+                )
+                .frame(minWidth: 1024, minHeight: 700)
+            }
             .alert(isPresented: $viewModel.showAlert) {
                 switch viewModel.alertType {
                 case .twoOptionsOneDelete:
