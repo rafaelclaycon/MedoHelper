@@ -45,6 +45,9 @@ struct ReactionsCRUDView: View {
                                         itemHeight: 100,
                                         reduceTextSize: false
                                     )
+                                    .onTapGesture {
+                                        viewModel.onEditReactionSelected(reactionId: reaction.id)
+                                    }
                                     .contextMenu {
                                         Button("Remover Reação") {
                                             viewModel.onRemoveReactionSelected(reactionId: reaction.id)
@@ -61,14 +64,6 @@ struct ReactionsCRUDView: View {
                 case .error(let errorString):
                     Text("Erro: \(errorString)")
                 }
-
-//                .contextMenu(forSelectionType: Sound.ID.self) { items in
-//                    Section {
-//                        Button("Editar Reação") {
-//                            guard let selectedItemId = items.first else { return }
-//                            viewModel.onEditReactionSelected(reactionId: selectedItemId)
-//                        }
-//                    }
             }
             .navigationTitle("Reações")
             .padding([.top, .leading, .trailing])
