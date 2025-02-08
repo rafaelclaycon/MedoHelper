@@ -45,6 +45,12 @@ struct ReactionsCRUDView: View {
                                         itemHeight: 100,
                                         reduceTextSize: false
                                     )
+                                    .contextMenu {
+                                        Button("Remover Reação") {
+                                            viewModel.onRemoveReactionSelected(reactionId: reaction.id)
+                                        }
+                                    }
+                                    .disabled(viewModel.isLoading)
                                 }
                             }
                         }
@@ -56,7 +62,6 @@ struct ReactionsCRUDView: View {
                     Text("Erro: \(errorString)")
                 }
 
-
 //                .contextMenu(forSelectionType: Sound.ID.self) { items in
 //                    Section {
 //                        Button("Editar Reação") {
@@ -64,62 +69,48 @@ struct ReactionsCRUDView: View {
 //                            viewModel.onEditReactionSelected(reactionId: selectedItemId)
 //                        }
 //                    }
-
-//
-//                HStack(spacing: 20) {
-//                    HStack(spacing: 10) {
-
-//
-//                        Button {
-//                            viewModel.onRemoveReactionSelected()
-//                        } label: {
-//                            Image(systemName: "minus")
-//                        }
-//                    }
-//                    .disabled(viewModel.isLoading)
             }
             .navigationTitle("Reações")
             .padding([.top, .leading, .trailing])
             .toolbar {
-                ToolbarItem(placement: .primaryAction) {
+                ToolbarItemGroup(placement: .primaryAction) {
                     Button {
                         viewModel.onCreateNewReactionSelected()
                     } label: {
-                        Image(systemName: "plus")
+                        Label("Enviar Dados", systemImage: "plus")
                     }
+                    .help("Enviar Dados")
+
+                    Button {
+                        Task {
+                            await viewModel.onSendDataSelected()
+                        }
+                    } label: {
+                        Label("Enviar Dados", systemImage: "paperplane")
+                    }
+                    .help("Enviar Dados")
+                    .keyboardShortcut(.defaultAction)
+                    .disabled(viewModel.isSendDataButtonDisabled)
                 }
 
                 ToolbarItemGroup(placement: .secondaryAction) {
-                    HStack(spacing: 20) {
-                        Spacer()
-
-                        Button("Importar de Arquivo JSON") {
-                            Task {
-                                await viewModel.onImportAndSendPreExistingReactionsSelected()
-                            }
+                    Button {
+                        Task {
+                            await viewModel.onImportAndSendPreExistingReactionsSelected()
                         }
-                        .disabled(viewModel.reactions.count > 0)
-
-                        Button("Exportar p/ JSON") {
-                            viewModel.onExportReactionsSelected()
-                        }
-                        .disabled(viewModel.reactions.count == 0)
-
-                        Spacer()
-                            .frame(width: 40)
-
-                        Button {
-                            Task {
-                                await viewModel.onSendDataSelected()
-                            }
-                        } label: {
-                            Text("Enviar Dados")
-                                .padding(.horizontal)
-                        }
-                        .keyboardShortcut(.defaultAction)
-                        .disabled(viewModel.isSendDataButtonDisabled)
+                    } label: {
+                        Label("Importar e Enviar", systemImage: "square.and.arrow.down")
                     }
-                    .padding(.all, 20)
+                    .help("Importar e Enviar")
+                    .disabled(viewModel.reactions.count > 0)
+
+                    Button {
+                        viewModel.onExportReactionsSelected()
+                    } label: {
+                        Label("Exportar Reações", systemImage: "square.and.arrow.up")
+                    }
+                    .help("Exportar Reações")
+                    .disabled(viewModel.reactions.count == 0)
                 }
             }
             .sheet(isPresented: $viewModel.isSending) {
@@ -143,8 +134,8 @@ struct ReactionsCRUDView: View {
                 switch viewModel.alertType {
                 case .twoOptionsOneDelete:
                     return Alert(
-                        title: Text("Deseja Remover Reação '\(viewModel.selectedReactionName)'?"),
-                        message: Text("Tem certeza de que deseja remover essa Reação?"),
+                        title: Text("Remover a Reação '\(viewModel.selectedReactionName)'?"),
+                        message: Text("Essa ação não pode ser desfeita."),
                         primaryButton: .cancel(Text("Cancelar")),
                         secondaryButton: .default(
                             Text("Remover"),

@@ -18,7 +18,7 @@ extension ReactionsCRUDView {
         @Published var sounds: [Sound] = []
 
         @Published var searchText = ""
-        @Published var selectedItem: HelperReaction.ID?
+        @Published var selectedItemId: String?
         @Published var reaction: HelperReaction? = nil
         @Published var isLoading: Bool = false
         @Published var loadingMessage: String = ""
@@ -68,8 +68,8 @@ extension ReactionsCRUDView {
 
         var selectedReactionName: String {
             guard
-                let selectedItem,
-                let reaction = reaction(withId: selectedItem)
+                let selectedItemId,
+                let reaction = reaction(withId: selectedItemId)
             else { return "" }
             return reaction.title
         }
@@ -104,7 +104,8 @@ extension ReactionsCRUDView.ViewModel {
         reactionForEditing = .init(position: 0, title: "")
     }
 
-    func onRemoveReactionSelected() {
+    func onRemoveReactionSelected(reactionId: String) {
+        selectedItemId = reactionId
         alertType = .twoOptionsOneDelete
         showAlert = true
     }
@@ -122,15 +123,15 @@ extension ReactionsCRUDView.ViewModel {
         reactionForEditing = reaction
     }
 
-    func onMoveReactionUpSelected() {
-        didChangeReactionOrder = true
-        moveUp(selectedID: selectedItem)
-    }
-
-    func onMoveReactionDownSelected() {
-        didChangeReactionOrder = true
-        moveDown(selectedID: selectedItem)
-    }
+//    func onMoveReactionUpSelected() {
+//        didChangeReactionOrder = true
+//        moveUp(selectedID: selectedItem)
+//    }
+//
+//    func onMoveReactionDownSelected() {
+//        didChangeReactionOrder = true
+//        moveDown(selectedID: selectedItem)
+//    }
 
     func onSendDataSelected() async {
         await sendAll()
@@ -141,10 +142,7 @@ extension ReactionsCRUDView.ViewModel {
     }
 
     func onConfirmRemoveReactionSelected() async {
-        guard
-            let selectedItem,
-            let reaction = reaction(withId: selectedItem)
-        else {
+        guard let selectedItemId else {
             alertType = .singleOptionError
             alertTitle = "Nenhuma Reação Selecionada"
             alertMessage = "Selecione uma Reação para remover."
@@ -153,7 +151,7 @@ extension ReactionsCRUDView.ViewModel {
         }
 
         do {
-            try await reactionRepository.removeReaction(withId: reaction.id)
+            try await reactionRepository.removeReaction(withId: selectedItemId)
             await loadReactions()
         } catch {
             print(error)
