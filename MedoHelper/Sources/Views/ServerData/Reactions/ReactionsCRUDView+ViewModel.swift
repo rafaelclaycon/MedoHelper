@@ -195,6 +195,12 @@ extension ReactionsCRUDView.ViewModel {
             var fetchedSounds = try await allSounds()
             let allAuthors = try await allAuthors()
 
+            guard !fetchedSounds.isEmpty else {
+                state = .error("Nenhum som.")
+                isLoading = false
+                return
+            }
+
             for i in 0...(fetchedSounds.count - 1) {
                 fetchedSounds[i].authorName = allAuthors.first(where: { $0.id == fetchedSounds[i].authorId })?.name ?? ""
             }
