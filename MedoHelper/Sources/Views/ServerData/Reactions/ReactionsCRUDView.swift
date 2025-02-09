@@ -11,11 +11,6 @@ struct ReactionsCRUDView: View {
 
     @StateObject private var viewModel = ViewModel(reactionRepository: ReactionRepository())
 
-    private let columns: [GridItem] = [
-        GridItem(.flexible(), spacing: 12),
-        GridItem(.flexible(), spacing: 12)
-    ]
-
     // MARK: - Environment
 
     @Environment(\.colorScheme) var colorScheme
@@ -35,32 +30,7 @@ struct ReactionsCRUDView: View {
                     if data.reactions.isEmpty {
                         Text("Nenhuma Reação para exibir.")
                     } else {
-                        ScrollView {
-                            LazyVGrid(
-                                columns: columns,
-                                spacing: 12
-                            ) {
-                                ForEach(data.reactions) { reaction in
-                                    ReactionItem(
-                                        title: reaction.title,
-                                        image: URL(string: reaction.image),
-                                        itemHeight: 100,
-                                        reduceTextSize: false
-                                    )
-                                    .onTapGesture {
-                                        viewModel.onEditReactionSelected(reactionId: reaction.id)
-                                    }
-                                    .contextMenu {
-                                        Button("Remover Reação") {
-                                            viewModel.onRemoveReactionSelected(reactionId: reaction.id)
-                                        }
-                                    }
-                                    .disabled(viewModel.isLoading)
-                                }
-                            }
-                            .frame(width: 390)
-                        }
-                        .disabled(viewModel.isLoading)
+                        LoadedView(reactions: data.reactions, isLoading: viewModel.isLoading)
                     }
 
                 case .error(let errorString):
@@ -164,6 +134,50 @@ struct ReactionsCRUDView: View {
 // MARK: - Subviews
 
 extension ReactionsCRUDView {
+
+    struct LoadedView: View {
+
+        let reactions: [HelperReaction]
+        let isLoading: Bool
+
+        private let columns: [GridItem] = [
+            GridItem(.flexible(), spacing: 12),
+            GridItem(.flexible(), spacing: 12)
+        ]
+
+        var body: some View {
+            HStack(spacing: 50) {
+                List(reactions) { reaction in
+                    Text(reaction.title)
+                }
+                .padding(.horizontal, 30)
+
+                VStack(alignment: .leading, spacing: 15) {
+                    Text("No App:")
+                        .font(.title2)
+                        .bold()
+
+                    ScrollView {
+                        LazyVGrid(
+                            columns: columns,
+                            spacing: 12
+                        ) {
+                            ForEach(reactions) { reaction in
+                                ReactionItem(
+                                    title: reaction.title,
+                                    image: URL(string: reaction.image),
+                                    itemHeight: 100,
+                                    reduceTextSize: false
+                                )
+                            }
+                        }
+                        .frame(width: 390)
+                    }
+                }
+            }
+            .disabled(isLoading)
+        }
+    }
 
     struct VerticalLoadingView: View {
 
