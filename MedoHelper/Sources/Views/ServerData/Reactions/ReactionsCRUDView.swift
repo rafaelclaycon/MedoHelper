@@ -24,10 +24,12 @@ struct ReactionsCRUDView: View {
 
     var body: some View {
         VStack {
-            VStack {
+            if viewModel.isLoading {
+                VerticalLoadingView(message: viewModel.loadingMessage.uppercased())
+            } else {
                 switch viewModel.state {
                 case .loading:
-                    Text(viewModel.loadingMessage)
+                    VerticalLoadingView(message: viewModel.loadingMessage.uppercased())
 
                 case .loaded(let data):
                     if data.reactions.isEmpty {
@@ -56,8 +58,8 @@ struct ReactionsCRUDView: View {
                                     .disabled(viewModel.isLoading)
                                 }
                             }
+                            .frame(width: 390)
                         }
-                        .frame(width: 390)
                         .disabled(viewModel.isLoading)
                     }
 
@@ -65,100 +67,115 @@ struct ReactionsCRUDView: View {
                     Text("Erro: \(errorString)")
                 }
             }
-            .navigationTitle("Reações")
-            .padding([.top, .leading, .trailing])
-            .toolbar {
-                ToolbarItemGroup(placement: .primaryAction) {
-                    Button {
-                        viewModel.onCreateNewReactionSelected()
-                    } label: {
-                        Label("Enviar Dados", systemImage: "plus")
-                    }
-                    .help("Enviar Dados")
-
-                    Button {
-                        Task {
-                            await viewModel.onSendDataSelected()
-                        }
-                    } label: {
-                        Label("Enviar Dados", systemImage: "paperplane")
-                    }
-                    .help("Enviar Dados")
-                    .keyboardShortcut(.defaultAction)
-                    .disabled(viewModel.isSendDataButtonDisabled)
+        }
+        .navigationTitle("Reações")
+        .padding([.top, .leading, .trailing])
+        .toolbar {
+            ToolbarItemGroup(placement: .primaryAction) {
+                Button {
+                    viewModel.onCreateNewReactionSelected()
+                } label: {
+                    Label("Nova Reação", systemImage: "plus")
                 }
+                .help("Nova Reação")
 
-                ToolbarItemGroup(placement: .secondaryAction) {
-                    Button {
-                        Task {
-                            await viewModel.onImportAndSendPreExistingReactionsSelected()
-                        }
-                    } label: {
-                        Label("Importar e Enviar", systemImage: "square.and.arrow.down")
+                Button {
+                    Task {
+                        await viewModel.onSendDataSelected()
                     }
-                    .help("Importar e Enviar")
-                    .disabled(viewModel.reactions.count > 0)
+                } label: {
+                    Label("Enviar Dados", systemImage: "paperplane")
+                }
+                .help("Enviar Dados")
+                .keyboardShortcut(.defaultAction)
+                .disabled(viewModel.isSendDataButtonDisabled)
+            }
 
-                    Button {
-                        viewModel.onExportReactionsSelected()
-                    } label: {
-                        Label("Exportar Reações", systemImage: "square.and.arrow.up")
+            ToolbarItemGroup(placement: .secondaryAction) {
+                Button {
+                    Task {
+                        await viewModel.onImportAndSendPreExistingReactionsSelected()
                     }
-                    .help("Exportar Reações")
-                    .disabled(viewModel.reactions.count == 0)
+                } label: {
+                    Label("Importar e Enviar", systemImage: "square.and.arrow.down")
                 }
-            }
-            .sheet(isPresented: $viewModel.isSending) {
-                SendingProgressView(
-                    message: viewModel.modalMessage,
-                    currentAmount: viewModel.progressAmount,
-                    totalAmount: viewModel.totalAmount
-                )
-            }
-            .sheet(item: $viewModel.reactionForEditing) { reaction in
-                EditReactionView(
-                    reaction: reaction,
-                    sounds: viewModel.sounds,
-                    saveAction: { Task { await viewModel.onSaveReactionSelected() } },
-                    dismissSheet: { viewModel.reactionForEditing = nil },
-                    lastPosition: viewModel.lastReactionPosition
-                )
-                .frame(minWidth: 1024, minHeight: 700)
-            }
-            .alert(isPresented: $viewModel.showAlert) {
-                switch viewModel.alertType {
-                case .twoOptionsOneDelete:
-                    return Alert(
-                        title: Text("Remover a Reação '\(viewModel.selectedReactionName)'?"),
-                        message: Text("Essa ação não pode ser desfeita."),
-                        primaryButton: .cancel(Text("Cancelar")),
-                        secondaryButton: .default(
-                            Text("Remover"),
-                            action: {
-                                Task {
-                                    await viewModel.onConfirmRemoveReactionSelected()
-                                }
-                            }
-                        )
-                    )
+                .help("Importar e Enviar")
+                .disabled(viewModel.reactions.count > 0)
 
-                default:
-                    return Alert(
-                        title: Text(viewModel.alertTitle),
-                        message: Text(viewModel.alertMessage),
-                        dismissButton: .cancel(Text("OK"))
-                    )
+                Button {
+                    viewModel.onExportReactionsSelected()
+                } label: {
+                    Label("Exportar Reações", systemImage: "square.and.arrow.up")
                 }
-            }
-            .onAppear {
-                Task {
-                    await viewModel.onViewAppear()
-                }
+                .help("Exportar Reações")
+                .disabled(viewModel.reactions.count == 0)
             }
         }
-        .overlay {
-            if viewModel.isLoading {
-                LoadingView(message: viewModel.loadingMessage)
+        .sheet(isPresented: $viewModel.isSending) {
+            SendingProgressView(
+                message: viewModel.modalMessage,
+                currentAmount: viewModel.progressAmount,
+                totalAmount: viewModel.totalAmount
+            )
+        }
+        .sheet(item: $viewModel.reactionForEditing) { reaction in
+            EditReactionView(
+                reaction: reaction,
+                sounds: viewModel.sounds,
+                saveAction: { Task { await viewModel.onSaveReactionSelected() } },
+                dismissSheet: { viewModel.reactionForEditing = nil },
+                lastPosition: viewModel.lastReactionPosition
+            )
+            .frame(minWidth: 1024, minHeight: 700)
+        }
+        .alert(isPresented: $viewModel.showAlert) {
+            switch viewModel.alertType {
+            case .twoOptionsOneDelete:
+                return Alert(
+                    title: Text("Remover a Reação '\(viewModel.selectedReactionName)'?"),
+                    message: Text("Essa ação não pode ser desfeita."),
+                    primaryButton: .cancel(Text("Cancelar")),
+                    secondaryButton: .default(
+                        Text("Remover"),
+                        action: {
+                            Task {
+                                await viewModel.onConfirmRemoveReactionSelected()
+                            }
+                        }
+                    )
+                )
+
+            default:
+                return Alert(
+                    title: Text(viewModel.alertTitle),
+                    message: Text(viewModel.alertMessage),
+                    dismissButton: .cancel(Text("OK"))
+                )
+            }
+        }
+        .onAppear {
+            Task {
+                await viewModel.onViewAppear()
+            }
+        }
+    }
+}
+
+// MARK: - Subviews
+
+extension ReactionsCRUDView {
+
+    struct VerticalLoadingView: View {
+
+        let message: String
+
+        var body: some View {
+            VStack {
+                ProgressView()
+                    .scaleEffect(0.7)
+
+                Text(message)
+                    .foregroundStyle(.gray)
             }
         }
     }
