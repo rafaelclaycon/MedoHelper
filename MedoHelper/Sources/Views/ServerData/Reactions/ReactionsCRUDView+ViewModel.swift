@@ -161,6 +161,11 @@ extension ReactionsCRUDView.ViewModel {
             showAlert = true
         }
     }
+
+    public func onMoveReaction(from source: IndexSet, to destination: Int) {
+        reactions.move(fromOffsets: source, toOffset: destination)
+        state = .loaded(ReactionsCRUDModel(reactions: reactions, sounds: sounds))
+    }
 }
 
 // MARK: - Internal Operations

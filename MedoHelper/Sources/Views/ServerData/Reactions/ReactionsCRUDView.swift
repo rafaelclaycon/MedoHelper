@@ -30,7 +30,13 @@ struct ReactionsCRUDView: View {
                     if data.reactions.isEmpty {
                         Text("Nenhuma Reação para exibir.")
                     } else {
-                        LoadedView(reactions: data.reactions, isLoading: viewModel.isLoading)
+                        LoadedView(
+                            reactions: data.reactions,
+                            isLoading: viewModel.isLoading,
+                            moveAction: {
+                                viewModel.onMoveReaction(from: $0, to: $1)
+                            }
+                        )
                     }
 
                 case .error(let errorString):
@@ -139,6 +145,7 @@ extension ReactionsCRUDView {
 
         let reactions: [HelperReaction]
         let isLoading: Bool
+        let moveAction: (IndexSet, Int) -> Void
 
         private let columns: [GridItem] = [
             GridItem(.flexible(), spacing: 12),
@@ -147,13 +154,15 @@ extension ReactionsCRUDView {
 
         var body: some View {
             HStack(spacing: 50) {
-                List(reactions) { reaction in
-                    Text(reaction.title)
+                List {
+                    ForEach(reactions) {
+                        ReactionEditableItem(reaction: $0)
+                    }
+                    .onMove(perform: moveAction)
                 }
-                .padding(.horizontal, 30)
 
                 VStack(alignment: .leading, spacing: 15) {
-                    Text("No App:")
+                    Text("Visualização no App:")
                         .font(.title2)
                         .bold()
 
@@ -175,7 +184,38 @@ extension ReactionsCRUDView {
                     }
                 }
             }
+            .padding(.horizontal, 30)
             .disabled(isLoading)
+        }
+    }
+
+    struct ReactionEditableItem: View {
+
+        let reaction: HelperReaction
+
+        private var soundCount: String {
+            guard let count = reaction.sounds?.count else {
+                return "Nenhum som"
+            }
+            switch count {
+            case 0:
+                return "Nenhum som"
+            case 1:
+                return "1 som"
+            default:
+                return "\(count) sons"
+            }
+        }
+
+        var body: some View {
+            VStack(alignment: .leading, spacing: 8) {
+                Text(reaction.title)
+                    .bold()
+
+                Text(soundCount)
+                    .foregroundStyle(.gray)
+            }
+            .padding(.all, 8)
         }
     }
 
@@ -195,8 +235,36 @@ extension ReactionsCRUDView {
     }
 }
 
-// MARK: - Preview
+// MARK: - Previews
 
 #Preview {
     ReactionsCRUDView()
+}
+
+#Preview {
+    ReactionsCRUDView.ReactionEditableItem(
+        reaction: HelperReaction(
+            id: "abc",
+            title: "bozo",
+            position: 0,
+            image: "",
+            lastUpdate: "2024-12-12",
+            attributionText: "",
+            attributionURL: "",
+            sounds: [
+                .init(
+                    id: "fre",
+                    soundId: "985",
+                    dateAdded: "2024-12-01",
+                    position: 0
+                ),
+                .init(
+                    id: "ert",
+                    soundId: "265",
+                    dateAdded: "2024-12-31",
+                    position: 2
+                )
+            ]
+        )
+    )
 }
