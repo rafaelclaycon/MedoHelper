@@ -33,8 +33,14 @@ struct ReactionsCRUDView: View {
                         LoadedView(
                             reactions: data.reactions,
                             isLoading: viewModel.isLoading,
+                            editAction: { reactionId in
+                                viewModel.onEditReactionSelected(reactionId: reactionId)
+                            },
                             moveAction: {
                                 viewModel.onMoveReaction(from: $0, to: $1)
+                            },
+                            deleteAction: { reactionId in
+                                viewModel.onRemoveReactionSelected(reactionId: reactionId)
                             }
                         )
                     }
@@ -145,7 +151,11 @@ extension ReactionsCRUDView {
 
         let reactions: [HelperReaction]
         let isLoading: Bool
+        let editAction: (String) -> Void
         let moveAction: (IndexSet, Int) -> Void
+        let deleteAction: (String) -> Void
+
+        @State private var selection: String?
 
         private let columns: [GridItem] = [
             GridItem(.flexible(), spacing: 12),
@@ -154,9 +164,18 @@ extension ReactionsCRUDView {
 
         var body: some View {
             HStack(spacing: 50) {
-                List {
-                    ForEach(reactions) {
-                        ReactionEditableItem(reaction: $0)
+                List(selection: $selection) {
+                    ForEach(reactions) { reaction in
+                        ReactionEditableItem(reaction: reaction)
+                            .contextMenu {
+                                Button("Editar Reação") {
+                                    editAction(reaction.id)
+                                }
+
+                                Button("Remover Reação") {
+                                    deleteAction(reaction.id)
+                                }
+                            }
                     }
                     .onMove(perform: moveAction)
                 }
@@ -181,6 +200,7 @@ extension ReactionsCRUDView {
                             }
                         }
                         .frame(width: 390)
+                        .padding(.bottom, 30)
                     }
                 }
             }

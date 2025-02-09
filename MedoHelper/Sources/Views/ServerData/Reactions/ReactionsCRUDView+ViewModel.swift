@@ -45,20 +45,6 @@ extension ReactionsCRUDView {
 
         // MARK: - Computed Properties
 
-        var searchResults: [HelperReaction] {
-            guard case .loaded(let data) = state else {
-                return []
-            }
-            return data.reactions
-//            if searchText.isEmpty {
-//                return reactions
-//            } else {
-//                return reactions.filter { reaction in
-//                    return reaction.title.contains(searchText.preparedForComparison())
-//                }
-//            }
-        }
-
         var isSendDataButtonDisabled: Bool {
             guard case .loaded(let data) = state else {
                 return true
@@ -122,16 +108,6 @@ extension ReactionsCRUDView.ViewModel {
         guard let reaction = reaction(withId: reactionId) else { return }
         reactionForEditing = reaction
     }
-
-//    func onMoveReactionUpSelected() {
-//        didChangeReactionOrder = true
-//        moveUp(selectedID: selectedItem)
-//    }
-//
-//    func onMoveReactionDownSelected() {
-//        didChangeReactionOrder = true
-//        moveDown(selectedID: selectedItem)
-//    }
 
     func onSendDataSelected() async {
         await sendAll()
@@ -302,37 +278,6 @@ extension ReactionsCRUDView.ViewModel {
             }
         } catch {
             afterSendingError(title: "Erro ao Tentar Exportar as Reações", message: error.localizedDescription)
-        }
-    }
-}
-
-// MARK: - List Item Moving
-
-extension ReactionsCRUDView.ViewModel {
-
-    private func moveUp(selectedID: ReactionSoundForDisplay.ID?) {
-        guard
-            let selectedID = selectedID,
-            let index = reactions.firstIndex(where: { $0.id == selectedID }),
-            index > 0
-        else { return }
-        reactions.swapAt(index, index - 1)
-        updatePositions()
-    }
-
-    private func moveDown(selectedID: ReactionSoundForDisplay.ID?) {
-        guard
-            let selectedID = selectedID,
-            let index = reactions.firstIndex(where: { $0.id == selectedID }),
-            index < reactions.count - 1
-        else { return }
-        reactions.swapAt(index, index + 1)
-        updatePositions()
-    }
-
-    private func updatePositions() {
-        for (index, _) in reactions.enumerated() {
-            reactions[index].position = index + 1
         }
     }
 }
