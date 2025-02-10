@@ -140,7 +140,9 @@ extension ReactionsCRUDView.ViewModel {
 
     public func onMoveReaction(from source: IndexSet, to destination: Int) {
         reactions.move(fromOffsets: source, toOffset: destination)
+        updateReactionsAssignedPositions()
         state = .loaded(ReactionsCRUDModel(reactions: reactions, sounds: sounds))
+        didChangeReactionOrder = true
     }
 }
 
@@ -243,6 +245,8 @@ extension ReactionsCRUDView.ViewModel {
 
             isSending = false
             didChangeReactionOrder = false
+
+            sentSuccessMessage(title: "Reações enviadas com sucesso!")
         } catch ReactionRepositoryError.errorDeletingReactions {
             afterSendingError(title: "Erro ao Tentar Remover as Reações")
         } catch ReactionRepositoryError.errorDeletingReactionSounds {
@@ -254,6 +258,16 @@ extension ReactionsCRUDView.ViewModel {
                 message: error.localizedDescription
             )
         }
+    }
+
+    private func sentSuccessMessage(
+        title: String,
+        message: String = ""
+    ) {
+        alertType = .singleOptionInformative
+        alertTitle = title
+        alertMessage = message
+        showAlert = true
     }
 
     private func afterSendingError(title: String, message: String = "") {
@@ -278,6 +292,12 @@ extension ReactionsCRUDView.ViewModel {
             }
         } catch {
             afterSendingError(title: "Erro ao Tentar Exportar as Reações", message: error.localizedDescription)
+        }
+    }
+
+    private func updateReactionsAssignedPositions() {
+        for (index, _) in reactions.enumerated() {
+            reactions[index].position = index + 1
         }
     }
 }
