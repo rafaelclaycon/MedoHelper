@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 55;
+	objectVersion = 70;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -60,6 +60,7 @@
 		D99AEF2E2BE28FA100C4A8FA /* ReactionsCRUDView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D99AEF2D2BE28FA100C4A8FA /* ReactionsCRUDView.swift */; };
 		D99AEF302BE2900F00C4A8FA /* Reaction.swift in Sources */ = {isa = PBXBuildFile; fileRef = D99AEF2F2BE2900F00C4A8FA /* Reaction.swift */; };
 		D99AEF322BE294C900C4A8FA /* EditReactionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D99AEF312BE294C900C4A8FA /* EditReactionView.swift */; };
+		D9A9E7FD2D5A518200AEAAC6 /* WatchMedoHelper Watch App.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = D9A9E7F02D5A518000AEAAC6 /* WatchMedoHelper Watch App.app */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		D9ABF0CD2A41E7D5009872DB /* MoveDataToServerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9ABF0CC2A41E7D5009872DB /* MoveDataToServerView.swift */; };
 		D9B8784B28650F4E009CA7AD /* CSVParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9B8784A28650F4E009CA7AD /* CSVParser.swift */; };
 		D9B8784F2865324F009CA7AD /* RankItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9B8784E2865324F009CA7AD /* RankItem.swift */; };
@@ -86,7 +87,28 @@
 			remoteGlobalIDString = D94A421D283DC94B00A504BD;
 			remoteInfo = MedoHelper;
 		};
+		D9A9E7FB2D5A518200AEAAC6 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = D94A4216283DC94B00A504BD /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = D9A9E7EF2D5A518000AEAAC6;
+			remoteInfo = "WatchMedoHelper Watch App";
+		};
 /* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		D9A9E8012D5A518200AEAAC6 /* Embed Watch Content */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "$(CONTENTS_FOLDER_PATH)/Watch";
+			dstSubfolderSpec = 16;
+			files = (
+				D9A9E7FD2D5A518200AEAAC6 /* WatchMedoHelper Watch App.app in Embed Watch Content */,
+			);
+			name = "Embed Watch Content";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		D90449552BB2743A0023088B /* ExternalLink.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExternalLink.swift; sourceTree = "<group>"; };
@@ -146,6 +168,7 @@
 		D99AEF2D2BE28FA100C4A8FA /* ReactionsCRUDView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReactionsCRUDView.swift; sourceTree = "<group>"; };
 		D99AEF2F2BE2900F00C4A8FA /* Reaction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Reaction.swift; sourceTree = "<group>"; };
 		D99AEF312BE294C900C4A8FA /* EditReactionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditReactionView.swift; sourceTree = "<group>"; };
+		D9A9E7F02D5A518000AEAAC6 /* WatchMedoHelper Watch App.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "WatchMedoHelper Watch App.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		D9ABF0CC2A41E7D5009872DB /* MoveDataToServerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoveDataToServerView.swift; sourceTree = "<group>"; };
 		D9B8784A28650F4E009CA7AD /* CSVParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CSVParser.swift; sourceTree = "<group>"; };
 		D9B8784E2865324F009CA7AD /* RankItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RankItem.swift; sourceTree = "<group>"; };
@@ -164,6 +187,10 @@
 		D9FF96BF2BF0E19F00803572 /* ReactionSound.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReactionSound.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		D9A9E7F12D5A518000AEAAC6 /* WatchMedoHelper Watch App */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = "WatchMedoHelper Watch App"; sourceTree = "<group>"; };
+/* End PBXFileSystemSynchronizedRootGroup section */
+
 /* Begin PBXFrameworksBuildPhase section */
 		D94A421B283DC94B00A504BD /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
@@ -174,6 +201,13 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		D94A422C283DC94D00A504BD /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D9A9E7ED2D5A518000AEAAC6 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -247,6 +281,7 @@
 				D91298A82CCB3B71003CC5E5 /* MedoHelper.xctestplan */,
 				D94A4220283DC94B00A504BD /* MedoHelper */,
 				D94A4232283DC94D00A504BD /* MedoHelperTests */,
+				D9A9E7F12D5A518000AEAAC6 /* WatchMedoHelper Watch App */,
 				D94A421F283DC94B00A504BD /* Products */,
 			);
 			sourceTree = "<group>";
@@ -256,6 +291,7 @@
 			children = (
 				D94A421E283DC94B00A504BD /* MedoHelper.app */,
 				D94A422F283DC94D00A504BD /* MedoHelperTests.xctest */,
+				D9A9E7F02D5A518000AEAAC6 /* WatchMedoHelper Watch App.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -536,10 +572,12 @@
 				D94A421A283DC94B00A504BD /* Sources */,
 				D94A421B283DC94B00A504BD /* Frameworks */,
 				D94A421C283DC94B00A504BD /* Resources */,
+				D9A9E8012D5A518200AEAAC6 /* Embed Watch Content */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				D9A9E7FC2D5A518200AEAAC6 /* PBXTargetDependency */,
 			);
 			name = MedoHelper;
 			productName = MedoHelper;
@@ -564,6 +602,28 @@
 			productReference = D94A422F283DC94D00A504BD /* MedoHelperTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
+		D9A9E7EF2D5A518000AEAAC6 /* WatchMedoHelper Watch App */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = D9A9E7FE2D5A518200AEAAC6 /* Build configuration list for PBXNativeTarget "WatchMedoHelper Watch App" */;
+			buildPhases = (
+				D9A9E7EC2D5A518000AEAAC6 /* Sources */,
+				D9A9E7ED2D5A518000AEAAC6 /* Frameworks */,
+				D9A9E7EE2D5A518000AEAAC6 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				D9A9E7F12D5A518000AEAAC6 /* WatchMedoHelper Watch App */,
+			);
+			name = "WatchMedoHelper Watch App";
+			packageProductDependencies = (
+			);
+			productName = "WatchMedoHelper Watch App";
+			productReference = D9A9E7F02D5A518000AEAAC6 /* WatchMedoHelper Watch App.app */;
+			productType = "com.apple.product-type.application";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -571,7 +631,7 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
-				LastSwiftUpdateCheck = 1340;
+				LastSwiftUpdateCheck = 1620;
 				LastUpgradeCheck = 1500;
 				TargetAttributes = {
 					D94A421D283DC94B00A504BD = {
@@ -580,6 +640,9 @@
 					D94A422E283DC94D00A504BD = {
 						CreatedOnToolsVersion = 13.4;
 						TestTargetID = D94A421D283DC94B00A504BD;
+					};
+					D9A9E7EF2D5A518000AEAAC6 = {
+						CreatedOnToolsVersion = 16.2;
 					};
 				};
 			};
@@ -601,6 +664,7 @@
 			targets = (
 				D94A421D283DC94B00A504BD /* MedoHelper */,
 				D94A422E283DC94D00A504BD /* MedoHelperTests */,
+				D9A9E7EF2D5A518000AEAAC6 /* WatchMedoHelper Watch App */,
 			);
 		};
 /* End PBXProject section */
@@ -621,6 +685,13 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		D94A422D283DC94D00A504BD /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D9A9E7EE2D5A518000AEAAC6 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -705,6 +776,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		D9A9E7EC2D5A518000AEAAC6 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -712,6 +790,11 @@
 			isa = PBXTargetDependency;
 			target = D94A421D283DC94B00A504BD /* MedoHelper */;
 			targetProxy = D94A4230283DC94D00A504BD /* PBXContainerItemProxy */;
+		};
+		D9A9E7FC2D5A518200AEAAC6 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = D9A9E7EF2D5A518000AEAAC6 /* WatchMedoHelper Watch App */;
+			targetProxy = D9A9E7FB2D5A518200AEAAC6 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -949,6 +1032,78 @@
 			};
 			name = Release;
 		};
+		D9A9E7FF2D5A518200AEAAC6 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "\"WatchMedoHelper Watch App/Preview Content\"";
+				DEVELOPMENT_TEAM = L8X3H5XA82;
+				ENABLE_PREVIEWS = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "WatchMedoHelper-Watch-App-Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = WatchMedoHelper;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				INFOPLIST_KEY_WKCompanionAppBundleIdentifier = com.rafaelschmitt.MedoHelper;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.rafaelschmitt.MedoHelper.watchkitapp;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = watchos;
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 4;
+				WATCHOS_DEPLOYMENT_TARGET = 11.2;
+			};
+			name = Debug;
+		};
+		D9A9E8002D5A518200AEAAC6 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "\"WatchMedoHelper Watch App/Preview Content\"";
+				DEVELOPMENT_TEAM = L8X3H5XA82;
+				ENABLE_PREVIEWS = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "WatchMedoHelper-Watch-App-Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = WatchMedoHelper;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				INFOPLIST_KEY_WKCompanionAppBundleIdentifier = com.rafaelschmitt.MedoHelper;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.rafaelschmitt.MedoHelper.watchkitapp;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = watchos;
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 4;
+				VALIDATE_PRODUCT = YES;
+				WATCHOS_DEPLOYMENT_TARGET = 11.2;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -975,6 +1130,15 @@
 			buildConfigurations = (
 				D94A4247283DC94D00A504BD /* Debug */,
 				D94A4248283DC94D00A504BD /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		D9A9E7FE2D5A518200AEAAC6 /* Build configuration list for PBXNativeTarget "WatchMedoHelper Watch App" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D9A9E7FF2D5A518200AEAAC6 /* Debug */,
+				D9A9E8002D5A518200AEAAC6 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
