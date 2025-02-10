@@ -249,10 +249,12 @@ struct ServerSoundsCRUDView: View {
     }
 
     private func copyTitlesToClipboard() {
+        #if canImport(AppKit)
         let titles = sounds.map { $0.title }.joined(separator: "\n")
         let pasteboard = NSPasteboard.general
         pasteboard.clearContents()
         pasteboard.setString(titles, forType: .string)
+        #endif
     }
 }
 

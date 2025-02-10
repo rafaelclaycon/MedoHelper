@@ -6,7 +6,9 @@
 //
 
 import AVFoundation
+#if canImport(AppKit)
 import AppKit
+#endif
 
 class FileHelper {
     
@@ -74,8 +76,10 @@ class FileHelper {
     }
     
     static func openFolderInFinder(_ folderURL: URL) {
+        #if canImport(AppKit)
         let workspace = NSWorkspace.shared
         workspace.selectFile(nil, inFileViewerRootedAtPath: folderURL.path)
+        #endif
     }
 }
 

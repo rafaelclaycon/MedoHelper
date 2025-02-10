@@ -279,6 +279,7 @@ extension ReactionsCRUDView.ViewModel {
     }
 
     private func copyReactionsToClipboard() {
+        #if canImport(AppKit)
         let encoder = JSONEncoder()
         encoder.outputFormatting = .prettyPrinted
 
@@ -293,6 +294,7 @@ extension ReactionsCRUDView.ViewModel {
         } catch {
             afterSendingError(title: "Erro ao Tentar Exportar as Reações", message: error.localizedDescription)
         }
+        #endif
     }
 
     private func updateReactionsAssignedPositions() {
