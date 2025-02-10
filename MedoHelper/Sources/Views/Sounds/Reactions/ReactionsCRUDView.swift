@@ -248,7 +248,7 @@ extension ReactionsCRUDView {
         let message: String
 
         var body: some View {
-            VStack {
+            VStack(spacing: 15) {
                 ProgressView()
                     .scaleEffect(0.7)
 

@@ -27,15 +27,12 @@
 		D92694012A015C7E007872D9 /* APIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = D92694002A015C7E007872D9 /* APIClient.swift */; };
 		D92694032A01A7F9007872D9 /* String+.swift in Sources */ = {isa = PBXBuildFile; fileRef = D92694022A01A7F9007872D9 /* String+.swift */; };
 		D92828712AA515AC009E5D37 /* EditSongOnServerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D92828702AA515AC009E5D37 /* EditSongOnServerView.swift */; };
-		D9310C292A0BDDDF006A3058 /* CreateAuthorAndSoundView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9310C282A0BDDDF006A3058 /* CreateAuthorAndSoundView.swift */; };
 		D93832FD2BF0ECBF00CCB48B /* reactions_data.json in Resources */ = {isa = PBXBuildFile; fileRef = D93832FC2BF0ECBF00CCB48B /* reactions_data.json */; };
 		D94A4222283DC94B00A504BD /* MedoHelperApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = D94A4221283DC94B00A504BD /* MedoHelperApp.swift */; };
 		D94A4224283DC94B00A504BD /* MainView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D94A4223283DC94B00A504BD /* MainView.swift */; };
 		D94A4226283DC94D00A504BD /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D94A4225283DC94D00A504BD /* Assets.xcassets */; };
 		D94A4229283DC94D00A504BD /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D94A4228283DC94D00A504BD /* Preview Assets.xcassets */; };
 		D94A4234283DC94D00A504BD /* ReactionsCRUDViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D94A4233283DC94D00A504BD /* ReactionsCRUDViewModelTests.swift */; };
-		D94A424F283E704300A504BD /* AuthorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D94A424E283E704300A504BD /* AuthorView.swift */; };
-		D94A4251283E705100A504BD /* SoundView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D94A4250283E705100A504BD /* SoundView.swift */; };
 		D94A4254283E7E5B00A504BD /* Date+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = D94A4253283E7E5B00A504BD /* Date+Extensions.swift */; };
 		D94A4257283E805900A504BD /* ProtoAuthor.swift in Sources */ = {isa = PBXBuildFile; fileRef = D94A4256283E805900A504BD /* ProtoAuthor.swift */; };
 		D94A4259283E809000A504BD /* ProtoSound.swift in Sources */ = {isa = PBXBuildFile; fileRef = D94A4258283E809000A504BD /* ProtoSound.swift */; };
@@ -64,7 +61,6 @@
 		D99AEF302BE2900F00C4A8FA /* Reaction.swift in Sources */ = {isa = PBXBuildFile; fileRef = D99AEF2F2BE2900F00C4A8FA /* Reaction.swift */; };
 		D99AEF322BE294C900C4A8FA /* EditReactionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D99AEF312BE294C900C4A8FA /* EditReactionView.swift */; };
 		D9ABF0CD2A41E7D5009872DB /* MoveDataToServerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9ABF0CC2A41E7D5009872DB /* MoveDataToServerView.swift */; };
-		D9B878482864FA73009CA7AD /* ParseSoundRankingCSVView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9B878472864FA73009CA7AD /* ParseSoundRankingCSVView.swift */; };
 		D9B8784B28650F4E009CA7AD /* CSVParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9B8784A28650F4E009CA7AD /* CSVParser.swift */; };
 		D9B8784F2865324F009CA7AD /* RankItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9B8784E2865324F009CA7AD /* RankItem.swift */; };
 		D9B87851286538C6009CA7AD /* JSONFileToData.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9B87850286538C6009CA7AD /* JSONFileToData.swift */; };
@@ -115,7 +111,6 @@
 		D92694022A01A7F9007872D9 /* String+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+.swift"; sourceTree = "<group>"; };
 		D92828702AA515AC009E5D37 /* EditSongOnServerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditSongOnServerView.swift; sourceTree = "<group>"; };
 		D929E3D12AB499DE008D8B3C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
-		D9310C282A0BDDDF006A3058 /* CreateAuthorAndSoundView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateAuthorAndSoundView.swift; sourceTree = "<group>"; };
 		D93832FC2BF0ECBF00CCB48B /* reactions_data.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = reactions_data.json; sourceTree = "<group>"; };
 		D94A421E283DC94B00A504BD /* MedoHelper.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MedoHelper.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D94A4221283DC94B00A504BD /* MedoHelperApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MedoHelperApp.swift; sourceTree = "<group>"; };
@@ -125,8 +120,6 @@
 		D94A422A283DC94D00A504BD /* MedoHelper.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = MedoHelper.entitlements; sourceTree = "<group>"; };
 		D94A422F283DC94D00A504BD /* MedoHelperTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MedoHelperTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		D94A4233283DC94D00A504BD /* ReactionsCRUDViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReactionsCRUDViewModelTests.swift; sourceTree = "<group>"; };
-		D94A424E283E704300A504BD /* AuthorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthorView.swift; sourceTree = "<group>"; };
-		D94A4250283E705100A504BD /* SoundView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SoundView.swift; sourceTree = "<group>"; };
 		D94A4253283E7E5B00A504BD /* Date+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Date+Extensions.swift"; sourceTree = "<group>"; };
 		D94A4256283E805900A504BD /* ProtoAuthor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProtoAuthor.swift; sourceTree = "<group>"; };
 		D94A4258283E809000A504BD /* ProtoSound.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProtoSound.swift; sourceTree = "<group>"; };
@@ -154,7 +147,6 @@
 		D99AEF2F2BE2900F00C4A8FA /* Reaction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Reaction.swift; sourceTree = "<group>"; };
 		D99AEF312BE294C900C4A8FA /* EditReactionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditReactionView.swift; sourceTree = "<group>"; };
 		D9ABF0CC2A41E7D5009872DB /* MoveDataToServerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoveDataToServerView.swift; sourceTree = "<group>"; };
-		D9B878472864FA73009CA7AD /* ParseSoundRankingCSVView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ParseSoundRankingCSVView.swift; sourceTree = "<group>"; };
 		D9B8784A28650F4E009CA7AD /* CSVParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CSVParser.swift; sourceTree = "<group>"; };
 		D9B8784E2865324F009CA7AD /* RankItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RankItem.swift; sourceTree = "<group>"; };
 		D9B87850286538C6009CA7AD /* JSONFileToData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSONFileToData.swift; sourceTree = "<group>"; };
@@ -249,16 +241,6 @@
 			path = Networking;
 			sourceTree = "<group>";
 		};
-		D9310C272A0BDDC3006A3058 /* CreateAuthorAndSound */ = {
-			isa = PBXGroup;
-			children = (
-				D9310C282A0BDDDF006A3058 /* CreateAuthorAndSoundView.swift */,
-				D94A424E283E704300A504BD /* AuthorView.swift */,
-				D94A4250283E705100A504BD /* SoundView.swift */,
-			);
-			path = CreateAuthorAndSound;
-			sourceTree = "<group>";
-		};
 		D94A4215283DC94B00A504BD = {
 			isa = PBXGroup;
 			children = (
@@ -322,9 +304,9 @@
 			isa = PBXGroup;
 			children = (
 				D94A4223283DC94B00A504BD /* MainView.swift */,
-				D9CA30222A057A9600F1F23D /* ServerData */,
+				D9CA30222A057A9600F1F23D /* Sounds */,
+				D9A9E7EB2D5A4B0900AEAAC6 /* Songs */,
 				D99AEF2C2BE28F6900C4A8FA /* Maintenance */,
-				D9CA30212A057A9100F1F23D /* LocalTools */,
 				D960F2232A1D22D1007D12D7 /* Analytics */,
 				D9CA30262A057ADA00F1F23D /* Shared */,
 			);
@@ -439,6 +421,15 @@
 			path = Maintenance;
 			sourceTree = "<group>";
 		};
+		D9A9E7EB2D5A4B0900AEAAC6 /* Songs */ = {
+			isa = PBXGroup;
+			children = (
+				D9CA30252A057AC200F1F23D /* Songs */,
+				D95315AA2A9AD031003DA40E /* MusicGenres */,
+			);
+			path = Songs;
+			sourceTree = "<group>";
+		};
 		D9B8784928650F3E009CA7AD /* Helpers */ = {
 			isa = PBXGroup;
 			children = (
@@ -472,25 +463,14 @@
 			path = AppSupport;
 			sourceTree = "<group>";
 		};
-		D9CA30212A057A9100F1F23D /* LocalTools */ = {
-			isa = PBXGroup;
-			children = (
-				D9310C272A0BDDC3006A3058 /* CreateAuthorAndSound */,
-				D9B878472864FA73009CA7AD /* ParseSoundRankingCSVView.swift */,
-			);
-			path = LocalTools;
-			sourceTree = "<group>";
-		};
-		D9CA30222A057A9600F1F23D /* ServerData */ = {
+		D9CA30222A057A9600F1F23D /* Sounds */ = {
 			isa = PBXGroup;
 			children = (
 				D9CA30232A057AB500F1F23D /* Sounds */,
 				D9CA30242A057ABC00F1F23D /* Authors */,
 				D99AEF2B2BE28F5F00C4A8FA /* Reactions */,
-				D9CA30252A057AC200F1F23D /* Songs */,
-				D95315AA2A9AD031003DA40E /* MusicGenres */,
 			);
-			path = ServerData;
+			path = Sounds;
 			sourceTree = "<group>";
 		};
 		D9CA30232A057AB500F1F23D /* Sounds */ = {
@@ -679,7 +659,6 @@
 				D9B8784B28650F4E009CA7AD /* CSVParser.swift in Sources */,
 				D92828712AA515AC009E5D37 /* EditSongOnServerView.swift in Sources */,
 				D904495D2BB483C20023088B /* CapsuleButtonStyle.swift in Sources */,
-				D94A424F283E704300A504BD /* AuthorView.swift in Sources */,
 				D90449562BB2743A0023088B /* ExternalLink.swift in Sources */,
 				D98B60B42BFE7E8A0093321A /* ReplaceSoundHelper.swift in Sources */,
 				D960F22E2A1D5DBA007D12D7 /* Song.swift in Sources */,
@@ -698,7 +677,6 @@
 				D9B87853286540E5009CA7AD /* Sound.swift in Sources */,
 				D9ABF0CD2A41E7D5009872DB /* MoveDataToServerView.swift in Sources */,
 				D99AEF322BE294C900C4A8FA /* EditReactionView.swift in Sources */,
-				D94A4251283E705100A504BD /* SoundView.swift in Sources */,
 				D99941F22C05553D00D16BCD /* SoundSearchView.swift in Sources */,
 				D90449612BB4E9140023088B /* Color+.swift in Sources */,
 				D9FB487E286E435A00FF90D0 /* Author.swift in Sources */,
@@ -706,14 +684,12 @@
 				D9D798722A05D338002B2D77 /* Double+Extensions.swift in Sources */,
 				D9E39DB72A1E59BF0053A527 /* AlertType.swift in Sources */,
 				D94A4254283E7E5B00A504BD /* Date+Extensions.swift in Sources */,
-				D9B878482864FA73009CA7AD /* ParseSoundRankingCSVView.swift in Sources */,
 				D9CA30202A0441A000F1F23D /* SendingProgressView.swift in Sources */,
 				D914C7252A09AD970011EC5B /* ContentType.swift in Sources */,
 				D972B7D12CCC7281005A2B83 /* ContentRepository.swift in Sources */,
 				D94A4222283DC94B00A504BD /* MedoHelperApp.swift in Sources */,
 				D987550B2A9C3EC800B6E96A /* UpdateEventRow.swift in Sources */,
 				D91298A42CC986C5003CC5E5 /* ReactionsCRUDView+ViewModel.swift in Sources */,
-				D9310C292A0BDDDF006A3058 /* CreateAuthorAndSoundView.swift in Sources */,
 				D960F22C2A1D5D6D007D12D7 /* ServerSongsCRUDView.swift in Sources */,
 				D9CA302A2A05975900F1F23D /* MoveSoundsToServerView.swift in Sources */,
 				D99AEF302BE2900F00C4A8FA /* Reaction.swift in Sources */,
