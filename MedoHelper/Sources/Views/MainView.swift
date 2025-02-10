@@ -1,101 +1,60 @@
 import SwiftUI
 
 struct MainView: View {
-    
-    @State private var currentTab = 0
+
     @State private var testVersionDotColor: Color = .red
-    
+
     var body: some View {
-        NavigationView {
-            List(selection: $currentTab) {
-                Section("SONS") {
-                    NavigationLink {
-                        ServerSoundsCRUDView()
-                    } label: {
-                        Label("Sons", systemImage: "speaker.wave.3")
-                    }
-                    .tag(0)
-                    
-                    NavigationLink {
-                        ServerAuthorsCRUDView()
-                    } label: {
-                        Label("Autores", systemImage: "person.2")
-                    }
-                    .tag(1)
-                    
-                    NavigationLink {
-                        ReactionsCRUDView()
-                    } label: {
-                        Label("Reações", systemImage: "rectangle.grid.2x2")
-                    }
-                    .tag(2)
+        TabView {
+            TabSection("Sons") {
+                Tab("Sons", systemImage: "speaker.wave.3") {
+                    ServerSoundsCRUDView()
                 }
 
-                Section("MÚSICAS") {
-                    NavigationLink {
-                        ServerSongsCRUDView()
-                    } label: {
-                        Label("Músicas", systemImage: "music.quarternote.3")
-                    }
-                    .tag(3)
-
-                    NavigationLink {
-                        ServerMusicGenreCRUDView()
-                    } label: {
-                        Label("Gêneros Musicais", systemImage: "guitars")
-                    }
-                    .tag(4)
+                Tab("Autores", systemImage: "person.2") {
+                    ServerAuthorsCRUDView()
                 }
 
-                Section("MANUTENÇÃO") {
-                    NavigationLink {
-                        UpdateEventListView()
-                    } label: {
-                        Label("Eventos de Atualização", systemImage: "clock.arrow.2.circlepath")
-                    }
-                    .tag(5)
-
-                    NavigationLink {
-                        TestVersionView()
-                    } label: {
-                        HStack {
-                            Label("Versão de teste", systemImage: "hammer")
-                            Spacer()
-                            Circle()
-                                .fill(testVersionDotColor)
-                                .frame(width: 10, height: 10)
-                        }
-                    }
-                    .tag(6)
-                }
-
-//                Section("FERRAMENTAS LOCAIS") {
-//                    NavigationLink {
-//                        CreateAuthorAndSoundView()
-//                    } label: {
-//                        Label("Criar Autor e Som", systemImage: "plus.circle")
-//                    }
-//                    .tag(7)
-//
-//                    NavigationLink {
-//                        ParseSoundRankingCSVView()
-//                    } label: {
-//                        Label("Parsear CSV", systemImage: "text.justify.leading")
-//                    }
-//                    .tag(8)
-//                }
-                
-                Section("ANÁLISE") {
-                    NavigationLink {
-                        AnalyticsView()
-                    } label: {
-                        Label("Estatísticas", systemImage: "chart.line.uptrend.xyaxis")
-                    }
-                    .tag(9)
+                Tab("Reações", systemImage: "rectangle.grid.2x2") {
+                    ReactionsCRUDView()
                 }
             }
-            .listStyle(.sidebar)
+
+            TabSection("Músicas") {
+                Tab("Músicas", systemImage: "music.quarternote.3") {
+                    ServerSongsCRUDView()
+                }
+
+                Tab("Gêneros Musicais", systemImage: "guitars") {
+                    ServerMusicGenreCRUDView()
+                }
+            }
+
+            TabSection("Manutenção") {
+                Tab("Eventos de Atualização", systemImage: "clock.arrow.2.circlepath") {
+                    UpdateEventListView()
+                }
+
+                Tab {
+                    TestVersionView()
+                } label: {
+                    HStack {
+                        Label("Versão de teste", systemImage: "hammer")
+                        Spacer()
+                        Circle()
+                            .fill(testVersionDotColor)
+                            .frame(width: 10, height: 10)
+                    }
+                }
+            }
+
+            TabSection("Análise") {
+                Tab("Estatísticas", systemImage: "chart.line.uptrend.xyaxis") {
+                    AnalyticsView()
+                }
+            }
         }
+        .tabViewStyle(.sidebarAdaptable)
         .onAppear {
             checkTestVersion()
         }
@@ -118,12 +77,5 @@ struct MainView: View {
                 self.testVersionDotColor = .red
             }
         }
-    }
-}
-
-struct ContentView_Previews: PreviewProvider {
-    
-    static var previews: some View {
-        MainView()
     }
 }
