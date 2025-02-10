@@ -29,6 +29,5 @@ struct MedoHelperApp: App {
             MainView()
                 .frame(minWidth: 500, minHeight: 500)
         }
-        //.windowStyle(HiddenTitleBarWindowStyle())
     }
 }

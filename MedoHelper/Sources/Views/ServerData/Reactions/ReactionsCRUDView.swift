@@ -168,12 +168,16 @@ extension ReactionsCRUDView {
                     ForEach(reactions) { reaction in
                         ReactionEditableItem(reaction: reaction)
                             .contextMenu {
-                                Button("Editar Reação") {
-                                    editAction(reaction.id)
+                                Section {
+                                    Button("Editar Reação") {
+                                        editAction(reaction.id)
+                                    }
                                 }
 
-                                Button("Remover Reação") {
-                                    deleteAction(reaction.id)
+                                Section {
+                                    Button("Remover Reação") {
+                                        deleteAction(reaction.id)
+                                    }
                                 }
                             }
                     }
