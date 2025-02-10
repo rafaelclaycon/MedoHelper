@@ -12,11 +12,13 @@ extension ReactionsCRUDView {
     @MainActor
     final class ViewModel: ObservableObject {
 
+        @Published var state: LoadingState<ReactionsCRUDModel> = .loading
+
         @Published var reactions: [HelperReaction] = []
         @Published var sounds: [Sound] = []
 
         @Published var searchText = ""
-        @Published var selectedItem: HelperReaction.ID?
+        @Published var selectedItemId: String?
         @Published var reaction: HelperReaction? = nil
         @Published var isLoading: Bool = false
         @Published var loadingMessage: String = ""
@@ -43,26 +45,26 @@ extension ReactionsCRUDView {
 
         // MARK: - Computed Properties
 
-        var searchResults: [HelperReaction] {
-            if searchText.isEmpty {
-                return reactions
-            } else {
-                return reactions.filter { reaction in
-                    return reaction.title.contains(searchText.preparedForComparison())
-                }
-            }
-        }
-
         var isSendDataButtonDisabled: Bool {
-            reactions.isEmpty || !didChangeReactionOrder
+            guard case .loaded(let data) = state else {
+                return true
+            }
+            return data.reactions.isEmpty || !didChangeReactionOrder
         }
 
         var selectedReactionName: String {
             guard
-                let selectedItem,
-                let reaction = reaction(withId: selectedItem)
+                let selectedItemId,
+                let reaction = reaction(withId: selectedItemId)
             else { return "" }
             return reaction.title
+        }
+
+        var lastReactionPosition: Int {
+            guard case .loaded(let data) = state else {
+                return 0
+            }
+            return data.reactions.count
         }
 
         // MARK: - Initializer
@@ -88,7 +90,8 @@ extension ReactionsCRUDView.ViewModel {
         reactionForEditing = .init(position: 0, title: "")
     }
 
-    func onRemoveReactionSelected() {
+    func onRemoveReactionSelected(reactionId: String) {
+        selectedItemId = reactionId
         alertType = .twoOptionsOneDelete
         showAlert = true
     }
@@ -106,16 +109,6 @@ extension ReactionsCRUDView.ViewModel {
         reactionForEditing = reaction
     }
 
-    func onMoveReactionUpSelected() {
-        didChangeReactionOrder = true
-        moveUp(selectedID: selectedItem)
-    }
-
-    func onMoveReactionDownSelected() {
-        didChangeReactionOrder = true
-        moveDown(selectedID: selectedItem)
-    }
-
     func onSendDataSelected() async {
         await sendAll()
     }
@@ -125,10 +118,7 @@ extension ReactionsCRUDView.ViewModel {
     }
 
     func onConfirmRemoveReactionSelected() async {
-        guard
-            let selectedItem,
-            let reaction = reaction(withId: selectedItem)
-        else {
+        guard let selectedItemId else {
             alertType = .singleOptionError
             alertTitle = "Nenhuma Reação Selecionada"
             alertMessage = "Selecione uma Reação para remover."
@@ -137,7 +127,7 @@ extension ReactionsCRUDView.ViewModel {
         }
 
         do {
-            try await reactionRepository.removeReaction(withId: reaction.id)
+            try await reactionRepository.removeReaction(withId: selectedItemId)
             await loadReactions()
         } catch {
             print(error)
@@ -146,6 +136,13 @@ extension ReactionsCRUDView.ViewModel {
             alertMessage = error.localizedDescription
             showAlert = true
         }
+    }
+
+    public func onMoveReaction(from source: IndexSet, to destination: Int) {
+        reactions.move(fromOffsets: source, toOffset: destination)
+        updateReactionsAssignedPositions()
+        state = .loaded(ReactionsCRUDModel(reactions: reactions, sounds: sounds))
+        didChangeReactionOrder = true
     }
 }
 
@@ -158,7 +155,9 @@ extension ReactionsCRUDView.ViewModel {
         isLoading = true
 
         do {
-            self.reactions = try await reactionRepository.allReactions()
+            let reactions = try await reactionRepository.allReactions()
+            self.reactions = reactions
+            state = .loaded(ReactionsCRUDModel(reactions: self.reactions, sounds: self.sounds))
         } catch {
             print(error)
             isLoading = false
@@ -179,6 +178,12 @@ extension ReactionsCRUDView.ViewModel {
             var fetchedSounds = try await allSounds()
             let allAuthors = try await allAuthors()
 
+            guard !fetchedSounds.isEmpty else {
+                state = .error("Nenhum som.")
+                isLoading = false
+                return
+            }
+
             for i in 0...(fetchedSounds.count - 1) {
                 fetchedSounds[i].authorName = allAuthors.first(where: { $0.id == fetchedSounds[i].authorId })?.name ?? ""
             }
@@ -186,6 +191,7 @@ extension ReactionsCRUDView.ViewModel {
             fetchedSounds.sort(by: { $0.dateAdded ?? Date() > $1.dateAdded ?? Date() })
 
             self.sounds = fetchedSounds
+            state = .loaded(ReactionsCRUDModel(reactions: self.reactions, sounds: self.sounds))
         } catch {
             print(error)
         }
@@ -239,6 +245,8 @@ extension ReactionsCRUDView.ViewModel {
 
             isSending = false
             didChangeReactionOrder = false
+
+            sentSuccessMessage(title: "Reações enviadas com sucesso!")
         } catch ReactionRepositoryError.errorDeletingReactions {
             afterSendingError(title: "Erro ao Tentar Remover as Reações")
         } catch ReactionRepositoryError.errorDeletingReactionSounds {
@@ -250,6 +258,16 @@ extension ReactionsCRUDView.ViewModel {
                 message: error.localizedDescription
             )
         }
+    }
+
+    private func sentSuccessMessage(
+        title: String,
+        message: String = ""
+    ) {
+        alertType = .singleOptionInformative
+        alertTitle = title
+        alertMessage = message
+        showAlert = true
     }
 
     private func afterSendingError(title: String, message: String = "") {
@@ -276,33 +294,8 @@ extension ReactionsCRUDView.ViewModel {
             afterSendingError(title: "Erro ao Tentar Exportar as Reações", message: error.localizedDescription)
         }
     }
-}
 
-// MARK: - List Item Moving
-
-extension ReactionsCRUDView.ViewModel {
-
-    private func moveUp(selectedID: ReactionSoundForDisplay.ID?) {
-        guard
-            let selectedID = selectedID,
-            let index = reactions.firstIndex(where: { $0.id == selectedID }),
-            index > 0
-        else { return }
-        reactions.swapAt(index, index - 1)
-        updatePositions()
-    }
-
-    private func moveDown(selectedID: ReactionSoundForDisplay.ID?) {
-        guard
-            let selectedID = selectedID,
-            let index = reactions.firstIndex(where: { $0.id == selectedID }),
-            index < reactions.count - 1
-        else { return }
-        reactions.swapAt(index, index + 1)
-        updatePositions()
-    }
-
-    private func updatePositions() {
+    private func updateReactionsAssignedPositions() {
         for (index, _) in reactions.enumerated() {
             reactions[index].position = index + 1
         }

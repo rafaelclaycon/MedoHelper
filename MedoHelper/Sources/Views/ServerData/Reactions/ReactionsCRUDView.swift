@@ -19,163 +19,272 @@ struct ReactionsCRUDView: View {
 
     var body: some View {
         VStack {
-            VStack {
-                Table(viewModel.searchResults, selection: $viewModel.selectedItem) {
-                    TableColumn("Posição") { reaction in
-                        Text("\(reaction.position)")
-                    }
-                    .width(min: 50, max: 50)
+            if viewModel.isLoading {
+                VerticalLoadingView(message: viewModel.loadingMessage.uppercased())
+            } else {
+                switch viewModel.state {
+                case .loading:
+                    VerticalLoadingView(message: viewModel.loadingMessage.uppercased())
 
-                    TableColumn("Título", value: \.title)
-
-                    TableColumn("Sons") { reaction in
-                        guard let sounds = reaction.sounds else { return Text("0") }
-                        return Text("\(sounds.count)")
-                    }
-                    .width(min: 50, max: 50)
-
-                    TableColumn("Data de última atualização") { reaction in
-                        return Text(reaction.lastUpdate.formattedDate)
-                    }
-                }
-                .contextMenu(forSelectionType: Sound.ID.self) { items in
-                    Section {
-                        Button("Editar Reação") {
-                            guard let selectedItemId = items.first else { return }
-                            viewModel.onEditReactionSelected(reactionId: selectedItemId)
-                        }
-                    }
-                } primaryAction: { items in
-                    guard let selectedItemId = items.first else { return }
-                    viewModel.onEditReactionSelected(reactionId: selectedItemId)
-                }
-                .searchable(text: $viewModel.searchText)
-                .disabled(viewModel.isLoading)
-
-                HStack(spacing: 20) {
-                    HStack(spacing: 10) {
-                        Button {
-                            viewModel.onCreateNewReactionSelected()
-                        } label: {
-                            Image(systemName: "plus")
-                        }
-
-                        Button {
-                            viewModel.onRemoveReactionSelected()
-                        } label: {
-                            Image(systemName: "minus")
-                        }
-                    }
-                    .disabled(viewModel.isLoading)
-
-                    Button("Importar de Arquivo JSON") {
-                        Task {
-                            await viewModel.onImportAndSendPreExistingReactionsSelected()
-                        }
-                    }
-                    .disabled(viewModel.reactions.count > 0)
-
-                    Button("Exportar p/ JSON") {
-                        viewModel.onExportReactionsSelected()
-                    }
-                    .disabled(viewModel.reactions.count == 0)
-
-//                    Button("Importar das Pastas") {
-//                        print("")
-//                    }
-//                    .disabled(!isInEditMode)
-
-                    Spacer()
-
-                    Button {
-                        viewModel.onMoveReactionDownSelected()
-                    } label: {
-                        Label("Mover", systemImage: "chevron.down")
-                    }
-                    .disabled(viewModel.selectedItem == nil)
-
-                    Button {
-                        viewModel.onMoveReactionUpSelected()
-                    } label: {
-                        Label("Mover", systemImage: "chevron.up")
-                    }
-                    .disabled(viewModel.selectedItem == nil)
-
-                    Text("\(viewModel.reactions.count.formattedString) itens")
-
-                    Button {
-                        Task {
-                            await viewModel.onSendDataSelected()
-                        }
-                    } label: {
-                        Text("Enviar Dados")
-                            .padding(.horizontal)
-                    }
-                    .keyboardShortcut(.defaultAction)
-                    .disabled(viewModel.isSendDataButtonDisabled)
-                }
-                .frame(height: 40)
-            }
-            .navigationTitle("Reações")
-            .padding()
-            .sheet(isPresented: $viewModel.isSending) {
-                SendingProgressView(
-                    message: viewModel.modalMessage,
-                    currentAmount: viewModel.progressAmount,
-                    totalAmount: viewModel.totalAmount
-                )
-            }
-            .sheet(item: $viewModel.reactionForEditing) { reaction in
-                EditReactionView(
-                    reaction: reaction,
-                    sounds: viewModel.sounds,
-                    saveAction: { Task { await viewModel.onSaveReactionSelected() } },
-                    dismissSheet: { viewModel.reactionForEditing = nil },
-                    lastPosition: viewModel.reactions.count
-                )
-                .frame(minWidth: 1024, minHeight: 700)
-            }
-            .alert(isPresented: $viewModel.showAlert) {
-                switch viewModel.alertType {
-                case .twoOptionsOneDelete:
-                    return Alert(
-                        title: Text("Deseja Remover Reação '\(viewModel.selectedReactionName)'?"),
-                        message: Text("Tem certeza de que deseja remover essa Reação?"),
-                        primaryButton: .cancel(Text("Cancelar")),
-                        secondaryButton: .default(
-                            Text("Remover"),
-                            action: {
-                                Task {
-                                    await viewModel.onConfirmRemoveReactionSelected()
-                                }
+                case .loaded(let data):
+                    if data.reactions.isEmpty {
+                        Text("Nenhuma Reação para exibir.")
+                    } else {
+                        LoadedView(
+                            reactions: data.reactions,
+                            isLoading: viewModel.isLoading,
+                            editAction: { reactionId in
+                                viewModel.onEditReactionSelected(reactionId: reactionId)
+                            },
+                            moveAction: {
+                                viewModel.onMoveReaction(from: $0, to: $1)
+                            },
+                            deleteAction: { reactionId in
+                                viewModel.onRemoveReactionSelected(reactionId: reactionId)
                             }
                         )
-                    )
+                    }
 
-                default:
-                    return Alert(
-                        title: Text(viewModel.alertTitle),
-                        message: Text(viewModel.alertMessage),
-                        dismissButton: .cancel(Text("OK"))
-                    )
-                }
-            }
-            .onAppear {
-                Task {
-                    await viewModel.onViewAppear()
+                case .error(let errorString):
+                    Text("Erro: \(errorString)")
                 }
             }
         }
-        .overlay {
-            if viewModel.isLoading {
-                LoadingView(message: viewModel.loadingMessage)
+        .navigationTitle("Reações")
+        .padding([.top, .leading, .trailing])
+        .toolbar {
+            ToolbarItemGroup(placement: .primaryAction) {
+                Button {
+                    viewModel.onCreateNewReactionSelected()
+                } label: {
+                    Label("Nova Reação", systemImage: "plus")
+                }
+                .help("Nova Reação")
+
+                Button {
+                    Task {
+                        await viewModel.onSendDataSelected()
+                    }
+                } label: {
+                    Label("Enviar Dados", systemImage: "paperplane")
+                }
+                .help("Enviar Dados")
+                .keyboardShortcut(.defaultAction)
+                .disabled(viewModel.isSendDataButtonDisabled)
+            }
+
+            ToolbarItemGroup(placement: .secondaryAction) {
+                Button {
+                    Task {
+                        await viewModel.onImportAndSendPreExistingReactionsSelected()
+                    }
+                } label: {
+                    Label("Importar e Enviar", systemImage: "square.and.arrow.down")
+                }
+                .help("Importar e Enviar")
+                .disabled(viewModel.reactions.count > 0)
+
+                Button {
+                    viewModel.onExportReactionsSelected()
+                } label: {
+                    Label("Exportar Reações", systemImage: "square.and.arrow.up")
+                }
+                .help("Exportar Reações")
+                .disabled(viewModel.reactions.count == 0)
+            }
+        }
+        .sheet(isPresented: $viewModel.isSending) {
+            SendingProgressView(
+                message: viewModel.modalMessage,
+                currentAmount: viewModel.progressAmount,
+                totalAmount: viewModel.totalAmount
+            )
+        }
+        .sheet(item: $viewModel.reactionForEditing) { reaction in
+            EditReactionView(
+                reaction: reaction,
+                sounds: viewModel.sounds,
+                saveAction: { Task { await viewModel.onSaveReactionSelected() } },
+                dismissSheet: { viewModel.reactionForEditing = nil },
+                lastPosition: viewModel.lastReactionPosition
+            )
+            .frame(minWidth: 1024, minHeight: 700)
+        }
+        .alert(isPresented: $viewModel.showAlert) {
+            switch viewModel.alertType {
+            case .twoOptionsOneDelete:
+                return Alert(
+                    title: Text("Remover a Reação '\(viewModel.selectedReactionName)'?"),
+                    message: Text("Essa ação não pode ser desfeita."),
+                    primaryButton: .cancel(Text("Cancelar")),
+                    secondaryButton: .default(
+                        Text("Remover"),
+                        action: {
+                            Task {
+                                await viewModel.onConfirmRemoveReactionSelected()
+                            }
+                        }
+                    )
+                )
+
+            default:
+                return Alert(
+                    title: Text(viewModel.alertTitle),
+                    message: Text(viewModel.alertMessage),
+                    dismissButton: .cancel(Text("OK"))
+                )
+            }
+        }
+        .onAppear {
+            Task {
+                await viewModel.onViewAppear()
             }
         }
     }
 }
 
-// MARK: - Preview
+// MARK: - Subviews
+
+extension ReactionsCRUDView {
+
+    struct LoadedView: View {
+
+        let reactions: [HelperReaction]
+        let isLoading: Bool
+        let editAction: (String) -> Void
+        let moveAction: (IndexSet, Int) -> Void
+        let deleteAction: (String) -> Void
+
+        @State private var selection: String?
+
+        private let columns: [GridItem] = [
+            GridItem(.flexible(), spacing: 12),
+            GridItem(.flexible(), spacing: 12)
+        ]
+
+        var body: some View {
+            HStack(spacing: 50) {
+                List(selection: $selection) {
+                    ForEach(reactions) { reaction in
+                        ReactionEditableItem(reaction: reaction)
+                            .contextMenu {
+                                Button("Editar Reação") {
+                                    editAction(reaction.id)
+                                }
+
+                                Button("Remover Reação") {
+                                    deleteAction(reaction.id)
+                                }
+                            }
+                    }
+                    .onMove(perform: moveAction)
+                }
+
+                VStack(alignment: .leading, spacing: 15) {
+                    Text("Visualização no App:")
+                        .font(.title2)
+                        .bold()
+
+                    ScrollView {
+                        LazyVGrid(
+                            columns: columns,
+                            spacing: 12
+                        ) {
+                            ForEach(reactions) { reaction in
+                                ReactionItem(
+                                    title: reaction.title,
+                                    image: URL(string: reaction.image),
+                                    itemHeight: 100,
+                                    reduceTextSize: false
+                                )
+                            }
+                        }
+                        .frame(width: 390)
+                        .padding(.bottom, 30)
+                    }
+                }
+            }
+            .padding(.horizontal, 30)
+            .disabled(isLoading)
+        }
+    }
+
+    struct ReactionEditableItem: View {
+
+        let reaction: HelperReaction
+
+        private var soundCount: String {
+            guard let count = reaction.sounds?.count else {
+                return "Nenhum som"
+            }
+            switch count {
+            case 0:
+                return "Nenhum som"
+            case 1:
+                return "1 som"
+            default:
+                return "\(count) sons"
+            }
+        }
+
+        var body: some View {
+            VStack(alignment: .leading, spacing: 8) {
+                Text(reaction.title)
+                    .bold()
+
+                Text(soundCount)
+                    .foregroundStyle(.gray)
+            }
+            .padding(.all, 8)
+        }
+    }
+
+    struct VerticalLoadingView: View {
+
+        let message: String
+
+        var body: some View {
+            VStack {
+                ProgressView()
+                    .scaleEffect(0.7)
+
+                Text(message)
+                    .foregroundStyle(.gray)
+            }
+        }
+    }
+}
+
+// MARK: - Previews
 
 #Preview {
     ReactionsCRUDView()
+}
+
+#Preview {
+    ReactionsCRUDView.ReactionEditableItem(
+        reaction: HelperReaction(
+            id: "abc",
+            title: "bozo",
+            position: 0,
+            image: "",
+            lastUpdate: "2024-12-12",
+            attributionText: "",
+            attributionURL: "",
+            sounds: [
+                .init(
+                    id: "fre",
+                    soundId: "985",
+                    dateAdded: "2024-12-01",
+                    position: 0
+                ),
+                .init(
+                    id: "ert",
+                    soundId: "265",
+                    dateAdded: "2024-12-31",
+                    position: 2
+                )
+            ]
+        )
+    )
 }

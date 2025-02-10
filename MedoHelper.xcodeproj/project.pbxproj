@@ -42,6 +42,9 @@
 		D94B03FD2993346F00EB03CA /* FileHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = D94B03FC2993346F00EB03CA /* FileHelper.swift */; };
 		D95315AC2A9AD100003DA40E /* ServerMusicGenreCRUDView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D95315AB2A9AD100003DA40E /* ServerMusicGenreCRUDView.swift */; };
 		D95315AE2A9AD87F003DA40E /* musicGenre_data.json in Resources */ = {isa = PBXBuildFile; fileRef = D95315AD2A9AD87F003DA40E /* musicGenre_data.json */; };
+		D953D9972D4EAD5200CF8689 /* LoadingState.swift in Sources */ = {isa = PBXBuildFile; fileRef = D953D9962D4EAD5200CF8689 /* LoadingState.swift */; };
+		D953D9992D4EB2BA00CF8689 /* ReactionItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = D953D9982D4EB2BA00CF8689 /* ReactionItem.swift */; };
+		D953D99C2D4EB42000CF8689 /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = D953D99B2D4EB42000CF8689 /* Kingfisher */; };
 		D95FCB6F29FEF75F00952868 /* EditSoundOnServerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D95FCB6E29FEF75F00952868 /* EditSoundOnServerView.swift */; };
 		D95FCB7129FF009500952868 /* MedoContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = D95FCB7029FF009500952868 /* MedoContent.swift */; };
 		D960F2252A1D22E1007D12D7 /* AnalyticsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D960F2242A1D22E1007D12D7 /* AnalyticsView.swift */; };
@@ -130,6 +133,8 @@
 		D94B03FC2993346F00EB03CA /* FileHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileHelper.swift; sourceTree = "<group>"; };
 		D95315AB2A9AD100003DA40E /* ServerMusicGenreCRUDView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerMusicGenreCRUDView.swift; sourceTree = "<group>"; };
 		D95315AD2A9AD87F003DA40E /* musicGenre_data.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = musicGenre_data.json; sourceTree = "<group>"; };
+		D953D9962D4EAD5200CF8689 /* LoadingState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadingState.swift; sourceTree = "<group>"; };
+		D953D9982D4EB2BA00CF8689 /* ReactionItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReactionItem.swift; sourceTree = "<group>"; };
 		D95FCB6E29FEF75F00952868 /* EditSoundOnServerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditSoundOnServerView.swift; sourceTree = "<group>"; };
 		D95FCB7029FF009500952868 /* MedoContent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MedoContent.swift; sourceTree = "<group>"; };
 		D960F2242A1D22E1007D12D7 /* AnalyticsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsView.swift; sourceTree = "<group>"; };
@@ -172,6 +177,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D953D99C2D4EB42000CF8689 /* Kingfisher in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -351,6 +357,7 @@
 				D9E39DB62A1E59BF0053A527 /* AlertType.swift */,
 				D91338A02A87F43D00C0502A /* CreateContentResponse.swift */,
 				D9FF96BE2BF0DE8600803572 /* Reactions */,
+				D953D9962D4EAD5200CF8689 /* LoadingState.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -418,6 +425,7 @@
 				D99AEF312BE294C900C4A8FA /* EditReactionView.swift */,
 				D91298AD2CCC6728003CC5E5 /* EditReactionView+ViewModel.swift */,
 				D99941F12C05553D00D16BCD /* SoundSearchView.swift */,
+				D953D9982D4EB2BA00CF8689 /* ReactionItem.swift */,
 			);
 			path = Reactions;
 			sourceTree = "<group>";
@@ -604,6 +612,9 @@
 				Base,
 			);
 			mainGroup = D94A4215283DC94B00A504BD;
+			packageReferences = (
+				D953D99A2D4EB42000CF8689 /* XCRemoteSwiftPackageReference "Kingfisher" */,
+			);
 			productRefGroup = D94A421F283DC94B00A504BD /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -649,6 +660,8 @@
 				D99AEF2E2BE28FA100C4A8FA /* ReactionsCRUDView.swift in Sources */,
 				D9FB1D9D29FEEF3900AE8744 /* ServerSoundsCRUDView.swift in Sources */,
 				D92694032A01A7F9007872D9 /* String+.swift in Sources */,
+				D953D9992D4EB2BA00CF8689 /* ReactionItem.swift in Sources */,
+				D953D9972D4EAD5200CF8689 /* LoadingState.swift in Sources */,
 				D9B87851286538C6009CA7AD /* JSONFileToData.swift in Sources */,
 				D90998CD2AA448800059CAE8 /* EditMusicGenreOnServerView.swift in Sources */,
 				D92693FA2A015048007872D9 /* MoveAuthorsToServerView.swift in Sources */,
@@ -979,6 +992,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		D953D99A2D4EB42000CF8689 /* XCRemoteSwiftPackageReference "Kingfisher" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/onevcat/Kingfisher";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 8.1.4;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		D953D99B2D4EB42000CF8689 /* Kingfisher */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = D953D99A2D4EB42000CF8689 /* XCRemoteSwiftPackageReference "Kingfisher" */;
+			productName = Kingfisher;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = D94A4216283DC94B00A504BD /* Project object */;
 }
