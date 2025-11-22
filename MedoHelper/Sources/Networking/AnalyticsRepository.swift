@@ -20,12 +20,17 @@ final class AnalyticsRepository: AnalyticsRepositoryProtocol {
     }
     
     func fetchAnalytics() async throws -> Analytics {
-        // Fetch real data for top shared sounds
-        let topSounds = try await fetchTopSharedSounds()
+        // Build date string for all endpoints
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy-MM-dd"
+        let todayString = dateFormatter.string(from: Date())
         
-        // Generate mock data for active users and sessions
-        let activeUsers = Int.random(in: 50...150)
-        let sessions = Int.random(in: 100...300)
+        // Fetch all data in parallel
+        async let activeUsersTask = fetchActiveUsers(date: todayString)
+        async let sessionsTask = fetchSessions(date: todayString)
+        async let topSoundsTask = fetchTopSharedSounds(date: todayString)
+        
+        let (activeUsers, sessions, topSounds) = try await (activeUsersTask, sessionsTask, topSoundsTask)
         
         return Analytics(
             activeUsers: activeUsers,
@@ -34,13 +39,20 @@ final class AnalyticsRepository: AnalyticsRepositoryProtocol {
         )
     }
     
-    private func fetchTopSharedSounds() async throws -> [SharedSoundRank] {
-        // Build URL with today's date
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "yyyy-MM-dd"
-        let todayString = dateFormatter.string(from: Date())
-        
-        let url = URL(string: serverPath + "v3/sound-share-count-stats-from/\(todayString)")!
+    private func fetchActiveUsers(date: String) async throws -> Int {
+        let url = URL(string: serverPath + "v3/active-users-count-from/\(date)/\(analyticsPassword)")!
+        let response: ActiveUsersResponse = try await apiClient.get(from: url)
+        return response.activeUsers
+    }
+    
+    private func fetchSessions(date: String) async throws -> Int {
+        let url = URL(string: serverPath + "v3/sessions-count-from/\(date)/\(analyticsPassword)")!
+        let response: SessionsResponse = try await apiClient.get(from: url)
+        return response.sessionsCount
+    }
+    
+    private func fetchTopSharedSounds(date: String) async throws -> [SharedSoundRank] {
+        let url = URL(string: serverPath + "v3/sound-share-count-stats-from/\(date)")!
         
         // Fetch data from API
         let topChartItems: [TopChartItem] = try await apiClient.getArray(from: url)
