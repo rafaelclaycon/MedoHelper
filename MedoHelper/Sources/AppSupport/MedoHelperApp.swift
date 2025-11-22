@@ -13,7 +13,7 @@ import SwiftUI
 //public let serverPath: String = CommandLine.arguments.contains("-USE_LOCAL_SERVER") ? "http://127.0.0.1:8080/api/" : "http://medodelirioios.com:8080/api/"
 //public let assetOperationPassword = ""
 //public let reactionsPassword = ""
-public let analyticsPassword = "total-real-password-7"
+//public let analyticsPassword = ""
 
 // MARK: - Dev
 
@@ -21,6 +21,7 @@ public let baseURL: String = CommandLine.arguments.contains("-USE_LOCAL_SERVER")
 public let serverPath: String = CommandLine.arguments.contains("-USE_LOCAL_SERVER") ? "http://127.0.0.1:8080/api/" : "http://medodelirioios.xyz:8080/api/"
 public let assetOperationPassword = "total-real-password-3"
 public let reactionsPassword = "total-real-password-5"
+public let analyticsPassword = "total-real-password-7"
 
 @main
 struct MedoHelperApp: App {
