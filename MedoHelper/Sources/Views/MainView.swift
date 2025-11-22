@@ -2,56 +2,55 @@ import SwiftUI
 
 struct MainView: View {
 
+    enum AppTab: Int {
+
+        case sounds, authors, reactions, songs, musicGenres, updateEvents, testVersion, analytics
+    }
+
+    @State private var tabSelection: AppTab = .analytics
     @State private var testVersionDotColor: Color = .red
 
     var body: some View {
-        TabView {
-            TabSection("Sons") {
-                Tab("Sons", systemImage: "speaker.wave.3") {
-                    ServerSoundsCRUDView()
-                }
-
-                Tab("Autores", systemImage: "person.2") {
-                    ServerAuthorsCRUDView()
-                }
-
-                Tab("Reações", systemImage: "rectangle.grid.2x2") {
-                    ReactionsCRUDView()
-                }
+        TabView(selection: $tabSelection) {
+            Tab("Sons", systemImage: "speaker.wave.3", value: .sounds) {
+                ServerSoundsCRUDView()
             }
-
-            TabSection("Músicas") {
-                Tab("Músicas", systemImage: "music.quarternote.3") {
-                    ServerSongsCRUDView()
-                }
-
-                Tab("Gêneros Musicais", systemImage: "guitars") {
-                    ServerMusicGenreCRUDView()
-                }
+            
+            Tab("Autores", systemImage: "person.2", value: .authors) {
+                ServerAuthorsCRUDView()
             }
-
-            TabSection("Manutenção") {
-                Tab("Eventos de Atualização", systemImage: "clock.arrow.2.circlepath") {
-                    UpdateEventListView()
-                }
-
-                Tab {
-                    TestVersionView()
-                } label: {
-                    HStack {
-                        Label("Versão de teste", systemImage: "hammer")
-                        Spacer()
-                        Circle()
-                            .fill(testVersionDotColor)
-                            .frame(width: 10, height: 10)
-                    }
-                }
+            
+            Tab("Reações", systemImage: "rectangle.grid.2x2", value: .reactions) {
+                ReactionsCRUDView()
             }
-
-            TabSection("Análise") {
-                Tab("Estatísticas", systemImage: "chart.line.uptrend.xyaxis") {
-                    AnalyticsView()
+            
+            Tab("Músicas", systemImage: "music.quarternote.3", value: .songs) {
+                ServerSongsCRUDView()
+            }
+            
+            Tab("Gêneros Musicais", systemImage: "guitars", value: .musicGenres) {
+                ServerMusicGenreCRUDView()
+            }
+            
+            Tab("Eventos de Atualização", systemImage: "clock.arrow.2.circlepath", value: .updateEvents) {
+                UpdateEventListView()
+            }
+            
+            Tab("Versão de teste", systemImage: "hammer", value: .testVersion) {
+                TestVersionView()
+            }
+            /*label: {
+                HStack {
+                    Label("Versão de teste", systemImage: "hammer")
+                    Spacer()
+                    Circle()
+                        .fill(testVersionDotColor)
+                        .frame(width: 10, height: 10)
                 }
+            }*/
+            
+            Tab("Estatísticas", systemImage: "chart.line.uptrend.xyaxis", value: .analytics) {
+                AnalyticsView()
             }
         }
         .tabViewStyle(.sidebarAdaptable)
