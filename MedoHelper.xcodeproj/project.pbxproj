@@ -28,6 +28,10 @@
 		D92694032A01A7F9007872D9 /* String+.swift in Sources */ = {isa = PBXBuildFile; fileRef = D92694022A01A7F9007872D9 /* String+.swift */; };
 		D92828712AA515AC009E5D37 /* EditSongOnServerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D92828702AA515AC009E5D37 /* EditSongOnServerView.swift */; };
 		D93832FD2BF0ECBF00CCB48B /* reactions_data.json in Resources */ = {isa = PBXBuildFile; fileRef = D93832FC2BF0ECBF00CCB48B /* reactions_data.json */; };
+		D938D7DD2ED20E44005ACC0D /* TopChartItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = D938D7DC2ED20E44005ACC0D /* TopChartItem.swift */; };
+		D938D7DE2ED20E44005ACC0D /* SharedSoundRank.swift in Sources */ = {isa = PBXBuildFile; fileRef = D938D7DB2ED20E44005ACC0D /* SharedSoundRank.swift */; };
+		D938D7DF2ED20E44005ACC0D /* Analytics.swift in Sources */ = {isa = PBXBuildFile; fileRef = D938D7DA2ED20E44005ACC0D /* Analytics.swift */; };
+		D938D7E12ED20E6C005ACC0D /* AnalyticsRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = D938D7E02ED20E6C005ACC0D /* AnalyticsRepository.swift */; };
 		D94A4222283DC94B00A504BD /* MedoHelperApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = D94A4221283DC94B00A504BD /* MedoHelperApp.swift */; };
 		D94A4224283DC94B00A504BD /* MainView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D94A4223283DC94B00A504BD /* MainView.swift */; };
 		D94A4226283DC94D00A504BD /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D94A4225283DC94D00A504BD /* Assets.xcassets */; };
@@ -134,6 +138,10 @@
 		D92828702AA515AC009E5D37 /* EditSongOnServerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditSongOnServerView.swift; sourceTree = "<group>"; };
 		D929E3D12AB499DE008D8B3C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		D93832FC2BF0ECBF00CCB48B /* reactions_data.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = reactions_data.json; sourceTree = "<group>"; };
+		D938D7DA2ED20E44005ACC0D /* Analytics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Analytics.swift; sourceTree = "<group>"; };
+		D938D7DB2ED20E44005ACC0D /* SharedSoundRank.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharedSoundRank.swift; sourceTree = "<group>"; };
+		D938D7DC2ED20E44005ACC0D /* TopChartItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TopChartItem.swift; sourceTree = "<group>"; };
+		D938D7E02ED20E6C005ACC0D /* AnalyticsRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsRepository.swift; sourceTree = "<group>"; };
 		D94A421E283DC94B00A504BD /* MedoHelper.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MedoHelper.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D94A4221283DC94B00A504BD /* MedoHelperApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MedoHelperApp.swift; sourceTree = "<group>"; };
 		D94A4223283DC94B00A504BD /* MainView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainView.swift; sourceTree = "<group>"; };
@@ -268,6 +276,7 @@
 		D92693FF2A015C67007872D9 /* Networking */ = {
 			isa = PBXGroup;
 			children = (
+				D938D7E02ED20E6C005ACC0D /* AnalyticsRepository.swift */,
 				D92694002A015C7E007872D9 /* APIClient.swift */,
 				D91298A92CCB3E1B003CC5E5 /* ReactionRepository.swift */,
 				D972B7D02CCC7281005A2B83 /* ContentRepository.swift */,
@@ -365,6 +374,9 @@
 		D94A4255283E804100A504BD /* Models */ = {
 			isa = PBXGroup;
 			children = (
+				D938D7DA2ED20E44005ACC0D /* Analytics.swift */,
+				D938D7DB2ED20E44005ACC0D /* SharedSoundRank.swift */,
+				D938D7DC2ED20E44005ACC0D /* TopChartItem.swift */,
 				D98B60B22BFE7E760093321A /* EnvObjs */,
 				D982218C2A20E2A20076042D /* FromTheApp */,
 				D94A4256283E805900A504BD /* ProtoAuthor.swift */,
@@ -715,6 +727,7 @@
 				D953D9972D4EAD5200CF8689 /* LoadingState.swift in Sources */,
 				D9B87851286538C6009CA7AD /* JSONFileToData.swift in Sources */,
 				D90998CD2AA448800059CAE8 /* EditMusicGenreOnServerView.swift in Sources */,
+				D938D7E12ED20E6C005ACC0D /* AnalyticsRepository.swift in Sources */,
 				D92693FA2A015048007872D9 /* MoveAuthorsToServerView.swift in Sources */,
 				D904495F2BB486F80023088B /* NewExternalLinkView.swift in Sources */,
 				D94A4259283E809000A504BD /* ProtoSound.swift in Sources */,
@@ -740,6 +753,9 @@
 				D98755072A9C366200B6E96A /* UpdateEventListView.swift in Sources */,
 				D9B8784F2865324F009CA7AD /* RankItem.swift in Sources */,
 				D960F2282A1D27E7007D12D7 /* TestVersionView.swift in Sources */,
+				D938D7DD2ED20E44005ACC0D /* TopChartItem.swift in Sources */,
+				D938D7DE2ED20E44005ACC0D /* SharedSoundRank.swift in Sources */,
+				D938D7DF2ED20E44005ACC0D /* Analytics.swift in Sources */,
 				D92693FE2A015665007872D9 /* Bundle+Extensions.swift in Sources */,
 				D92694012A015C7E007872D9 /* APIClient.swift in Sources */,
 				D91298AE2CCC6728003CC5E5 /* EditReactionView+ViewModel.swift in Sources */,
