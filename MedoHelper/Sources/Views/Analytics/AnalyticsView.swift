@@ -48,10 +48,10 @@ struct AnalyticsView: View {
                         color: .blue
                     )
                     
-                    // Sessions Card
+                    // Sessions Per User Card
                     StatCard(
-                        title: "Sessões Hoje",
-                        value: "\(analytics.sessions)",
+                        title: "Sessões Por Usuário",
+                        value: sessionsPerUserValue(analytics.sessionsPerUser),
                         icon: "chart.bar.fill",
                         color: .green
                     )
@@ -133,6 +133,13 @@ struct AnalyticsView: View {
         formatter.timeStyle = .short
         formatter.dateStyle = .none
         return formatter.string(from: date)
+    }
+    
+    private func sessionsPerUserValue(_ value: Double?) -> String {
+        guard let value = value else {
+            return "--"
+        }
+        return String(format: "%.1f", value)
     }
 }
 

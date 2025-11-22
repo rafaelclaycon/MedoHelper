@@ -35,14 +35,18 @@ final class AnalyticsRepository: AnalyticsRepositoryProtocol {
         do {
             let (activeUsers, sessions, topSounds) = try await (activeUsersTask, sessionsTask, topSoundsTask)
             
+            // Calculate sessions per user
+            let sessionsPerUser: Double? = activeUsers > 0 ? Double(sessions) / Double(activeUsers) : nil
+            
             print("✅ [Analytics] Successfully fetched all data:")
             print("   - Active Users: \(activeUsers)")
             print("   - Sessions: \(sessions)")
+            print("   - Sessions Per User: \(sessionsPerUser.map { String(format: "%.2f", $0) } ?? "N/A")")
             print("   - Top Sounds: \(topSounds.count) items")
             
             return Analytics(
                 activeUsers: activeUsers,
-                sessions: sessions,
+                sessionsPerUser: sessionsPerUser,
                 topSharedSounds: topSounds
             )
         } catch {

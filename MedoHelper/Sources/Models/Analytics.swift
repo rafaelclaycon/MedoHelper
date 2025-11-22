@@ -9,7 +9,7 @@ import Foundation
 
 struct Analytics: Codable {
     let activeUsers: Int
-    let sessions: Int
+    let sessionsPerUser: Double?
     let topSharedSounds: [SharedSoundRank]
 }
 
