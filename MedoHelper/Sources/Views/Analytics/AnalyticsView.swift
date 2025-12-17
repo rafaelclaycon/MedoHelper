@@ -618,6 +618,18 @@ struct DailyUserCountChart: View {
         }
     }
     
+    var medianValue: Int {
+        let sortedCounts = dailyUserCounts.map { $0.count }.sorted()
+        let count = sortedCounts.count
+        if count == 0 {
+            return 0
+        } else if count % 2 == 0 {
+            return (sortedCounts[count / 2 - 1] + sortedCounts[count / 2]) / 2
+        } else {
+            return sortedCounts[count / 2]
+        }
+    }
+    
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             HStack {
@@ -683,6 +695,20 @@ struct DailyUserCountChart: View {
                         .foregroundStyle(.blue.opacity(0.5))
                         .lineStyle(StrokeStyle(lineWidth: 2, dash: [5, 3]))
                 }
+                
+                // Horizontal rule mark for median value
+                RuleMark(y: .value("Median", medianValue))
+                    .foregroundStyle(.orange.opacity(0.7))
+                    .lineStyle(StrokeStyle(lineWidth: 2, dash: [8, 4]))
+                    .annotation(position: .top, alignment: .trailing) {
+                        Text("Median: \(medianValue)")
+                            .font(.caption2)
+                            .fontWeight(.semibold)
+                            .foregroundColor(.orange)
+                            .padding(4)
+                            .background(Color.orange.opacity(0.1))
+                            .cornerRadius(4)
+                    }
             }
             .chartXSelection(value: $selectedDate)
             .chartXAxis {
