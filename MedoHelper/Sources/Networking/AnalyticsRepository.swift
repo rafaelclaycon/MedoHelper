@@ -42,6 +42,11 @@ final class AnalyticsRepository: AnalyticsRepositoryProtocol {
             try? await fetchDailyUserCountsLast30Days()
         }
         
+        // Fetch device analytics separately (non-blocking)
+        let deviceAnalyticsTask = Task {
+            try? await fetchDeviceAnalytics()
+        }
+        
         do {
             let (activeUsers, sessions, topSounds) = try await (activeUsersTask, sessionsTask, topSoundsTask)
             
@@ -53,6 +58,20 @@ final class AnalyticsRepository: AnalyticsRepositoryProtocol {
             
             // Get daily user counts (may be nil if it failed)
             let dailyUserCounts = try? await dailyUsersTask.value
+            
+            // Get device analytics (may be nil if it failed)
+            let deviceAnalytics = try? await deviceAnalyticsTask.value
+            
+            print("🔍 [Analytics] Checking device analytics result...")
+            if let deviceAnalytics = deviceAnalytics {
+                print("✅ [Analytics] Device analytics is NOT nil")
+                print("   - iOS Versions count: \(deviceAnalytics.topIOSVersions.count)")
+                print("   - Device Models count: \(deviceAnalytics.topDeviceModels.count)")
+                print("   - Device Types count: \(deviceAnalytics.topDeviceTypes.count)")
+                print("   - Timezones count: \(deviceAnalytics.topTimezones.count)")
+            } else {
+                print("⚠️ [Analytics] Device analytics is nil - fetch may have failed silently")
+            }
             
             print("✅ [Analytics] Successfully fetched all data:")
             print("   - Active Users: \(activeUsers)")
@@ -69,13 +88,19 @@ final class AnalyticsRepository: AnalyticsRepositoryProtocol {
             } else {
                 print("   - Daily User Counts: Failed to load")
             }
+            if let deviceAnalytics = deviceAnalytics {
+                print("   - Device Analytics: iOS Versions: \(deviceAnalytics.topIOSVersions.count), Models: \(deviceAnalytics.topDeviceModels.count), Types: \(deviceAnalytics.topDeviceTypes.count), Timezones: \(deviceAnalytics.topTimezones.count)")
+            } else {
+                print("   - Device Analytics: Failed to load")
+            }
             
             return Analytics(
                 activeUsers: activeUsers,
                 sessionsPerUser: sessionsPerUser,
                 topSharedSounds: topSounds,
                 retro2025: retro2025,
-                dailyUserCounts: dailyUserCounts
+                dailyUserCounts: dailyUserCounts,
+                deviceAnalytics: deviceAnalytics
             )
         } catch {
             print("❌ [Analytics] Error fetching analytics: \(error)")
@@ -209,6 +234,63 @@ final class AnalyticsRepository: AnalyticsRepositoryProtocol {
             return results
         } catch {
             print("❌ [Daily Users] Failed: \(error)")
+            throw error
+        }
+    }
+    
+    func fetchDeviceAnalytics() async throws -> DeviceAnalyticsResponse {
+        let urlString = serverPath + "v3/device-analytics/\(analyticsPassword)"
+        print("🔍 [Device Analytics] Fetching from: \(urlString)")
+        
+        guard let url = URL(string: urlString) else {
+            print("❌ [Device Analytics] Invalid URL: \(urlString)")
+            throw AnalyticsError.invalidURL
+        }
+        
+        do {
+            // Fetch raw data first to debug
+            let (data, _) = try await URLSession.shared.data(from: url)
+            if let jsonString = String(data: data, encoding: .utf8) {
+                print("🔍 [Device Analytics] Raw JSON response (first 500 chars):")
+                print(String(jsonString.prefix(500)))
+            }
+            
+            // Try to parse as dictionary to see what keys are actually present
+            if let jsonObject = try? JSONSerialization.jsonObject(with: data) as? [String: Any] {
+                print("🔍 [Device Analytics] JSON keys found: \(jsonObject.keys.sorted())")
+            }
+            
+            // Decode manually - with explicit CodingKeys, we don't need convertFromSnakeCase
+            let decoder = JSONDecoder()
+            // Don't use convertFromSnakeCase since we have explicit CodingKeys
+            let response = try decoder.decode(DeviceAnalyticsResponse.self, from: data)
+            
+            print("✅ [Device Analytics] Success:")
+            print("   - iOS Versions: \(response.topIOSVersions.count) groups")
+            response.topIOSVersions.forEach { version in
+                print("      • \(version.displayName): \(version.count)")
+            }
+            print("   - Device Models: \(response.topDeviceModels.count) models")
+            response.topDeviceModels.prefix(5).forEach { model in
+                print("      • \(model.modelName): \(model.count)")
+            }
+            print("   - Device Types: \(response.topDeviceTypes.count) types")
+            response.topDeviceTypes.forEach { type in
+                print("      • \(type.deviceType): \(type.count)")
+            }
+            print("   - Timezones: \(response.topTimezones.count) timezones")
+            response.topTimezones.prefix(5).forEach { tz in
+                print("      • \(tz.timezone): \(tz.count)")
+            }
+            return response
+        } catch {
+            print("❌ [Device Analytics] Failed: \(error)")
+            print("   Error type: \(type(of: error))")
+            print("   Error description: \(error.localizedDescription)")
+            if let urlError = error as? URLError {
+                print("   URL Error code: \(urlError.code.rawValue)")
+                print("   URL Error description: \(urlError.localizedDescription)")
+            }
             throw error
         }
     }

@@ -84,6 +84,43 @@ struct AnalyticsView: View {
                             .background(platterColor)
                             .cornerRadius(12)
                             .padding(.horizontal)
+                            
+                            // Device & System Analytics
+                            if let deviceAnalytics = analytics.deviceAnalytics {
+                                DeviceAnalyticsSection(analytics: deviceAnalytics)
+                                    .onAppear {
+                                        print("🔍 [AnalyticsView] DeviceAnalyticsSection appeared")
+                                        print("   - iOS Versions: \(deviceAnalytics.topIOSVersions.count)")
+                                        print("   - Device Models: \(deviceAnalytics.topDeviceModels.count)")
+                                        print("   - Device Types: \(deviceAnalytics.topDeviceTypes.count)")
+                                        print("   - Timezones: \(deviceAnalytics.topTimezones.count)")
+                                    }
+                            } else {
+                                // Debug placeholder to show the section would be here
+                                VStack(alignment: .leading, spacing: 12) {
+                                    HStack {
+                                        Image(systemName: "exclamationmark.triangle.fill")
+                                            .foregroundColor(.orange)
+                                            .font(.title3)
+                                        Text("Device Analytics Debug")
+                                            .font(.subheadline)
+                                            .fontWeight(.semibold)
+                                    }
+                                    .padding(.horizontal)
+                                    
+                                    Text("deviceAnalytics is nil - check console logs")
+                                        .font(.caption)
+                                        .foregroundColor(.secondary)
+                                        .padding(.horizontal)
+                                }
+                                .padding()
+                                .background(platterColor)
+                                .cornerRadius(12)
+                                .padding(.horizontal)
+                                .onAppear {
+                                    print("⚠️ [AnalyticsView] deviceAnalytics is nil - section will not render")
+                                }
+                            }
                         }
                         .frame(maxWidth: .infinity)
                         
@@ -745,8 +782,598 @@ struct DailyUserCountChart: View {
     }
 }
 
+// MARK: - Device Analytics Section
+
+struct DeviceAnalyticsSection: View {
+    let analytics: DeviceAnalyticsResponse
+    
+    init(analytics: DeviceAnalyticsResponse) {
+        self.analytics = analytics
+        print("🔍 [DeviceAnalyticsSection] Initialized")
+        print("   - iOS Versions: \(analytics.topIOSVersions.count) items")
+        print("   - Device Models: \(analytics.topDeviceModels.count) items")
+        print("   - Device Types: \(analytics.topDeviceTypes.count) items")
+        print("   - Timezones: \(analytics.topTimezones.count) items")
+    }
+    
+    var body: some View {
+        VStack(alignment: .leading, spacing: 20) {
+            // Section Header
+            HStack {
+                Image(systemName: "iphone")
+                    .foregroundColor(.blue)
+                    .font(.title2)
+                Text("Dispositivos e Sistema")
+                    .font(.headline)
+            }
+            .padding(.horizontal)
+            .onAppear {
+                print("🔍 [DeviceAnalyticsSection] Header appeared")
+            }
+            
+            // Top iOS Versions
+            if !analytics.topIOSVersions.isEmpty {
+                let totalIOSVersions = analytics.topIOSVersions.reduce(0) { $0 + $1.count }
+                VStack(alignment: .leading, spacing: 12) {
+                    HStack {
+                        Image(systemName: "app.badge")
+                            .foregroundColor(.blue)
+                            .font(.title3)
+                        Text("Versões iOS")
+                            .font(.subheadline)
+                            .fontWeight(.semibold)
+                    }
+                    .padding(.horizontal)
+                    
+                    VStack(spacing: 8) {
+                        ForEach(analytics.topIOSVersions) { version in
+                            IOSVersionRow(version: version, totalCount: totalIOSVersions)
+                        }
+                    }
+                }
+                .padding()
+                .background(platterColor)
+                .cornerRadius(12)
+                .padding(.horizontal)
+                .onAppear {
+                    print("🔍 [DeviceAnalyticsSection] iOS Versions section appeared (total: \(totalIOSVersions))")
+                }
+            }
+            
+            // Top Device Models
+            if !analytics.topDeviceModels.isEmpty {
+                let totalDeviceModels = analytics.topDeviceModels.reduce(0) { $0 + $1.count }
+                VStack(alignment: .leading, spacing: 12) {
+                    HStack {
+                        Image(systemName: "iphone")
+                            .foregroundColor(.green)
+                            .font(.title3)
+                        Text("Modelos de Dispositivo")
+                            .font(.subheadline)
+                            .fontWeight(.semibold)
+                    }
+                    .padding(.horizontal)
+                    
+                    VStack(spacing: 8) {
+                        ForEach(Array(analytics.topDeviceModels.prefix(5))) { model in
+                            DeviceModelRow(model: model, totalCount: totalDeviceModels)
+                        }
+                    }
+                }
+                .padding()
+                .background(platterColor)
+                .cornerRadius(12)
+                .padding(.horizontal)
+                .onAppear {
+                    print("🔍 [DeviceAnalyticsSection] Device Models section appeared (total: \(totalDeviceModels))")
+                }
+            }
+            
+            // Top Device Types
+            if !analytics.topDeviceTypes.isEmpty {
+                let totalDeviceTypes = analytics.topDeviceTypes.reduce(0) { $0 + $1.count }
+                VStack(alignment: .leading, spacing: 12) {
+                    HStack {
+                        Image(systemName: "devices")
+                            .foregroundColor(.purple)
+                            .font(.title3)
+                        Text("Tipos de Dispositivo")
+                            .font(.subheadline)
+                            .fontWeight(.semibold)
+                    }
+                    .padding(.horizontal)
+                    
+                    VStack(spacing: 8) {
+                        ForEach(analytics.topDeviceTypes) { type in
+                            DeviceTypeRow(type: type, totalCount: totalDeviceTypes)
+                        }
+                    }
+                }
+                .padding()
+                .background(platterColor)
+                .cornerRadius(12)
+                .padding(.horizontal)
+                .onAppear {
+                    print("🔍 [DeviceAnalyticsSection] Device Types section appeared (total: \(totalDeviceTypes))")
+                }
+            }
+            
+            // Top Timezones
+            if !analytics.topTimezones.isEmpty {
+                TimezonePieChart(
+                    timezones: analytics.topTimezones,
+                    totalCount: analytics.totalTimezonesCount
+                )
+            }
+        }
+        .onAppear {
+            print("🔍 [DeviceAnalyticsSection] Full section appeared")
+        }
+    }
+}
+
+// MARK: - iOS Version Row
+
+struct IOSVersionRow: View {
+    let version: IOSVersionStat
+    let totalCount: Int
+    
+    var percentage: Double {
+        guard totalCount > 0 else { return 0 }
+        return Double(version.count) / Double(totalCount) * 100
+    }
+    
+    var body: some View {
+        HStack {
+            Image(systemName: "app.badge")
+                .foregroundColor(.blue)
+                .font(.title3)
+                .frame(width: 32)
+            
+            Text(version.displayName)
+                .font(.body)
+            
+            Spacer()
+            
+            HStack(spacing: 4) {
+                Text("\(version.count)")
+                    .font(.body)
+                    .fontWeight(.semibold)
+                    .foregroundColor(.secondary)
+                
+                Text("(\(String(format: "%.1f", percentage))%)")
+                    .font(.body)
+                    .foregroundColor(.secondary)
+            }
+        }
+        .padding(.vertical, 8)
+        .padding(.horizontal)
+        .background(platterColor)
+        .cornerRadius(8)
+    }
+}
+
+// MARK: - Device Model Row
+
+struct DeviceModelRow: View {
+    let model: DeviceModelStat
+    let totalCount: Int
+    
+    var percentage: Double {
+        guard totalCount > 0 else { return 0 }
+        return Double(model.count) / Double(totalCount) * 100
+    }
+    
+    var body: some View {
+        HStack {
+            Image(systemName: "iphone")
+                .foregroundColor(.green)
+                .font(.title3)
+                .frame(width: 32)
+            
+            Text(model.modelName)
+                .font(.body)
+            
+            Spacer()
+            
+            HStack(spacing: 4) {
+                Text("\(model.count)")
+                    .font(.body)
+                    .fontWeight(.semibold)
+                    .foregroundColor(.secondary)
+                
+                Text("(\(String(format: "%.1f", percentage))%)")
+                    .font(.body)
+                    .foregroundColor(.secondary)
+            }
+        }
+        .padding(.vertical, 8)
+        .padding(.horizontal)
+        .background(platterColor)
+        .cornerRadius(8)
+    }
+}
+
+// MARK: - Device Type Row
+
+struct DeviceTypeRow: View {
+    let type: DeviceTypeStat
+    let totalCount: Int
+    
+    var percentage: Double {
+        guard totalCount > 0 else { return 0 }
+        return Double(type.count) / Double(totalCount) * 100
+    }
+    
+    var body: some View {
+        HStack {
+            Image(systemName: type.iconName)
+                .foregroundColor(.purple)
+                .font(.title3)
+                .frame(width: 32)
+            
+            Text(type.deviceType)
+                .font(.body)
+            
+            Spacer()
+            
+            HStack(spacing: 4) {
+                Text("\(type.count)")
+                    .font(.body)
+                    .fontWeight(.semibold)
+                    .foregroundColor(.secondary)
+                
+                Text("(\(String(format: "%.1f", percentage))%)")
+                    .font(.body)
+                    .foregroundColor(.secondary)
+            }
+        }
+        .padding(.vertical, 8)
+        .padding(.horizontal)
+        .background(platterColor)
+        .cornerRadius(8)
+    }
+}
+
+// MARK: - Timezone Pie Chart
+
+struct TimezonePieChart: View {
+    let timezones: [TimezoneStat]
+    let totalCount: Int
+    @State private var selectedTimezone: String?
+    @State private var hoveredTimezone: String?
+    
+    // Color palette for timezones
+    private let colors: [Color] = [
+        .blue, .orange, .green, .purple, .pink,
+        .red, .yellow, .teal, .indigo, .cyan
+    ]
+    
+    private func color(for timezone: String) -> Color {
+        let index = timezones.firstIndex(where: { $0.timezone == timezone }) ?? 0
+        return colors[index % colors.count]
+    }
+    
+    private func percentage(for timezone: TimezoneStat) -> Double {
+        guard totalCount > 0 else { return 0 }
+        return Double(timezone.count) / Double(totalCount) * 100
+    }
+    
+    var selectedTimezoneStat: TimezoneStat? {
+        let active = selectedTimezone ?? hoveredTimezone
+        guard let active = active else { return nil }
+        return timezones.first { $0.timezone == active }
+    }
+    
+    var body: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            HStack {
+                Image(systemName: "globe")
+                    .foregroundColor(.orange)
+                    .font(.title3)
+                Text("Fusos Horários")
+                    .font(.subheadline)
+                    .fontWeight(.semibold)
+                Spacer()
+                
+                // Show selected timezone info
+                if let selected = selectedTimezoneStat {
+                    VStack(alignment: .trailing, spacing: 2) {
+                        Text(selected.timezone)
+                            .font(.caption)
+                            .fontWeight(.semibold)
+                        Text("\(selected.count) (\(String(format: "%.1f", percentage(for: selected)))%)")
+                            .font(.caption2)
+                            .foregroundColor(.secondary)
+                    }
+                }
+            }
+            .padding(.horizontal)
+            
+            Chart {
+                ForEach(timezones) { timezone in
+                    let active = selectedTimezone ?? hoveredTimezone
+                    let isActive = active == nil || active == timezone.timezone
+                    
+                    SectorMark(
+                        angle: .value("Count", timezone.count),
+                        innerRadius: .ratio(0.5),
+                        angularInset: 2
+                    )
+                    .foregroundStyle(color(for: timezone.timezone))
+                    .opacity(isActive ? 1.0 : 0.3)
+                    .cornerRadius(4)
+                }
+            }
+            .chartBackground { chartProxy in
+                GeometryReader { geometry in
+                    if let selected = selectedTimezoneStat {
+                        VStack(spacing: 4) {
+                            Text(selected.timezone)
+                                .font(.headline)
+                                .fontWeight(.bold)
+                            Text("\(selected.count) usuários")
+                                .font(.subheadline)
+                                .foregroundColor(.secondary)
+                            Text("\(String(format: "%.1f", percentage(for: selected)))%")
+                                .font(.title3)
+                                .fontWeight(.semibold)
+                                .foregroundColor(color(for: selected.timezone))
+                        }
+                        .frame(width: geometry.size.width * 0.4, height: geometry.size.height * 0.4)
+                    } else {
+                        VStack(spacing: 4) {
+                            Text("Total")
+                                .font(.headline)
+                                .fontWeight(.bold)
+                            Text("\(totalCount) usuários")
+                                .font(.subheadline)
+                                .foregroundColor(.secondary)
+                            Text("\(timezones.count) timezones")
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                        }
+                        .frame(width: geometry.size.width * 0.4, height: geometry.size.height * 0.4)
+                    }
+                }
+            }
+            .frame(height: 300)
+            
+            // Legend
+            VStack(alignment: .leading, spacing: 8) {
+                ForEach(Array(timezones.prefix(10))) { timezone in
+                    Button(action: {
+                        selectedTimezone = selectedTimezone == timezone.timezone ? nil : timezone.timezone
+                    }) {
+                        HStack {
+                            Circle()
+                                .fill(color(for: timezone.timezone))
+                                .frame(width: 12, height: 12)
+                            
+                            VStack(alignment: .leading, spacing: 2) {
+                                Text(timezone.timezone)
+                                    .font(.body)
+                                    .foregroundColor(.primary)
+                                
+                                if !regionDescription(for: timezone.timezone).isEmpty {
+                                    Text(regionDescription(for: timezone.timezone))
+                                        .font(.caption)
+                                        .foregroundColor(.secondary)
+                                }
+                            }
+                            
+                            Spacer()
+                            
+                            HStack(spacing: 4) {
+                                Text("\(timezone.count)")
+                                    .font(.body)
+                                    .fontWeight(.semibold)
+                                    .foregroundColor(.secondary)
+                                
+                                Text("(\(String(format: "%.1f", percentage(for: timezone)))%)")
+                                    .font(.body)
+                                    .foregroundColor(.secondary)
+                            }
+                        }
+                        .padding(.vertical, 4)
+                        .padding(.horizontal, 8)
+                        .background(backgroundColor(for: timezone.timezone))
+                        .cornerRadius(6)
+                    }
+                    .buttonStyle(.plain)
+                    .onHover { isHovering in
+                        hoveredTimezone = isHovering ? timezone.timezone : nil
+                    }
+                }
+            }
+            .padding(.horizontal)
+        }
+        .padding()
+        .background(platterColor)
+        .cornerRadius(12)
+        .padding(.horizontal)
+        .onAppear {
+            print("🔍 [DeviceAnalyticsSection] Timezones pie chart appeared (total: \(totalCount))")
+        }
+    }
+    
+    private func backgroundColor(for timezone: String) -> Color {
+        let active = selectedTimezone ?? hoveredTimezone
+        return active == timezone ? color(for: timezone).opacity(0.15) : Color.clear
+    }
+    
+    private func regionDescription(for timezone: String) -> String {
+        let tz = timezone.uppercased()
+        
+        // GMT offsets (e.g., GMT+1, GMT-5)
+        if tz.hasPrefix("GMT") {
+            let offsetString = tz.replacingOccurrences(of: "GMT", with: "").trimmingCharacters(in: .whitespaces)
+            if offsetString.isEmpty {
+                // Just "GMT" without offset
+                return "Reino Unido/Irlanda"
+            } else if let offset = Int(offsetString) {
+                switch offset {
+                case -8: return "Pacífico (EUA/Canadá)"
+                case -6: return "América Central"
+                case -5: return "América do Norte (EST)"
+                case -3: return "América do Sul"
+                case 0: return "Reino Unido/Irlanda"
+                case 1: return "Europa Central"
+                case 8: return "Ásia (China/Singapura)"
+                default:
+                    if offset < 0 {
+                        return "Américas"
+                    } else if offset > 0 && offset <= 3 {
+                        return "Europa/África"
+                    } else {
+                        return "Ásia/Oceania"
+                    }
+                }
+            }
+        }
+        
+        // Common timezone abbreviations
+        switch tz {
+        case "EST", "EDT": return "América do Norte (Leste)"
+        case "PST", "PDT": return "América do Norte (Pacífico)"
+        case "CST", "CDT": return "América do Norte (Central)"
+        case "MST", "MDT": return "América do Norte (Montanha)"
+        case "AMT": return "Amazônia (Brasil)"
+        case "BRT": return "Brasil"
+        case "CET", "CEST": return "Europa Central"
+        case "WET", "WEST": return "Europa Ocidental"
+        case "EET", "EEST": return "Europa Oriental"
+        case "JST": return "Japão"
+        case "AEST", "AEDT": return "Austrália (Leste)"
+        case "AWST": return "Austrália (Oeste)"
+        case "IST": return "Índia"
+        case "KST": return "Coreia"
+        default:
+            // Try to infer from common patterns
+            if tz.contains("EUROPE") || tz.contains("PARIS") || tz.contains("BERLIN") {
+                return "Europa"
+            } else if tz.contains("AMERICA") || tz.contains("NEW_YORK") || tz.contains("LOS_ANGELES") {
+                return "Américas"
+            } else if tz.contains("ASIA") || tz.contains("TOKYO") || tz.contains("BEIJING") {
+                return "Ásia"
+            } else {
+                return ""
+            }
+        }
+    }
+}
+
+// MARK: - Timezone Row
+
+struct TimezoneRow: View {
+    let timezone: TimezoneStat
+    let totalCount: Int
+    
+    var percentage: Double {
+        guard totalCount > 0 else { return 0 }
+        return Double(timezone.count) / Double(totalCount) * 100
+    }
+    
+    var regionDescription: String {
+        let tz = timezone.timezone.uppercased()
+        
+        // GMT offsets (e.g., GMT+1, GMT-5)
+        if tz.hasPrefix("GMT") {
+            let offsetString = tz.replacingOccurrences(of: "GMT", with: "").trimmingCharacters(in: .whitespaces)
+            if offsetString.isEmpty {
+                // Just "GMT" without offset
+                return "Reino Unido/Irlanda"
+            } else if let offset = Int(offsetString) {
+                switch offset {
+                case -8: return "Pacífico (EUA/Canadá)"
+                case -6: return "América Central"
+                case -5: return "América do Norte (EST)"
+                case -3: return "América do Sul"
+                case 0: return "Reino Unido/Irlanda"
+                case 1: return "Europa Central"
+                case 8: return "Ásia (China/Singapura)"
+                default:
+                    if offset < 0 {
+                        return "Américas"
+                    } else if offset > 0 && offset <= 3 {
+                        return "Europa/África"
+                    } else {
+                        return "Ásia/Oceania"
+                    }
+                }
+            }
+        }
+        
+        // Common timezone abbreviations
+        switch tz {
+        case "EST", "EDT": return "América do Norte (Leste)"
+        case "PST", "PDT": return "América do Norte (Pacífico)"
+        case "CST", "CDT": return "América do Norte (Central)"
+        case "MST", "MDT": return "América do Norte (Montanha)"
+        case "AMT": return "Amazônia (Brasil)"
+        case "CET", "CEST": return "Europa Central"
+        case "WET", "WEST": return "Europa Ocidental"
+        case "EET", "EEST": return "Europa Oriental"
+        case "JST": return "Japão"
+        case "AEST", "AEDT": return "Austrália (Leste)"
+        case "AWST": return "Austrália (Oeste)"
+        case "IST": return "Índia"
+        case "KST": return "Coreia"
+        default:
+            // Try to infer from common patterns
+            if tz.contains("EUROPE") || tz.contains("PARIS") || tz.contains("BERLIN") {
+                return "Europa"
+            } else if tz.contains("AMERICA") || tz.contains("NEW_YORK") || tz.contains("LOS_ANGELES") {
+                return "Américas"
+            } else if tz.contains("ASIA") || tz.contains("TOKYO") || tz.contains("BEIJING") {
+                return "Ásia"
+            } else {
+                return ""
+            }
+        }
+    }
+    
+    var body: some View {
+        HStack {
+            Image(systemName: "globe")
+                .foregroundColor(.orange)
+                .font(.title3)
+                .frame(width: 32)
+            
+            VStack(alignment: .leading, spacing: 2) {
+                Text(timezone.timezone)
+                    .font(.body)
+                
+                if !regionDescription.isEmpty {
+                    Text(regionDescription)
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                }
+            }
+            
+            Spacer()
+            
+            HStack(spacing: 4) {
+                Text("\(timezone.count)")
+                    .font(.body)
+                    .fontWeight(.semibold)
+                    .foregroundColor(.secondary)
+                
+                Text("(\(String(format: "%.1f", percentage))%)")
+                    .font(.body)
+                    .foregroundColor(.secondary)
+            }
+        }
+        .padding(.vertical, 8)
+        .padding(.horizontal)
+        .background(platterColor)
+        .cornerRadius(8)
+    }
+}
+
 #Preview {
     NavigationStack {
         AnalyticsView()
     }
 }
+

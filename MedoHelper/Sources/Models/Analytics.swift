@@ -13,5 +13,6 @@ struct Analytics: Codable {
     let topSharedSounds: [SharedSoundRank]
     let retro2025: Retro2025DashboardResponse?
     let dailyUserCounts: [DailyUserCount]?
+    let deviceAnalytics: DeviceAnalyticsResponse?
 }
 
