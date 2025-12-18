@@ -9,7 +9,7 @@ import Foundation
 
 // MARK: - Device Analytics Response
 
-struct DeviceAnalyticsResponse: Codable {
+struct DeviceAnalyticsResponse: Codable, Equatable {
     let topIOSVersions: [IOSVersionStat]
     let topDeviceModels: [DeviceModelStat]
     let topDeviceTypes: [DeviceTypeStat]
@@ -27,7 +27,7 @@ struct DeviceAnalyticsResponse: Codable {
 
 // MARK: - iOS Version Stat
 
-struct IOSVersionStat: Codable, Identifiable {
+struct IOSVersionStat: Codable, Identifiable, Equatable {
     let id: String // major version number (e.g., "15", "16", "17", "18")
     let majorVersion: String // major version number
     let count: Int
@@ -45,7 +45,7 @@ struct IOSVersionStat: Codable, Identifiable {
 
 // MARK: - Device Model Stat
 
-struct DeviceModelStat: Codable, Identifiable {
+struct DeviceModelStat: Codable, Identifiable, Equatable {
     let id: String // modelName
     let modelName: String
     let count: Int
@@ -59,7 +59,7 @@ struct DeviceModelStat: Codable, Identifiable {
 
 // MARK: - Device Type Stat
 
-struct DeviceTypeStat: Codable, Identifiable {
+struct DeviceTypeStat: Codable, Identifiable, Equatable {
     let id: String // "iPhone", "iPad", "Mac"
     let deviceType: String
     let count: Int
@@ -82,7 +82,7 @@ struct DeviceTypeStat: Codable, Identifiable {
 
 // MARK: - Timezone Stat
 
-struct TimezoneStat: Codable, Identifiable {
+struct TimezoneStat: Codable, Identifiable, Equatable {
     let id: String // timezone name
     let timezone: String
     let count: Int

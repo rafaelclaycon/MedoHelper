@@ -14,5 +14,6 @@ struct Analytics: Codable {
     let retro2025: Retro2025DashboardResponse?
     let dailyUserCounts: [DailyUserCount]?
     let deviceAnalytics: DeviceAnalyticsResponse?
+    let navigationAnalytics: NavigationAnalyticsResponse?
 }
 

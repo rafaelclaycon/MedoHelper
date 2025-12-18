@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct DailyUserCount: Codable, Identifiable {
+struct DailyUserCount: Codable, Identifiable, Equatable {
     let id: String // date string
     let date: String
     let count: Int

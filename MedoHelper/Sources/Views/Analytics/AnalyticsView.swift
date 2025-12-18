@@ -17,13 +17,24 @@ private let platterColor = Color.gray.opacity(0.3)
 
 struct AnalyticsView: View {
     
-    @State private var analytics: Analytics?
-    @State private var isLoading = false
-    @State private var errorMessage: String?
+    // Individual loading states for each section
+    @State private var activeUsers: LoadingState<Int> = .loading
+    @State private var dailyUserCounts: LoadingState<[DailyUserCount]> = .loading
+    @State private var topSharedSounds: LoadingState<[SharedSoundRank]> = .loading
+    @State private var deviceAnalytics: LoadingState<DeviceAnalyticsResponse> = .loading
+    @State private var navigationAnalytics: LoadingState<NavigationAnalyticsResponse> = .loading
+    @State private var retro2025: LoadingState<Retro2025DashboardResponse> = .loading
+    
     @State private var lastUpdated: Date?
     
     private let repository: AnalyticsRepositoryProtocol
     private let timer = Timer.publish(every: 300, on: .main, in: .common).autoconnect()
+    
+    private var todayString: String {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy-MM-dd"
+        return dateFormatter.string(from: Date())
+    }
 
     init(repository: AnalyticsRepositoryProtocol = AnalyticsRepository()) {
         self.repository = repository
@@ -32,121 +43,41 @@ struct AnalyticsView: View {
     var body: some View {
         ScrollView {
             VStack(spacing: 20) {
-                if isLoading && analytics == nil {
-                    LoadingView()
-                } else if let analytics = analytics {
-                    // Header with last updated time
-                    if let lastUpdated = lastUpdated {
-                        HStack {
-                            Spacer()
-                            Text("Última atualização: \(formattedTime(lastUpdated))")
-                                .font(.caption)
-                                .foregroundColor(.secondary)
-                        }
-                        .padding(.horizontal)
-                    }
-                    
-                    // Side-by-side layout
-                    HStack(alignment: .top, spacing: 20) {
-                        // Regular Analytics Column (Left)
-                        VStack(alignment: .leading, spacing: 20) {
-                            // Active Users Card
-                            StatCard(
-                                title: "Usuários Ativos Hoje",
-                                value: "\(analytics.activeUsers)",
-                                icon: "person.2.fill",
-                                color: .blue
-                            )
-                            
-                            // 30-Day User Trend Chart
-                            if let dailyUserCounts = analytics.dailyUserCounts, !dailyUserCounts.isEmpty {
-                                DailyUserCountChart(dailyUserCounts: dailyUserCounts)
-                            }
-                            
-                            // Top Shared Sounds
-                            VStack(alignment: .leading, spacing: 12) {
-                                HStack {
-                                    Image(systemName: "arrow.up.message.fill")
-                                        .foregroundColor(.orange)
-                                        .font(.title2)
-                                    Text("Sons Mais Compartilhados")
-                                        .font(.headline)
-                                }
-                                .padding(.horizontal)
-                                
-                                VStack(spacing: 8) {
-                                    ForEach(analytics.topSharedSounds) { sound in
-                                        SharedSoundRow(sound: sound)
-                                    }
-                                }
-                            }
-                            .padding()
-                            .background(platterColor)
-                            .cornerRadius(12)
-                            .padding(.horizontal)
-                            
-                            // Device & System Analytics
-                            if let deviceAnalytics = analytics.deviceAnalytics {
-                                DeviceAnalyticsSection(analytics: deviceAnalytics)
-                                    .onAppear {
-                                        print("🔍 [AnalyticsView] DeviceAnalyticsSection appeared")
-                                        print("   - iOS Versions: \(deviceAnalytics.topIOSVersions.count)")
-                                        print("   - Device Models: \(deviceAnalytics.topDeviceModels.count)")
-                                        print("   - Device Types: \(deviceAnalytics.topDeviceTypes.count)")
-                                        print("   - Timezones: \(deviceAnalytics.topTimezones.count)")
-                                    }
-                            } else {
-                                // Debug placeholder to show the section would be here
-                                VStack(alignment: .leading, spacing: 12) {
-                                    HStack {
-                                        Image(systemName: "exclamationmark.triangle.fill")
-                                            .foregroundColor(.orange)
-                                            .font(.title3)
-                                        Text("Device Analytics Debug")
-                                            .font(.subheadline)
-                                            .fontWeight(.semibold)
-                                    }
-                                    .padding(.horizontal)
-                                    
-                                    Text("deviceAnalytics is nil - check console logs")
-                                        .font(.caption)
-                                        .foregroundColor(.secondary)
-                                        .padding(.horizontal)
-                                }
-                                .padding()
-                                .background(platterColor)
-                                .cornerRadius(12)
-                                .padding(.horizontal)
-                                .onAppear {
-                                    print("⚠️ [AnalyticsView] deviceAnalytics is nil - section will not render")
-                                }
-                            }
-                        }
-                        .frame(maxWidth: .infinity)
-                        
-                        // Retro2025 Section Column (Right)
-                        if let retro2025 = analytics.retro2025 {
-                            Retro2025Section(dashboard: retro2025)
-                                .frame(maxWidth: .infinity)
-                        }
-                    }
-                } else if let errorMessage = errorMessage {
-                    VStack(spacing: 16) {
-                        Image(systemName: "exclamationmark.triangle")
-                            .font(.system(size: 48))
-                            .foregroundColor(.orange)
-                        Text("Erro ao carregar dados")
-                            .font(.headline)
-                        Text(errorMessage)
-                            .font(.subheadline)
+                // Header with last updated time
+                if let lastUpdated = lastUpdated {
+                    HStack {
+                        Spacer()
+                        Text("Última atualização: \(formattedTime(lastUpdated))")
+                            .font(.caption)
                             .foregroundColor(.secondary)
-                            .multilineTextAlignment(.center)
-                        Button("Tentar Novamente") {
-                            fetchAnalytics()
-                        }
-                        .buttonStyle(.borderedProminent)
                     }
-                    .padding()
+                    .padding(.horizontal)
+                }
+                
+                // Side-by-side layout
+                HStack(alignment: .top, spacing: 20) {
+                    // Regular Analytics Column (Left)
+                    VStack(alignment: .leading, spacing: 20) {
+                        // Active Users Card
+                        activeUsersSection
+                        
+                        // 30-Day User Trend Chart
+                        dailyUserCountsSection
+                        
+                        // Top Shared Sounds
+                        topSharedSoundsSection
+                        
+                        // Device & System Analytics
+                        deviceAnalyticsSection
+                        
+                        // Navigation Analytics
+                        navigationAnalyticsSection
+                    }
+                    .frame(maxWidth: .infinity)
+                    
+                    // Retro2025 Section Column (Right)
+                    retro2025Section
+                        .frame(maxWidth: .infinity)
                 }
             }
             .padding(.vertical)
@@ -154,29 +85,250 @@ struct AnalyticsView: View {
         }
         .navigationTitle("Estatísticas do App")
         .onAppear {
-            fetchAnalytics()
+            fetchAllSections()
         }
         .onReceive(timer) { _ in
-            fetchAnalytics()
+            fetchAllSections()
         }
     }
     
-    private func fetchAnalytics() {
+    // MARK: - Section Views
+    
+    @ViewBuilder
+    private var activeUsersSection: some View {
+        switch activeUsers {
+        case .loading:
+            StatCardLoading(title: "Usuários Ativos Hoje", icon: "person.2.fill", color: .blue)
+        case .loaded(let count):
+            StatCard(title: "Usuários Ativos Hoje", value: "\(count)", icon: "person.2.fill", color: .blue)
+        case .error(let message):
+            StatCardError(title: "Usuários Ativos Hoje", icon: "person.2.fill", color: .blue, message: message) {
+                fetchActiveUsers()
+            }
+        }
+    }
+    
+    @ViewBuilder
+    private var dailyUserCountsSection: some View {
+        switch dailyUserCounts {
+        case .loading:
+            SectionLoadingView(title: "Usuários - Últimos 30 Dias", icon: "chart.line.uptrend.xyaxis", color: .blue)
+        case .loaded(let counts):
+            if !counts.isEmpty {
+                DailyUserCountChart(dailyUserCounts: counts)
+            }
+        case .error(let message):
+            SectionErrorView(
+                title: "Usuários - Últimos 30 Dias",
+                icon: "chart.line.uptrend.xyaxis",
+                color: .blue,
+                message: message
+            ) {
+                fetchDailyUserCounts()
+            }
+        }
+    }
+    
+    @ViewBuilder
+    private var topSharedSoundsSection: some View {
+        switch topSharedSounds {
+        case .loading:
+            SectionLoadingView(title: "Sons Mais Compartilhados", icon: "arrow.up.message.fill", color: .orange)
+        case .loaded(let sounds):
+            VStack(alignment: .leading, spacing: 12) {
+                HStack {
+                    Image(systemName: "arrow.up.message.fill")
+                        .foregroundColor(.orange)
+                        .font(.title2)
+                    Text("Sons Mais Compartilhados")
+                        .font(.headline)
+                }
+                .padding(.horizontal)
+                
+                VStack(spacing: 8) {
+                    ForEach(sounds) { sound in
+                        SharedSoundRow(sound: sound)
+                    }
+                }
+            }
+            .padding()
+            .background(platterColor)
+            .cornerRadius(12)
+            .padding(.horizontal)
+        case .error(let message):
+            SectionErrorView(
+                title: "Sons Mais Compartilhados",
+                icon: "arrow.up.message.fill",
+                color: .orange,
+                message: message
+            ) {
+                fetchTopSharedSounds()
+            }
+        }
+    }
+    
+    @ViewBuilder
+    private var deviceAnalyticsSection: some View {
+        switch deviceAnalytics {
+        case .loading:
+            SectionLoadingView(title: "Dispositivos e Sistema", icon: "iphone", color: .blue)
+        case .loaded(let analytics):
+            DeviceAnalyticsSection(analytics: analytics)
+        case .error(let message):
+            SectionErrorView(
+                title: "Dispositivos e Sistema",
+                icon: "iphone",
+                color: .blue,
+                message: message
+            ) {
+                fetchDeviceAnalytics()
+            }
+        }
+    }
+    
+    @ViewBuilder
+    private var navigationAnalyticsSection: some View {
+        switch navigationAnalytics {
+        case .loading:
+            SectionLoadingView(title: "Navegação no App", icon: "map", color: .indigo)
+        case .loaded(let analytics):
+            NavigationAnalyticsSection(analytics: analytics)
+        case .error(let message):
+            SectionErrorView(
+                title: "Navegação no App",
+                icon: "map",
+                color: .indigo,
+                message: message
+            ) {
+                fetchNavigationAnalytics()
+            }
+        }
+    }
+    
+    @ViewBuilder
+    private var retro2025Section: some View {
+        switch retro2025 {
+        case .loading:
+            VStack(spacing: 20) {
+                SectionLoadingView(title: "Retro2025 - Dezembro 2025", icon: "calendar.badge.clock", color: .purple)
+            }
+        case .loaded(let dashboard):
+            Retro2025Section(dashboard: dashboard)
+        case .error(let message):
+            SectionErrorView(
+                title: "Retro2025 - Dezembro 2025",
+                icon: "calendar.badge.clock",
+                color: .purple,
+                message: message
+            ) {
+                fetchRetro2025()
+            }
+        }
+    }
+    
+    // MARK: - Fetch Methods
+    
+    private func fetchAllSections() {
+        lastUpdated = Date()
+        fetchActiveUsers()
+        fetchDailyUserCounts()
+        fetchTopSharedSounds()
+        fetchDeviceAnalytics()
+        fetchNavigationAnalytics()
+        fetchRetro2025()
+    }
+    
+    private func fetchActiveUsers() {
         Task {
-            isLoading = true
-            errorMessage = nil
-            
+            activeUsers = .loading
             do {
-                let fetchedAnalytics = try await repository.fetchAnalytics()
+                let count = try await repository.fetchActiveUsers(date: todayString)
                 await MainActor.run {
-                    self.analytics = fetchedAnalytics
-                    self.lastUpdated = Date()
-                    self.isLoading = false
+                    activeUsers = .loaded(count)
                 }
             } catch {
                 await MainActor.run {
-                    self.errorMessage = error.localizedDescription
-                    self.isLoading = false
+                    activeUsers = .error(error.localizedDescription)
+                }
+            }
+        }
+    }
+    
+    private func fetchDailyUserCounts() {
+        Task {
+            dailyUserCounts = .loading
+            do {
+                let counts = try await repository.fetchDailyUserCountsLast30Days()
+                await MainActor.run {
+                    dailyUserCounts = .loaded(counts)
+                }
+            } catch {
+                await MainActor.run {
+                    dailyUserCounts = .error(error.localizedDescription)
+                }
+            }
+        }
+    }
+    
+    private func fetchTopSharedSounds() {
+        Task {
+            topSharedSounds = .loading
+            do {
+                let sounds = try await repository.fetchTopSharedSounds(date: todayString)
+                await MainActor.run {
+                    topSharedSounds = .loaded(sounds)
+                }
+            } catch {
+                await MainActor.run {
+                    topSharedSounds = .error(error.localizedDescription)
+                }
+            }
+        }
+    }
+    
+    private func fetchDeviceAnalytics() {
+        Task {
+            deviceAnalytics = .loading
+            do {
+                let analytics = try await repository.fetchDeviceAnalytics()
+                await MainActor.run {
+                    deviceAnalytics = .loaded(analytics)
+                }
+            } catch {
+                await MainActor.run {
+                    deviceAnalytics = .error(error.localizedDescription)
+                }
+            }
+        }
+    }
+    
+    private func fetchNavigationAnalytics() {
+        Task {
+            navigationAnalytics = .loading
+            do {
+                let analytics = try await repository.fetchNavigationAnalytics()
+                await MainActor.run {
+                    navigationAnalytics = .loaded(analytics)
+                }
+            } catch {
+                await MainActor.run {
+                    navigationAnalytics = .error(error.localizedDescription)
+                }
+            }
+        }
+    }
+    
+    private func fetchRetro2025() {
+        Task {
+            retro2025 = .loading
+            do {
+                let dashboard = try await repository.fetchRetro2025Dashboard(startDate: "2025-12-01", endDate: "2025-12-31")
+                await MainActor.run {
+                    retro2025 = .loaded(dashboard)
+                }
+            } catch {
+                await MainActor.run {
+                    retro2025 = .error(error.localizedDescription)
                 }
             }
         }
@@ -1368,6 +1520,446 @@ struct TimezoneRow: View {
         .padding(.horizontal)
         .background(platterColor)
         .cornerRadius(8)
+    }
+}
+
+// MARK: - Navigation Analytics Section
+
+struct NavigationAnalyticsSection: View {
+    let analytics: NavigationAnalyticsResponse
+    
+    // Calculate adjusted total views excluding didViewSpecificReaction for percentage calculations
+    var adjustedTotalViews: Int {
+        let specificReactionCount = analytics.topScreens.first { $0.screenName == "didViewSpecificReaction" }?.viewCount ?? 0
+        return analytics.totalViews - specificReactionCount
+    }
+    
+    // Screens for pie chart (excluding didViewSpecificReaction)
+    var screensForChart: [ScreenViewStat] {
+        analytics.topScreens.filter { $0.screenName != "didViewSpecificReaction" }
+    }
+    
+    // didViewSpecificReaction entry (if exists)
+    var specificReactionScreen: ScreenViewStat? {
+        analytics.topScreens.first { $0.screenName == "didViewSpecificReaction" }
+    }
+    
+    var body: some View {
+        VStack(alignment: .leading, spacing: 20) {
+            // Section Header
+            HStack {
+                Image(systemName: "map")
+                    .foregroundColor(.indigo)
+                    .font(.title2)
+                Text("Navegação no App")
+                    .font(.headline)
+            }
+            .padding(.horizontal)
+            
+            // Pie Chart
+            if !screensForChart.isEmpty {
+                NavigationPieChart(
+                    screens: screensForChart,
+                    adjustedTotalViews: adjustedTotalViews
+                )
+            }
+            
+            // Show didViewSpecificReaction separately (without percentage)
+            if let specificReaction = specificReactionScreen {
+                VStack(alignment: .leading, spacing: 12) {
+                    HStack {
+                        Image(systemName: "info.circle")
+                            .foregroundColor(.indigo)
+                            .font(.title3)
+                        Text("Nota")
+                            .font(.subheadline)
+                            .fontWeight(.semibold)
+                    }
+                    .padding(.horizontal)
+                    
+                    ScreenViewRow(
+                        screen: specificReaction,
+                        totalViews: analytics.totalViews,
+                        adjustedTotalViews: adjustedTotalViews
+                    )
+                    .padding(.horizontal)
+                }
+                .padding()
+                .background(platterColor)
+                .cornerRadius(12)
+                .padding(.horizontal)
+            }
+        }
+    }
+}
+
+// MARK: - Navigation Pie Chart
+
+struct NavigationPieChart: View {
+    let screens: [ScreenViewStat]
+    let adjustedTotalViews: Int
+    @State private var selectedScreen: String?
+    @State private var hoveredScreen: String?
+    
+    private let colors: [Color] = [
+        .indigo, .blue, .purple, .pink, .orange,
+        .green, .teal, .cyan, .mint, .yellow,
+        .red, .brown, .gray
+    ]
+    
+    private func color(for screenName: String) -> Color {
+        let index = screens.firstIndex(where: { $0.screenName == screenName }) ?? 0
+        return colors[index % colors.count]
+    }
+    
+    private func percentage(for screen: ScreenViewStat) -> Double {
+        guard adjustedTotalViews > 0 else { return 0 }
+        return Double(screen.viewCount) / Double(adjustedTotalViews) * 100
+    }
+    
+    var selectedScreenStat: ScreenViewStat? {
+        let active = selectedScreen ?? hoveredScreen
+        guard let active = active else { return nil }
+        return screens.first { $0.screenName == active }
+    }
+    
+    var body: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            HStack {
+                Image(systemName: "rectangle.stack")
+                    .foregroundColor(.indigo)
+                    .font(.title3)
+                Text("Telas Mais Acessadas")
+                    .font(.subheadline)
+                    .fontWeight(.semibold)
+                Spacer()
+                
+                // Show selected screen info
+                if let selected = selectedScreenStat {
+                    VStack(alignment: .trailing, spacing: 2) {
+                        Text(selected.displayName)
+                            .font(.caption)
+                            .fontWeight(.semibold)
+                        Text("\(selected.viewCount) (\(String(format: "%.1f", percentage(for: selected)))%)")
+                            .font(.caption2)
+                            .foregroundColor(.secondary)
+                    }
+                }
+            }
+            .padding(.horizontal)
+            
+            Chart {
+                ForEach(screens) { screen in
+                    let active = selectedScreen ?? hoveredScreen
+                    let isActive = active == nil || active == screen.screenName
+                    
+                    SectorMark(
+                        angle: .value("Count", screen.viewCount),
+                        innerRadius: .ratio(0.5),
+                        angularInset: 2
+                    )
+                    .foregroundStyle(color(for: screen.screenName))
+                    .opacity(isActive ? 1.0 : 0.3)
+                    .cornerRadius(4)
+                }
+            }
+            .chartBackground { chartProxy in
+                GeometryReader { geometry in
+                    if let selected = selectedScreenStat {
+                        VStack(spacing: 4) {
+                            Text(selected.displayName)
+                                .font(.headline)
+                                .fontWeight(.bold)
+                                .multilineTextAlignment(.center)
+                            Text("\(selected.viewCount) visualizações")
+                                .font(.subheadline)
+                                .foregroundColor(.secondary)
+                            Text("\(String(format: "%.1f", percentage(for: selected)))%")
+                                .font(.title3)
+                                .fontWeight(.semibold)
+                                .foregroundColor(color(for: selected.screenName))
+                        }
+                        .frame(width: geometry.size.width * 0.4, height: geometry.size.height * 0.4)
+                    } else {
+                        VStack(spacing: 4) {
+                            Text("Total")
+                                .font(.headline)
+                                .fontWeight(.bold)
+                            Text("\(adjustedTotalViews) visualizações")
+                                .font(.subheadline)
+                                .foregroundColor(.secondary)
+                            Text("\(screens.count) telas")
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                        }
+                        .frame(width: geometry.size.width * 0.4, height: geometry.size.height * 0.4)
+                    }
+                }
+            }
+            .frame(height: 300)
+            
+            // Legend
+            VStack(alignment: .leading, spacing: 8) {
+                ForEach(Array(screens.prefix(15))) { screen in
+                    Button(action: {
+                        selectedScreen = selectedScreen == screen.screenName ? nil : screen.screenName
+                    }) {
+                        HStack {
+                            Circle()
+                                .fill(color(for: screen.screenName))
+                                .frame(width: 12, height: 12)
+                            
+                            VStack(alignment: .leading, spacing: 2) {
+                                Text(screen.displayName)
+                                    .font(.body)
+                                    .foregroundColor(.primary)
+                            }
+                            
+                            Spacer()
+                            
+                            HStack(spacing: 4) {
+                                Text("\(screen.viewCount)")
+                                    .font(.body)
+                                    .fontWeight(.semibold)
+                                    .foregroundColor(.secondary)
+                                
+                                Text("(\(String(format: "%.1f", percentage(for: screen)))%)")
+                                    .font(.body)
+                                    .foregroundColor(.secondary)
+                            }
+                        }
+                        .padding(.vertical, 4)
+                        .padding(.horizontal, 8)
+                        .background(backgroundColor(for: screen.screenName))
+                        .cornerRadius(6)
+                    }
+                    .buttonStyle(.plain)
+                    .onHover { isHovering in
+                        hoveredScreen = isHovering ? screen.screenName : nil
+                    }
+                }
+            }
+            .padding(.horizontal)
+        }
+        .padding()
+        .background(platterColor)
+        .cornerRadius(12)
+        .padding(.horizontal)
+    }
+    
+    private func backgroundColor(for screenName: String) -> Color {
+        let active = selectedScreen ?? hoveredScreen
+        return active == screenName ? color(for: screenName).opacity(0.15) : Color.clear
+    }
+}
+
+// MARK: - Screen View Row
+
+struct ScreenViewRow: View {
+    let screen: ScreenViewStat
+    let totalViews: Int
+    let adjustedTotalViews: Int
+    
+    // Show no percentage for didViewSpecificReaction
+    var shouldShowPercentage: Bool {
+        screen.screenName != "didViewSpecificReaction"
+    }
+    
+    var percentage: Double {
+        guard shouldShowPercentage, adjustedTotalViews > 0 else { return 0 }
+        return Double(screen.viewCount) / Double(adjustedTotalViews) * 100
+    }
+    
+    var body: some View {
+        HStack {
+            Image(systemName: screen.iconName)
+                .foregroundColor(.indigo)
+                .font(.title3)
+                .frame(width: 32)
+            
+            VStack(alignment: .leading, spacing: 2) {
+                Text(screen.displayName)
+                    .font(.body)
+                    .lineLimit(2)
+            }
+            
+            Spacer()
+            
+            HStack(spacing: 4) {
+                Text("\(screen.viewCount)")
+                    .font(.body)
+                    .fontWeight(.semibold)
+                    .foregroundColor(.secondary)
+                
+                if shouldShowPercentage {
+                    Text("(\(String(format: "%.1f", percentage))%)")
+                        .font(.body)
+                        .foregroundColor(.secondary)
+                }
+            }
+        }
+        .padding(.vertical, 8)
+        .padding(.horizontal)
+        .background(platterColor)
+        .cornerRadius(8)
+    }
+}
+
+// MARK: - Section Loading View
+
+struct SectionLoadingView: View {
+    let title: String
+    let icon: String
+    let color: Color
+    
+    var body: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            HStack {
+                Image(systemName: icon)
+                    .foregroundColor(color)
+                    .font(.title2)
+                Text(title)
+                    .font(.headline)
+                Spacer()
+            }
+            .padding(.horizontal)
+            
+            HStack {
+                Spacer()
+                ProgressView()
+                    .scaleEffect(1.2)
+                Spacer()
+            }
+            .frame(height: 100)
+        }
+        .padding()
+        .background(platterColor)
+        .cornerRadius(12)
+        .padding(.horizontal)
+    }
+}
+
+// MARK: - Section Error View
+
+struct SectionErrorView: View {
+    let title: String
+    let icon: String
+    let color: Color
+    let message: String
+    let retryAction: () -> Void
+    
+    var body: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            HStack {
+                Image(systemName: icon)
+                    .foregroundColor(color)
+                    .font(.title2)
+                Text(title)
+                    .font(.headline)
+                Spacer()
+            }
+            .padding(.horizontal)
+            
+            VStack(spacing: 12) {
+                Image(systemName: "exclamationmark.triangle")
+                    .font(.title)
+                    .foregroundColor(.orange)
+                
+                Text(message)
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+                    .multilineTextAlignment(.center)
+                    .lineLimit(2)
+                
+                Button("Tentar Novamente") {
+                    retryAction()
+                }
+                .buttonStyle(.bordered)
+                .controlSize(.small)
+            }
+            .frame(maxWidth: .infinity)
+            .padding(.vertical, 8)
+        }
+        .padding()
+        .background(platterColor)
+        .cornerRadius(12)
+        .padding(.horizontal)
+    }
+}
+
+// MARK: - Stat Card Loading View
+
+struct StatCardLoading: View {
+    let title: String
+    let icon: String
+    let color: Color
+    
+    var body: some View {
+        HStack(spacing: 16) {
+            Image(systemName: icon)
+                .font(.system(size: 40))
+                .foregroundColor(color)
+                .frame(width: 60)
+            
+            VStack(alignment: .leading, spacing: 4) {
+                Text(title)
+                    .font(.subheadline)
+                    .foregroundColor(.secondary)
+                ProgressView()
+            }
+            
+            Spacer()
+        }
+        .padding()
+        .background(platterColor)
+        .cornerRadius(12)
+        .padding(.horizontal)
+    }
+}
+
+// MARK: - Stat Card Error View
+
+struct StatCardError: View {
+    let title: String
+    let icon: String
+    let color: Color
+    let message: String
+    let retryAction: () -> Void
+    
+    var body: some View {
+        HStack(spacing: 16) {
+            Image(systemName: icon)
+                .font(.system(size: 40))
+                .foregroundColor(color.opacity(0.5))
+                .frame(width: 60)
+            
+            VStack(alignment: .leading, spacing: 4) {
+                Text(title)
+                    .font(.subheadline)
+                    .foregroundColor(.secondary)
+                
+                HStack(spacing: 8) {
+                    Image(systemName: "exclamationmark.triangle")
+                        .foregroundColor(.orange)
+                        .font(.caption)
+                    Text("Erro")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                    
+                    Button("Retry") {
+                        retryAction()
+                    }
+                    .buttonStyle(.bordered)
+                    .controlSize(.mini)
+                }
+            }
+            
+            Spacer()
+        }
+        .padding()
+        .background(platterColor)
+        .cornerRadius(12)
+        .padding(.horizontal)
     }
 }
 

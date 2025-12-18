@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct SharedSoundRank: Codable, Identifiable {
+struct SharedSoundRank: Codable, Identifiable, Equatable {
     let id: String
     let soundId: String
     let soundName: String

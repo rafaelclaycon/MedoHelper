@@ -9,14 +9,14 @@ import Foundation
 
 // MARK: - Share Count Response
 
-struct Retro2025ShareCountResponse: Codable {
+struct Retro2025ShareCountResponse: Codable, Equatable {
     let shareCount: Int
     let date: String
 }
 
 // MARK: - Sound Stat
 
-struct Retro2025SoundStat: Codable, Identifiable {
+struct Retro2025SoundStat: Codable, Identifiable, Equatable {
     var id: Int { soundNumber }
     let soundNumber: Int
     let soundName: String
@@ -25,7 +25,7 @@ struct Retro2025SoundStat: Codable, Identifiable {
 
 // MARK: - Author Stat
 
-struct Retro2025AuthorStat: Codable, Identifiable {
+struct Retro2025AuthorStat: Codable, Identifiable, Equatable {
     var id: String { authorName }
     let authorName: String
     let shareCount: Int
@@ -34,7 +34,7 @@ struct Retro2025AuthorStat: Codable, Identifiable {
 
 // MARK: - Day of Week Stat
 
-struct Retro2025DayOfWeekStat: Codable, Identifiable {
+struct Retro2025DayOfWeekStat: Codable, Identifiable, Equatable {
     var id: String { dayName }
     let dayName: String
     let shareCount: Int
@@ -42,7 +42,7 @@ struct Retro2025DayOfWeekStat: Codable, Identifiable {
 
 // MARK: - User Stat
 
-struct Retro2025UserStat: Codable, Identifiable {
+struct Retro2025UserStat: Codable, Identifiable, Equatable {
     var id: String { userId }
     let userId: String
     let totalShares: Int
@@ -51,7 +51,7 @@ struct Retro2025UserStat: Codable, Identifiable {
 
 // MARK: - Overall Stats
 
-struct Retro2025OverallStats: Codable {
+struct Retro2025OverallStats: Codable, Equatable {
     let totalShares: Int
     let uniqueUsers: Int
     let averageSharesPerUser: Double
@@ -61,7 +61,7 @@ struct Retro2025OverallStats: Codable {
 
 // MARK: - Dashboard Response
 
-struct Retro2025DashboardResponse: Codable {
+struct Retro2025DashboardResponse: Codable, Equatable {
     let overallStats: Retro2025OverallStats
     let topSounds: [Retro2025SoundStat]
     let topAuthors: [Retro2025AuthorStat]

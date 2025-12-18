@@ -8,7 +8,12 @@
 import Foundation
 
 protocol AnalyticsRepositoryProtocol {
-    func fetchAnalytics() async throws -> Analytics
+    func fetchActiveUsers(date: String) async throws -> Int
+    func fetchDailyUserCountsLast30Days() async throws -> [DailyUserCount]
+    func fetchTopSharedSounds(date: String) async throws -> [SharedSoundRank]
+    func fetchDeviceAnalytics() async throws -> DeviceAnalyticsResponse
+    func fetchNavigationAnalytics() async throws -> NavigationAnalyticsResponse
+    func fetchRetro2025Dashboard(startDate: String, endDate: String) async throws -> Retro2025DashboardResponse
 }
 
 final class AnalyticsRepository: AnalyticsRepositoryProtocol {
@@ -19,97 +24,7 @@ final class AnalyticsRepository: AnalyticsRepositoryProtocol {
         self.apiClient = apiClient
     }
     
-    func fetchAnalytics() async throws -> Analytics {
-        // Build date string for all endpoints
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "yyyy-MM-dd"
-        let todayString = dateFormatter.string(from: Date())
-        
-        print("📊 [Analytics] Fetching analytics for date: \(todayString)")
-        
-        // Fetch core analytics in parallel
-        async let activeUsersTask = fetchActiveUsers(date: todayString)
-        async let sessionsTask = fetchSessions(date: todayString)
-        async let topSoundsTask = fetchTopSharedSounds(date: todayString)
-        
-        // Fetch Retro2025 separately (non-blocking)
-        let retro2025Task = Task {
-            try? await fetchRetro2025Dashboard(startDate: "2025-12-01", endDate: "2025-12-31")
-        }
-        
-        // Fetch daily user counts separately (non-blocking)
-        let dailyUsersTask = Task {
-            try? await fetchDailyUserCountsLast30Days()
-        }
-        
-        // Fetch device analytics separately (non-blocking)
-        let deviceAnalyticsTask = Task {
-            try? await fetchDeviceAnalytics()
-        }
-        
-        do {
-            let (activeUsers, sessions, topSounds) = try await (activeUsersTask, sessionsTask, topSoundsTask)
-            
-            // Calculate sessions per user
-            let sessionsPerUser: Double? = activeUsers > 0 ? Double(sessions) / Double(activeUsers) : nil
-            
-            // Get Retro2025 result (may be nil if it failed)
-            let retro2025 = try? await retro2025Task.value
-            
-            // Get daily user counts (may be nil if it failed)
-            let dailyUserCounts = try? await dailyUsersTask.value
-            
-            // Get device analytics (may be nil if it failed)
-            let deviceAnalytics = try? await deviceAnalyticsTask.value
-            
-            print("🔍 [Analytics] Checking device analytics result...")
-            if let deviceAnalytics = deviceAnalytics {
-                print("✅ [Analytics] Device analytics is NOT nil")
-                print("   - iOS Versions count: \(deviceAnalytics.topIOSVersions.count)")
-                print("   - Device Models count: \(deviceAnalytics.topDeviceModels.count)")
-                print("   - Device Types count: \(deviceAnalytics.topDeviceTypes.count)")
-                print("   - Timezones count: \(deviceAnalytics.topTimezones.count)")
-            } else {
-                print("⚠️ [Analytics] Device analytics is nil - fetch may have failed silently")
-            }
-            
-            print("✅ [Analytics] Successfully fetched all data:")
-            print("   - Active Users: \(activeUsers)")
-            print("   - Sessions: \(sessions)")
-            print("   - Sessions Per User: \(sessionsPerUser.map { String(format: "%.2f", $0) } ?? "N/A")")
-            print("   - Top Sounds: \(topSounds.count) items")
-            if let retro2025 = retro2025 {
-                print("   - Retro2025: Total Shares: \(retro2025.overallStats.totalShares)")
-            } else {
-                print("   - Retro2025: Failed to load")
-            }
-            if let dailyUserCounts = dailyUserCounts {
-                print("   - Daily User Counts: \(dailyUserCounts.count) days")
-            } else {
-                print("   - Daily User Counts: Failed to load")
-            }
-            if let deviceAnalytics = deviceAnalytics {
-                print("   - Device Analytics: iOS Versions: \(deviceAnalytics.topIOSVersions.count), Models: \(deviceAnalytics.topDeviceModels.count), Types: \(deviceAnalytics.topDeviceTypes.count), Timezones: \(deviceAnalytics.topTimezones.count)")
-            } else {
-                print("   - Device Analytics: Failed to load")
-            }
-            
-            return Analytics(
-                activeUsers: activeUsers,
-                sessionsPerUser: sessionsPerUser,
-                topSharedSounds: topSounds,
-                retro2025: retro2025,
-                dailyUserCounts: dailyUserCounts,
-                deviceAnalytics: deviceAnalytics
-            )
-        } catch {
-            print("❌ [Analytics] Error fetching analytics: \(error)")
-            print("   Error details: \(error.localizedDescription)")
-            throw error
-        }
-    }
-    
-    private func fetchActiveUsers(date: String) async throws -> Int {
+    func fetchActiveUsers(date: String) async throws -> Int {
         let urlString = serverPath + "v3/active-users-count-from/\(date)/\(analyticsPassword)"
         print("🔍 [Active Users] Fetching from: \(urlString)")
         
@@ -128,26 +43,7 @@ final class AnalyticsRepository: AnalyticsRepositoryProtocol {
         }
     }
     
-    private func fetchSessions(date: String) async throws -> Int {
-        let urlString = serverPath + "v3/sessions-count-from/\(date)/\(analyticsPassword)"
-        print("🔍 [Sessions] Fetching from: \(urlString)")
-        
-        guard let url = URL(string: urlString) else {
-            print("❌ [Sessions] Invalid URL: \(urlString)")
-            throw AnalyticsError.invalidURL
-        }
-        
-        do {
-            let response: SessionsResponse = try await apiClient.get(from: url)
-            print("✅ [Sessions] Success: \(response.sessionsCount) sessions")
-            return response.sessionsCount
-        } catch {
-            print("❌ [Sessions] Failed: \(error)")
-            throw error
-        }
-    }
-    
-    private func fetchTopSharedSounds(date: String) async throws -> [SharedSoundRank] {
+    func fetchTopSharedSounds(date: String) async throws -> [SharedSoundRank] {
         let urlString = serverPath + "v3/sound-share-count-stats-from/\(date)"
         print("🔍 [Top Sounds] Fetching from: \(urlString)")
         
@@ -291,6 +187,46 @@ final class AnalyticsRepository: AnalyticsRepositoryProtocol {
                 print("   URL Error code: \(urlError.code.rawValue)")
                 print("   URL Error description: \(urlError.localizedDescription)")
             }
+            throw error
+        }
+    }
+    
+    func fetchNavigationAnalytics() async throws -> NavigationAnalyticsResponse {
+        let urlString = serverPath + "v3/navigation-analytics/\(analyticsPassword)"
+        print("🔍 [Navigation Analytics] Fetching from: \(urlString)")
+        
+        guard let url = URL(string: urlString) else {
+            print("❌ [Navigation Analytics] Invalid URL: \(urlString)")
+            throw AnalyticsError.invalidURL
+        }
+        
+        do {
+            // Fetch raw data first to debug
+            let (data, _) = try await URLSession.shared.data(from: url)
+            if let jsonString = String(data: data, encoding: .utf8) {
+                print("🔍 [Navigation Analytics] Raw JSON response (first 500 chars):")
+                print(String(jsonString.prefix(500)))
+            }
+            
+            // Try to parse as dictionary to see what keys are actually present
+            if let jsonObject = try? JSONSerialization.jsonObject(with: data) as? [String: Any] {
+                print("🔍 [Navigation Analytics] JSON keys found: \(jsonObject.keys.sorted())")
+            }
+            
+            // Decode manually - with explicit CodingKeys, we don't need convertFromSnakeCase
+            let decoder = JSONDecoder()
+            let response = try decoder.decode(NavigationAnalyticsResponse.self, from: data)
+            print("✅ [Navigation Analytics] Success:")
+            print("   - Top Screens: \(response.topScreens.count) screens")
+            print("   - Total Views: \(response.totalViews)")
+            response.topScreens.prefix(10).forEach { screen in
+                print("      • \(screen.displayName): \(screen.viewCount)")
+            }
+            return response
+        } catch {
+            print("❌ [Navigation Analytics] Failed: \(error)")
+            print("   Error type: \(type(of: error))")
+            print("   Error description: \(error.localizedDescription)")
             throw error
         }
     }
