@@ -1534,7 +1534,7 @@ struct NavigationAnalyticsSection: View {
         return analytics.totalViews - specificReactionCount
     }
     
-    // Screens for pie chart (excluding didViewSpecificReaction)
+    // Screens for bar chart (excluding didViewSpecificReaction)
     var screensForChart: [ScreenViewStat] {
         analytics.topScreens.filter { $0.screenName != "didViewSpecificReaction" }
     }
@@ -1556,9 +1556,9 @@ struct NavigationAnalyticsSection: View {
             }
             .padding(.horizontal)
             
-            // Pie Chart
+            // Bar Chart
             if !screensForChart.isEmpty {
-                NavigationPieChart(
+                NavigationBarChart(
                     screens: screensForChart,
                     adjustedTotalViews: adjustedTotalViews
                 )
@@ -1593,40 +1593,22 @@ struct NavigationAnalyticsSection: View {
     }
 }
 
-// MARK: - Navigation Pie Chart
+// MARK: - Navigation Bar Chart
 
-struct NavigationPieChart: View {
+struct NavigationBarChart: View {
     let screens: [ScreenViewStat]
     let adjustedTotalViews: Int
     @State private var selectedScreen: String?
-    @State private var hoveredScreen: String?
-    
-    private let colors: [Color] = [
-        .indigo, .blue, .purple, .pink, .orange,
-        .green, .teal, .cyan, .mint, .yellow,
-        .red, .brown, .gray
-    ]
-    
-    private func color(for screenName: String) -> Color {
-        let index = screens.firstIndex(where: { $0.screenName == screenName }) ?? 0
-        return colors[index % colors.count]
-    }
     
     private func percentage(for screen: ScreenViewStat) -> Double {
         guard adjustedTotalViews > 0 else { return 0 }
         return Double(screen.viewCount) / Double(adjustedTotalViews) * 100
     }
     
-    var selectedScreenStat: ScreenViewStat? {
-        let active = selectedScreen ?? hoveredScreen
-        guard let active = active else { return nil }
-        return screens.first { $0.screenName == active }
-    }
-    
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             HStack {
-                Image(systemName: "rectangle.stack")
+                Image(systemName: "chart.bar.fill")
                     .foregroundColor(.indigo)
                     .font(.title3)
                 Text("Telas Mais Acessadas")
@@ -1634,122 +1616,44 @@ struct NavigationPieChart: View {
                     .fontWeight(.semibold)
                 Spacer()
                 
-                // Show selected screen info
-                if let selected = selectedScreenStat {
-                    VStack(alignment: .trailing, spacing: 2) {
-                        Text(selected.displayName)
-                            .font(.caption)
-                            .fontWeight(.semibold)
-                        Text("\(selected.viewCount) (\(String(format: "%.1f", percentage(for: selected)))%)")
+                Text("\(adjustedTotalViews) visualizações")
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+            }
+            .padding(.horizontal)
+            
+            Chart {
+                ForEach(Array(screens.prefix(15))) { screen in
+                    BarMark(
+                        x: .value("Views", screen.viewCount),
+                        y: .value("Screen", screen.displayName)
+                    )
+                    .foregroundStyle(.indigo.gradient)
+                    .cornerRadius(4)
+                    .annotation(position: .trailing, alignment: .leading, spacing: 4) {
+                        Text("\(screen.viewCount)")
                             .font(.caption2)
                             .foregroundColor(.secondary)
                     }
                 }
             }
-            .padding(.horizontal)
-            
-            Chart {
-                ForEach(screens) { screen in
-                    let active = selectedScreen ?? hoveredScreen
-                    let isActive = active == nil || active == screen.screenName
-                    
-                    SectorMark(
-                        angle: .value("Count", screen.viewCount),
-                        innerRadius: .ratio(0.5),
-                        angularInset: 2
-                    )
-                    .foregroundStyle(color(for: screen.screenName))
-                    .opacity(isActive ? 1.0 : 0.3)
-                    .cornerRadius(4)
+            .chartXAxis {
+                AxisMarks { value in
+                    AxisGridLine()
+                    AxisValueLabel()
                 }
             }
-            .chartBackground { chartProxy in
-                GeometryReader { geometry in
-                    if let selected = selectedScreenStat {
-                        VStack(spacing: 4) {
-                            Text(selected.displayName)
-                                .font(.headline)
-                                .fontWeight(.bold)
-                                .multilineTextAlignment(.center)
-                            Text("\(selected.viewCount) visualizações")
-                                .font(.subheadline)
-                                .foregroundColor(.secondary)
-                            Text("\(String(format: "%.1f", percentage(for: selected)))%")
-                                .font(.title3)
-                                .fontWeight(.semibold)
-                                .foregroundColor(color(for: selected.screenName))
-                        }
-                        .frame(width: geometry.size.width * 0.4, height: geometry.size.height * 0.4)
-                    } else {
-                        VStack(spacing: 4) {
-                            Text("Total")
-                                .font(.headline)
-                                .fontWeight(.bold)
-                            Text("\(adjustedTotalViews) visualizações")
-                                .font(.subheadline)
-                                .foregroundColor(.secondary)
-                            Text("\(screens.count) telas")
-                                .font(.caption)
-                                .foregroundColor(.secondary)
-                        }
-                        .frame(width: geometry.size.width * 0.4, height: geometry.size.height * 0.4)
-                    }
+            .chartYAxis {
+                AxisMarks { value in
+                    AxisValueLabel()
                 }
             }
-            .frame(height: 300)
-            
-            // Legend
-            VStack(alignment: .leading, spacing: 8) {
-                ForEach(Array(screens.prefix(15))) { screen in
-                    Button(action: {
-                        selectedScreen = selectedScreen == screen.screenName ? nil : screen.screenName
-                    }) {
-                        HStack {
-                            Circle()
-                                .fill(color(for: screen.screenName))
-                                .frame(width: 12, height: 12)
-                            
-                            VStack(alignment: .leading, spacing: 2) {
-                                Text(screen.displayName)
-                                    .font(.body)
-                                    .foregroundColor(.primary)
-                            }
-                            
-                            Spacer()
-                            
-                            HStack(spacing: 4) {
-                                Text("\(screen.viewCount)")
-                                    .font(.body)
-                                    .fontWeight(.semibold)
-                                    .foregroundColor(.secondary)
-                                
-                                Text("(\(String(format: "%.1f", percentage(for: screen)))%)")
-                                    .font(.body)
-                                    .foregroundColor(.secondary)
-                            }
-                        }
-                        .padding(.vertical, 4)
-                        .padding(.horizontal, 8)
-                        .background(backgroundColor(for: screen.screenName))
-                        .cornerRadius(6)
-                    }
-                    .buttonStyle(.plain)
-                    .onHover { isHovering in
-                        hoveredScreen = isHovering ? screen.screenName : nil
-                    }
-                }
-            }
-            .padding(.horizontal)
+            .frame(height: CGFloat(min(screens.count, 15) * 32 + 40))
         }
         .padding()
         .background(platterColor)
         .cornerRadius(12)
         .padding(.horizontal)
-    }
-    
-    private func backgroundColor(for screenName: String) -> Color {
-        let active = selectedScreen ?? hoveredScreen
-        return active == screenName ? color(for: screenName).opacity(0.15) : Color.clear
     }
 }
 
