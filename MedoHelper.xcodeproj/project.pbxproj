@@ -13,6 +13,7 @@
 		D904495F2BB486F80023088B /* NewExternalLinkView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D904495E2BB486F80023088B /* NewExternalLinkView.swift */; };
 		D90449612BB4E9140023088B /* Color+.swift in Sources */ = {isa = PBXBuildFile; fileRef = D90449602BB4E9140023088B /* Color+.swift */; };
 		D90998CD2AA448800059CAE8 /* EditMusicGenreOnServerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D90998CC2AA448800059CAE8 /* EditMusicGenreOnServerView.swift */; };
+		D9120D462F055D5100EB27D1 /* AnalyticsTimeSpan.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9120D452F055D5100EB27D1 /* AnalyticsTimeSpan.swift */; };
 		D91298A42CC986C5003CC5E5 /* ReactionsCRUDView+ViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D91298A32CC986C5003CC5E5 /* ReactionsCRUDView+ViewModel.swift */; };
 		D91298AA2CCB3E1B003CC5E5 /* ReactionRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = D91298A92CCB3E1B003CC5E5 /* ReactionRepository.swift */; };
 		D91298AC2CCB49EC003CC5E5 /* ReactionRepositoryMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = D91298AB2CCB49EC003CC5E5 /* ReactionRepositoryMock.swift */; };
@@ -127,6 +128,7 @@
 		D904495E2BB486F80023088B /* NewExternalLinkView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewExternalLinkView.swift; sourceTree = "<group>"; };
 		D90449602BB4E9140023088B /* Color+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Color+.swift"; sourceTree = "<group>"; };
 		D90998CC2AA448800059CAE8 /* EditMusicGenreOnServerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditMusicGenreOnServerView.swift; sourceTree = "<group>"; };
+		D9120D452F055D5100EB27D1 /* AnalyticsTimeSpan.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsTimeSpan.swift; sourceTree = "<group>"; };
 		D91298A32CC986C5003CC5E5 /* ReactionsCRUDView+ViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ReactionsCRUDView+ViewModel.swift"; sourceTree = "<group>"; };
 		D91298A82CCB3B71003CC5E5 /* MedoHelper.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; name = MedoHelper.xctestplan; path = MedoHelperTests/MedoHelper.xctestplan; sourceTree = "<group>"; };
 		D91298A92CCB3E1B003CC5E5 /* ReactionRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReactionRepository.swift; sourceTree = "<group>"; };
@@ -386,6 +388,7 @@
 		D94A4255283E804100A504BD /* Models */ = {
 			isa = PBXGroup;
 			children = (
+				D9120D452F055D5100EB27D1 /* AnalyticsTimeSpan.swift */,
 				D9148BF72EF26A1B00FD6815 /* NavigationAnalytics.swift */,
 				D9148BF52EF25BAB00FD6815 /* DeviceAnalytics.swift */,
 				D967761D2EEFB7380070F798 /* DailyUserCount.swift */,
@@ -778,6 +781,7 @@
 				D938D7DF2ED20E44005ACC0D /* Analytics.swift in Sources */,
 				D9148BF62EF25BAB00FD6815 /* DeviceAnalytics.swift in Sources */,
 				D92693FE2A015665007872D9 /* Bundle+Extensions.swift in Sources */,
+				D9120D462F055D5100EB27D1 /* AnalyticsTimeSpan.swift in Sources */,
 				D938D7E42ED21B45005ACC0D /* ActiveUsersResponse.swift in Sources */,
 				D938D7E52ED21B45005ACC0D /* SessionsResponse.swift in Sources */,
 				D92694012A015C7E007872D9 /* APIClient.swift in Sources */,

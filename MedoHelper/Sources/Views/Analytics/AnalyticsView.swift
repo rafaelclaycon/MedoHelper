@@ -26,15 +26,10 @@ struct AnalyticsView: View {
     @State private var retro2025: LoadingState<Retro2025DashboardResponse> = .loading
     
     @State private var lastUpdated: Date?
+    @State private var selectedTimeSpan: AnalyticsTimeSpan = .today
     
     private let repository: AnalyticsRepositoryProtocol
     private let timer = Timer.publish(every: 300, on: .main, in: .common).autoconnect()
-    
-    private var todayString: String {
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "yyyy-MM-dd"
-        return dateFormatter.string(from: Date())
-    }
 
     init(repository: AnalyticsRepositoryProtocol = AnalyticsRepository()) {
         self.repository = repository
@@ -43,6 +38,19 @@ struct AnalyticsView: View {
     var body: some View {
         ScrollView {
             VStack(spacing: 20) {
+                // Time span picker
+                Picker("Período", selection: $selectedTimeSpan) {
+                    ForEach(AnalyticsTimeSpan.allCases, id: \.self) { span in
+                        Text(span.rawValue).tag(span)
+                    }
+                }
+                .pickerStyle(.segmented)
+                .padding(.horizontal)
+                .onChange(of: selectedTimeSpan) { _, _ in
+                    fetchActiveUsers()
+                    fetchTopSharedSounds()
+                }
+                
                 // Header with last updated time
                 if let lastUpdated = lastUpdated {
                     HStack {
@@ -98,11 +106,11 @@ struct AnalyticsView: View {
     private var activeUsersSection: some View {
         switch activeUsers {
         case .loading:
-            StatCardLoading(title: "Usuários Ativos Hoje", icon: "person.2.fill", color: .blue)
+            StatCardLoading(title: selectedTimeSpan.displayTitle, icon: "person.2.fill", color: .blue)
         case .loaded(let count):
-            StatCard(title: "Usuários Ativos Hoje", value: "\(count)", icon: "person.2.fill", color: .blue)
+            StatCard(title: selectedTimeSpan.displayTitle, value: "\(count)", icon: "person.2.fill", color: .blue)
         case .error(let message):
-            StatCardError(title: "Usuários Ativos Hoje", icon: "person.2.fill", color: .blue, message: message) {
+            StatCardError(title: selectedTimeSpan.displayTitle, icon: "person.2.fill", color: .blue, message: message) {
                 fetchActiveUsers()
             }
         }
@@ -133,14 +141,14 @@ struct AnalyticsView: View {
     private var topSharedSoundsSection: some View {
         switch topSharedSounds {
         case .loading:
-            SectionLoadingView(title: "Sons Mais Compartilhados", icon: "arrow.up.message.fill", color: .orange)
+            SectionLoadingView(title: selectedTimeSpan.topSoundsTitle, icon: "arrow.up.message.fill", color: .orange)
         case .loaded(let sounds):
             VStack(alignment: .leading, spacing: 12) {
                 HStack {
                     Image(systemName: "arrow.up.message.fill")
                         .foregroundColor(.orange)
                         .font(.title2)
-                    Text("Sons Mais Compartilhados")
+                    Text(selectedTimeSpan.topSoundsTitle)
                         .font(.headline)
                 }
                 .padding(.horizontal)
@@ -157,7 +165,7 @@ struct AnalyticsView: View {
             .padding(.horizontal)
         case .error(let message):
             SectionErrorView(
-                title: "Sons Mais Compartilhados",
+                title: selectedTimeSpan.topSoundsTitle,
                 icon: "arrow.up.message.fill",
                 color: .orange,
                 message: message
@@ -210,13 +218,13 @@ struct AnalyticsView: View {
         switch retro2025 {
         case .loading:
             VStack(spacing: 20) {
-                SectionLoadingView(title: "Retro2025 - Dezembro 2025", icon: "calendar.badge.clock", color: .purple)
+                SectionLoadingView(title: "Retro2025", icon: "calendar.badge.clock", color: .purple)
             }
         case .loaded(let dashboard):
             Retro2025Section(dashboard: dashboard)
         case .error(let message):
             SectionErrorView(
-                title: "Retro2025 - Dezembro 2025",
+                title: "Retro2025",
                 icon: "calendar.badge.clock",
                 color: .purple,
                 message: message
@@ -242,7 +250,7 @@ struct AnalyticsView: View {
         Task {
             activeUsers = .loading
             do {
-                let count = try await repository.fetchActiveUsers(date: todayString)
+                let count = try await repository.fetchActiveUsers(date: selectedTimeSpan.startDateString)
                 await MainActor.run {
                     activeUsers = .loaded(count)
                 }
@@ -274,7 +282,7 @@ struct AnalyticsView: View {
         Task {
             topSharedSounds = .loading
             do {
-                let sounds = try await repository.fetchTopSharedSounds(date: todayString)
+                let sounds = try await repository.fetchTopSharedSounds(date: selectedTimeSpan.startDateString)
                 await MainActor.run {
                     topSharedSounds = .loaded(sounds)
                 }
@@ -322,7 +330,7 @@ struct AnalyticsView: View {
         Task {
             retro2025 = .loading
             do {
-                let dashboard = try await repository.fetchRetro2025Dashboard(startDate: "2025-12-01", endDate: "2025-12-31")
+                let dashboard = try await repository.fetchRetro2025Dashboard(startDate: "2025-01-01", endDate: "2026-12-31")
                 await MainActor.run {
                     retro2025 = .loaded(dashboard)
                 }
@@ -442,7 +450,7 @@ struct Retro2025Section: View {
                 Image(systemName: "calendar.badge.clock")
                     .foregroundColor(.purple)
                     .font(.title2)
-                Text("Retro2025 - Dezembro 2025")
+                Text("Retro2025")
                     .font(.headline)
                 Spacer()
             }
