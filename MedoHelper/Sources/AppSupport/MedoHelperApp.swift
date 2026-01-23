@@ -17,11 +17,11 @@ import SwiftUI
 
 // MARK: - Dev
 
-public let baseURL: String = CommandLine.arguments.contains("-USE_LOCAL_SERVER") ? "http://127.0.0.1:8080/" : "http://medodelirioios.xyz:8080/"
-public let serverPath: String = CommandLine.arguments.contains("-USE_LOCAL_SERVER") ? "http://127.0.0.1:8080/api/" : "http://medodelirioios.xyz:8080/api/"
-public let assetOperationPassword = "total-real-password-3"
-public let reactionsPassword = "total-real-password-5"
-public let analyticsPassword = "total-real-password-7"
+//public let baseURL: String = CommandLine.arguments.contains("-USE_LOCAL_SERVER") ? "http://127.0.0.1:8080/" : "http://170.187.141.103:8080/"
+//public let serverPath: String = CommandLine.arguments.contains("-USE_LOCAL_SERVER") ? "http://127.0.0.1:8080/api/" : "http://170.187.141.103:8080/api/"
+//public let assetOperationPassword = "total-real-password-3"
+//public let reactionsPassword = "total-real-password-5"
+//public let analyticsPassword = "total-real-password-7"
 
 @main
 struct MedoHelperApp: App {
