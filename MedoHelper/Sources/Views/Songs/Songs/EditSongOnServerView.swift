@@ -177,7 +177,7 @@ struct EditSongOnServerView: View {
             showSendProgress = true
             modalMessage = "Enviando Dados..."
             
-            let url = URL(string: serverPath + "v3/create-song/\(assetOperationPassword)")!
+            let url = URL(string: serverPath + "v3/create-song/\(Secrets.assetOperationPassword)")!
             guard let genreId = selectedGenre else {
                 alertType = .singleOptionInformative
                 alertTitle = "Dados Incompletos"
@@ -261,7 +261,7 @@ struct EditSongOnServerView: View {
             showSendProgress = true
             modalMessage = "Enviando Dados..."
 
-            let url = URL(string: serverPath + "v3/update-content/\(assetOperationPassword)")!
+            let url = URL(string: serverPath + "v3/update-content/\(Secrets.assetOperationPassword)")!
             guard let genreId = selectedGenre else {
                 alertType = .singleOptionInformative
                 alertTitle = "Dados Incompletos"
@@ -340,7 +340,7 @@ struct EditSongOnServerView: View {
             showSendProgress = true
             modalMessage = "Definindo Visibilidade..."
 
-            let url = URL(string: serverPath + "v3/change-update-visibility/\(updateId)/\(newValue == true ? "1" : "0")/\(assetOperationPassword)")!
+            let url = URL(string: serverPath + "v3/change-update-visibility/\(updateId)/\(newValue == true ? "1" : "0")/\(Secrets.assetOperationPassword)")!
 
             do {
                 let response = try await APIClient().put(in: url, data: Optional<String>.none)

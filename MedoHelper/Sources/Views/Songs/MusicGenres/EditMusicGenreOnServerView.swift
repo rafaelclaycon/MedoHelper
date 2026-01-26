@@ -99,7 +99,7 @@ struct EditMusicGenreOnServerView: View {
             showSendProgress = true
             modalMessage = "Enviando Dados..."
 
-            let url = URL(string: serverPath + "v3/create-music-genre/\(assetOperationPassword)")!
+            let url = URL(string: serverPath + "v3/create-music-genre/\(Secrets.assetOperationPassword)")!
 
             dump(genre)
 

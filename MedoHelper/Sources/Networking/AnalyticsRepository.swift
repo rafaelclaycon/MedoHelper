@@ -25,7 +25,7 @@ final class AnalyticsRepository: AnalyticsRepositoryProtocol {
     }
     
     func fetchActiveUsers(date: String) async throws -> Int {
-        let urlString = serverPath + "v3/active-users-count-from/\(date)/\(analyticsPassword)"
+        let urlString = serverPath + "v3/active-users-count-from/\(date)/\(Secrets.analyticsPassword)"
         print("🔍 [Active Users] Fetching from: \(urlString)")
         
         guard let url = URL(string: urlString) else {
@@ -103,7 +103,7 @@ final class AnalyticsRepository: AnalyticsRepositoryProtocol {
     }
     
     func fetchDailyUserCountsLast30Days() async throws -> [DailyUserCount] {
-        let urlString = serverPath + "v3/active-users-daily-last-30-days/\(analyticsPassword)"
+        let urlString = serverPath + "v3/active-users-daily-last-30-days/\(Secrets.analyticsPassword)"
         print("🔍 [Daily Users] Fetching from: \(urlString)")
         
         guard let url = URL(string: urlString) else {
@@ -135,7 +135,7 @@ final class AnalyticsRepository: AnalyticsRepositoryProtocol {
     }
     
     func fetchDeviceAnalytics() async throws -> DeviceAnalyticsResponse {
-        let urlString = serverPath + "v3/device-analytics/\(analyticsPassword)"
+        let urlString = serverPath + "v3/device-analytics/\(Secrets.analyticsPassword)"
         print("🔍 [Device Analytics] Fetching from: \(urlString)")
         
         guard let url = URL(string: urlString) else {
@@ -192,7 +192,7 @@ final class AnalyticsRepository: AnalyticsRepositoryProtocol {
     }
     
     func fetchNavigationAnalytics() async throws -> NavigationAnalyticsResponse {
-        let urlString = serverPath + "v3/navigation-analytics/\(analyticsPassword)"
+        let urlString = serverPath + "v3/navigation-analytics/\(Secrets.analyticsPassword)"
         print("🔍 [Navigation Analytics] Fetching from: \(urlString)")
         
         guard let url = URL(string: urlString) else {

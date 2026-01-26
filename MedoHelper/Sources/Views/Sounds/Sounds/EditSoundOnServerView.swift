@@ -339,7 +339,7 @@ struct EditSoundOnServerView: View {
             showSendProgress = true
             modalMessage = "Definindo Visibilidade..."
 
-            let url = URL(string: serverPath + "v3/change-update-visibility/\(updateId)/\(newValue == true ? "1" : "0")/\(assetOperationPassword)")!
+            let url = URL(string: serverPath + "v3/change-update-visibility/\(updateId)/\(newValue == true ? "1" : "0")/\(Secrets.assetOperationPassword)")!
 
             do {
                 let response = try await APIClient().put(in: url, data: Optional<String>.none)

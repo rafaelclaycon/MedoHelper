@@ -90,3 +90,7 @@ fastlane/test_output
 iOSInjectionProject/
 
 .DS_Store
+
+# Secrets
+# The actual secrets file should never be committed
+MedoHelper/Configuration/Secrets.xcconfig

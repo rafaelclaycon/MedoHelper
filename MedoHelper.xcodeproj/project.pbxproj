@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		D9SECRETS0005 /* Secrets.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9SECRETS0004 /* Secrets.swift */; };
 		D90449562BB2743A0023088B /* ExternalLink.swift in Sources */ = {isa = PBXBuildFile; fileRef = D90449552BB2743A0023088B /* ExternalLink.swift */; };
 		D90449582BB281960023088B /* ExternalLinkButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = D90449572BB281960023088B /* ExternalLinkButton.swift */; };
 		D904495D2BB483C20023088B /* CapsuleButtonStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = D904495C2BB483C20023088B /* CapsuleButtonStyle.swift */; };
@@ -122,6 +123,9 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		D9SECRETS0001 /* Secrets.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Secrets.xcconfig; sourceTree = "<group>"; };
+		D9SECRETS0002 /* Secrets.xcconfig.template */ = {isa = PBXFileReference; lastKnownFileType = text; path = Secrets.xcconfig.template; sourceTree = "<group>"; };
+		D9SECRETS0004 /* Secrets.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Secrets.swift; sourceTree = "<group>"; };
 		D90449552BB2743A0023088B /* ExternalLink.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExternalLink.swift; sourceTree = "<group>"; };
 		D90449572BB281960023088B /* ExternalLinkButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExternalLinkButton.swift; sourceTree = "<group>"; };
 		D904495C2BB483C20023088B /* CapsuleButtonStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CapsuleButtonStyle.swift; sourceTree = "<group>"; };
@@ -323,10 +327,20 @@
 			isa = PBXGroup;
 			children = (
 				D929E3D12AB499DE008D8B3C /* Info.plist */,
+				D9SECRETS0003 /* Configuration */,
 				D94A424C283E702A00A504BD /* Sources */,
 				D9B8784C286513ED009CA7AD /* Resources */,
 			);
 			path = MedoHelper;
+			sourceTree = "<group>";
+		};
+		D9SECRETS0003 /* Configuration */ = {
+			isa = PBXGroup;
+			children = (
+				D9SECRETS0001 /* Secrets.xcconfig */,
+				D9SECRETS0002 /* Secrets.xcconfig.template */,
+			);
+			path = Configuration;
 			sourceTree = "<group>";
 		};
 		D94A4227283DC94D00A504BD /* Preview Content */ = {
@@ -505,6 +519,7 @@
 				D9B8784A28650F4E009CA7AD /* CSVParser.swift */,
 				D9B87850286538C6009CA7AD /* JSONFileToData.swift */,
 				D94B03FC2993346F00EB03CA /* FileHelper.swift */,
+				D9SECRETS0004 /* Secrets.swift */,
 			);
 			path = Helpers;
 			sourceTree = "<group>";
@@ -801,6 +816,7 @@
 				D9CA30202A0441A000F1F23D /* SendingProgressView.swift in Sources */,
 				D914C7252A09AD970011EC5B /* ContentType.swift in Sources */,
 				D972B7D12CCC7281005A2B83 /* ContentRepository.swift in Sources */,
+				D9SECRETS0005 /* Secrets.swift in Sources */,
 				D94A4222283DC94B00A504BD /* MedoHelperApp.swift in Sources */,
 				D987550B2A9C3EC800B6E96A /* UpdateEventRow.swift in Sources */,
 				D9EFA0C92EED771F00B11C3D /* Retro2025Models.swift in Sources */,
@@ -963,6 +979,7 @@
 		};
 		D94A4244283DC94D00A504BD /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = D9SECRETS0001 /* Secrets.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -1001,6 +1018,7 @@
 		};
 		D94A4245283DC94D00A504BD /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = D9SECRETS0001 /* Secrets.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;

@@ -7,21 +7,13 @@
 
 import SwiftUI
 
-// MARK: - Prod
+// MARK: - Server Configuration
 
-//public let baseURL: String = CommandLine.arguments.contains("-USE_LOCAL_SERVER") ? "http://127.0.0.1:8080/" : "http://medodelirioios.com:8080/"
-//public let serverPath: String = CommandLine.arguments.contains("-USE_LOCAL_SERVER") ? "http://127.0.0.1:8080/api/" : "http://medodelirioios.com:8080/api/"
-//public let assetOperationPassword = ""
-//public let reactionsPassword = ""
-//public let analyticsPassword = ""
+public let baseURL: String = CommandLine.arguments.contains("-USE_LOCAL_SERVER") ? "http://127.0.0.1:8080/" : "http://medodelirioios.com:8080/"
+public let serverPath: String = CommandLine.arguments.contains("-USE_LOCAL_SERVER") ? "http://127.0.0.1:8080/api/" : "http://medodelirioios.com:8080/api/"
 
-// MARK: - Dev
-
-//public let baseURL: String = CommandLine.arguments.contains("-USE_LOCAL_SERVER") ? "http://127.0.0.1:8080/" : "http://170.187.141.103:8080/"
-//public let serverPath: String = CommandLine.arguments.contains("-USE_LOCAL_SERVER") ? "http://127.0.0.1:8080/api/" : "http://170.187.141.103:8080/api/"
-//public let assetOperationPassword = "total-real-password-3"
-//public let reactionsPassword = "total-real-password-5"
-//public let analyticsPassword = "total-real-password-7"
+// Note: API passwords are now stored in Secrets.xcconfig and accessed via the Secrets enum.
+// See MedoHelper/Configuration/Secrets.xcconfig.template for setup instructions.
 
 @main
 struct MedoHelperApp: App {

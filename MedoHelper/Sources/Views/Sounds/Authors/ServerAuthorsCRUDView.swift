@@ -101,7 +101,7 @@ struct ServerAuthorsCRUDView: View {
                         isBeingShown: $showAddAlreadyOnAppSheet,
                         data: fixedData!,
                         chunkSize: 100,
-                        endpointEnding: "v3/import-authors/\(assetOperationPassword)"
+                        endpointEnding: "v3/import-authors/\(Secrets.assetOperationPassword)"
                     )
                     .frame(minWidth: 800, minHeight: 900)
                 }
@@ -152,7 +152,7 @@ struct ServerAuthorsCRUDView: View {
     private func hideAuthor(withId authorId: String) {
         Task {
             do {
-                let url = URL(string: serverPath + "v3/author/\(authorId)/\(assetOperationPassword)")!
+                let url = URL(string: serverPath + "v3/author/\(authorId)/\(Secrets.assetOperationPassword)")!
                 let response = try await APIClient().delete(in: url, data: nil as String?)
 
                 print(response as Any)

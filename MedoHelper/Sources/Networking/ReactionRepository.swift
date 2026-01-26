@@ -81,7 +81,7 @@ extension ReactionRepository {
     }
 
     func add(sounds: [ServerReactionSoundForSending]) async throws {
-        let url = URL(string: serverPath + "v4/add-sounds-to-reaction/\(reactionsPassword)")!
+        let url = URL(string: serverPath + "v4/add-sounds-to-reaction/\(Secrets.reactionsPassword)")!
         let _ = try await apiClient.post(data: sounds, to: url)
     }
 }
@@ -137,7 +137,7 @@ extension ReactionRepository {
 extension ReactionRepository {
 
     func update(reaction: HelperReaction) async throws {
-        let updateUrl = URL(string: serverPath + "v4/reaction/\(reactionsPassword)")!
+        let updateUrl = URL(string: serverPath + "v4/reaction/\(Secrets.reactionsPassword)")!
         let _ = try await apiClient.put(in: updateUrl, data: reaction)
     }
 }
@@ -147,8 +147,8 @@ extension ReactionRepository {
 extension ReactionRepository {
 
     func removeAllReactions() async throws {
-        let reactionsUrl = URL(string: serverPath + "v4/delete-all-reactions/\(reactionsPassword)")!
-        let soundsUrl = URL(string: serverPath + "v4/delete-all-reaction-sounds/\(reactionsPassword)")!
+        let reactionsUrl = URL(string: serverPath + "v4/delete-all-reactions/\(Secrets.reactionsPassword)")!
+        let soundsUrl = URL(string: serverPath + "v4/delete-all-reaction-sounds/\(Secrets.reactionsPassword)")!
         guard try await apiClient.delete(in: reactionsUrl) else {
             throw ReactionRepositoryError.errorDeletingReactions
         }
@@ -158,13 +158,13 @@ extension ReactionRepository {
     }
 
     func removeAllSoundsOf(reactionId: String) async throws {
-        let url = URL(string: serverPath + "v4/delete-reaction-sounds/\(reactionId)/\(reactionsPassword)")!
+        let url = URL(string: serverPath + "v4/delete-reaction-sounds/\(reactionId)/\(Secrets.reactionsPassword)")!
         let _ = try await apiClient.delete(in: url)
     }
 
     func removeReaction(withId reactionId: String) async throws {
         try await removeAllSoundsOf(reactionId: reactionId)
-        let url = URL(string: serverPath + "v4/delete-reaction/\(reactionId)/\(reactionsPassword)")!
+        let url = URL(string: serverPath + "v4/delete-reaction/\(reactionId)/\(Secrets.reactionsPassword)")!
         let _ = try await apiClient.delete(in: url)
     }
 }
@@ -174,12 +174,12 @@ extension ReactionRepository {
 extension ReactionRepository {
 
     private func send(reaction: ServerReaction) async throws {
-        let url = URL(string: serverPath + "v4/create-reaction/\(reactionsPassword)")!
+        let url = URL(string: serverPath + "v4/create-reaction/\(Secrets.reactionsPassword)")!
         let _ = try await apiClient.post(data: reaction, to: url)
     }
 
     private func send(reactionSounds: [ServerReactionSoundForSending]) async throws {
-        let url = URL(string: serverPath + "v4/add-sounds-to-reaction/\(reactionsPassword)")!
+        let url = URL(string: serverPath + "v4/add-sounds-to-reaction/\(Secrets.reactionsPassword)")!
         let _ = try await apiClient.post(data: reactionSounds, to: url)
     }
 }

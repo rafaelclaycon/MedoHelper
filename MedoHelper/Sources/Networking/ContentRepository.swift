@@ -25,12 +25,12 @@ final class ContentRepository: ContentRepositoryProtocol {
     }
 
     func create(content: MedoContent) async throws -> CreateContentResponse? {
-        let url = URL(string: serverPath + "v3/create-sound/\(assetOperationPassword)")!
+        let url = URL(string: serverPath + "v3/create-sound/\(Secrets.assetOperationPassword)")!
         return try await apiClient.post(data: content, to: url)
     }
 
     func update(content: MedoContent) async throws {
-        let url = URL(string: serverPath + "v3/update-content/\(assetOperationPassword)")!
+        let url = URL(string: serverPath + "v3/update-content/\(Secrets.assetOperationPassword)")!
         let _ = try await apiClient.put(in: url, data: content)
     }
 }

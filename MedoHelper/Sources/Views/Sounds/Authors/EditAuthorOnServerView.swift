@@ -179,7 +179,7 @@ struct EditAuthorOnServerView: View {
             showSendProgress = true
             modalMessage = "Enviando Dados..."
             
-            let url = URL(string: serverPath + "v3/create-author/\(assetOperationPassword)")!
+            let url = URL(string: serverPath + "v3/create-author/\(Secrets.assetOperationPassword)")!
             
             if description != "" {
                 author.description = description
@@ -214,7 +214,7 @@ struct EditAuthorOnServerView: View {
             showSendProgress = true
             modalMessage = "Enviando Dados..."
 
-            let url = URL(string: serverPath + "v3/update-author/\(assetOperationPassword)")!
+            let url = URL(string: serverPath + "v3/update-author/\(Secrets.assetOperationPassword)")!
 
             let newAuthor: Author = .init(
                 id: author.id,

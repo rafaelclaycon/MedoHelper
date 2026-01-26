@@ -2,6 +2,12 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>AssetOperationPassword</key>
+	<string>$(ASSET_OPERATION_PASSWORD)</string>
+	<key>ReactionsPassword</key>
+	<string>$(REACTIONS_PASSWORD)</string>
+	<key>AnalyticsPassword</key>
+	<string>$(ANALYTICS_PASSWORD)</string>
 	<key>NSAppTransportSecurity</key>
 	<dict>
 		<key>NSAllowsArbitraryLoads</key>

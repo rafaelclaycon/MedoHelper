@@ -151,7 +151,7 @@ struct ServerSoundsCRUDView: View {
                         MoveDataToServerView(isBeingShown: $showAddAlreadyOnAppSheet,
                                              data: fixedData!,
                                              chunkSize: 10,
-                                             endpointEnding: "v3/import-sounds/\(assetOperationPassword)")
+                                             endpointEnding: "v3/import-sounds/\(Secrets.assetOperationPassword)")
                             .frame(minWidth: 800, minHeight: 500)
                     }
                     
@@ -228,7 +228,7 @@ struct ServerSoundsCRUDView: View {
     private func removeSound(withId soundId: String) {
         Task {
             do {
-                let url = URL(string: serverPath + "v3/sound/\(soundId)/\(assetOperationPassword)")!
+                let url = URL(string: serverPath + "v3/sound/\(soundId)/\(Secrets.assetOperationPassword)")!
                 let _ = try await APIClient().delete(in: url, data: nil as String?)
                 alertType = .singleOptionInformative
                 showAlert = true

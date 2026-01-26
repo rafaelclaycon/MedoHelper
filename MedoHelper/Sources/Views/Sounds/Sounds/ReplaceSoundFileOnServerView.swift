@@ -199,12 +199,12 @@ struct ReplaceSoundFileOnServerView: View {
     }
     
     private func createFileUpdatedUpdateEvent() async throws {
-        let url = URL(string: serverPath + "v3/update-content-file/sound/\(soundId)/\(assetOperationPassword)")!
+        let url = URL(string: serverPath + "v3/update-content-file/sound/\(soundId)/\(Secrets.assetOperationPassword)")!
         _ = try await APIClient().post(data: nil as String?, to: url)
     }
     
     private func createDurationChangedUpdateEvent() async throws {
-        let url = URL(string: serverPath + "v3/update-content/\(assetOperationPassword)")!
+        let url = URL(string: serverPath + "v3/update-content/\(Secrets.assetOperationPassword)")!
         
         guard let fileURL = selectedFile else { throw ReplaceSoundFileOnServerViewError.couldNotGetFile }
         guard let newDuration = await FileHelper.getDuration(of: fileURL) else { throw ReplaceSoundFileOnServerViewError.unableToCalculateNewDuration }
