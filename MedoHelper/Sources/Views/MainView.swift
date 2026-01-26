@@ -7,7 +7,7 @@ struct MainView: View {
         case sounds, authors, reactions, songs, musicGenres, updateEvents, testVersion, analytics
     }
 
-    @State private var tabSelection: AppTab = .analytics
+    @State private var tabSelection: AppTab = .sounds
     @State private var testVersionDotColor: Color = .red
 
     var body: some View {
