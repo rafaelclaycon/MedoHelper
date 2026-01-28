@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		D9ROLLOUT001 /* ReleaseRolloutModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9ROLLOUT002 /* ReleaseRolloutModels.swift */; };
+		D9ROLLOUT003 /* ReleaseRolloutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9ROLLOUT004 /* ReleaseRolloutView.swift */; };
 		D9SECRETS0005 /* Secrets.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9SECRETS0004 /* Secrets.swift */; };
 		D90449562BB2743A0023088B /* ExternalLink.swift in Sources */ = {isa = PBXBuildFile; fileRef = D90449552BB2743A0023088B /* ExternalLink.swift */; };
 		D90449582BB281960023088B /* ExternalLinkButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = D90449572BB281960023088B /* ExternalLinkButton.swift */; };
@@ -123,6 +125,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		D9ROLLOUT002 /* ReleaseRolloutModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReleaseRolloutModels.swift; sourceTree = "<group>"; };
+		D9ROLLOUT004 /* ReleaseRolloutView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReleaseRolloutView.swift; sourceTree = "<group>"; };
 		D9SECRETS0001 /* Secrets.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Secrets.xcconfig; sourceTree = "<group>"; };
 		D9SECRETS0002 /* Secrets.xcconfig.template */ = {isa = PBXFileReference; lastKnownFileType = text; path = Secrets.xcconfig.template; sourceTree = "<group>"; };
 		D9SECRETS0004 /* Secrets.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Secrets.swift; sourceTree = "<group>"; };
@@ -381,9 +385,18 @@
 				D9A9E7EB2D5A4B0900AEAAC6 /* Songs */,
 				D99AEF2C2BE28F6900C4A8FA /* Maintenance */,
 				D960F2232A1D22D1007D12D7 /* Analytics */,
+				D9ROLLOUT005 /* ReleaseRollout */,
 				D9CA30262A057ADA00F1F23D /* Shared */,
 			);
 			path = Views;
+			sourceTree = "<group>";
+		};
+		D9ROLLOUT005 /* ReleaseRollout */ = {
+			isa = PBXGroup;
+			children = (
+				D9ROLLOUT004 /* ReleaseRolloutView.swift */,
+			);
+			path = ReleaseRollout;
 			sourceTree = "<group>";
 		};
 		D94A4252283E7E3500A504BD /* Extensions */ = {
@@ -406,6 +419,7 @@
 				D9148BF72EF26A1B00FD6815 /* NavigationAnalytics.swift */,
 				D9148BF52EF25BAB00FD6815 /* DeviceAnalytics.swift */,
 				D967761D2EEFB7380070F798 /* DailyUserCount.swift */,
+				D9ROLLOUT002 /* ReleaseRolloutModels.swift */,
 				D9EFA0C82EED771F00B11C3D /* Retro2025Models.swift */,
 				D938D7E22ED21B45005ACC0D /* ActiveUsersResponse.swift */,
 				D938D7E32ED21B45005ACC0D /* SessionsResponse.swift */,
@@ -753,6 +767,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D9ROLLOUT001 /* ReleaseRolloutModels.swift in Sources */,
+				D9ROLLOUT003 /* ReleaseRolloutView.swift in Sources */,
 				D90449582BB281960023088B /* ExternalLinkButton.swift in Sources */,
 				D91338A12A87F43D00C0502A /* CreateContentResponse.swift in Sources */,
 				D960F2252A1D22E1007D12D7 /* AnalyticsView.swift in Sources */,

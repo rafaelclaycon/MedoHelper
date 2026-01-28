@@ -14,6 +14,11 @@ protocol AnalyticsRepositoryProtocol {
     func fetchDeviceAnalytics() async throws -> DeviceAnalyticsResponse
     func fetchNavigationAnalytics() async throws -> NavigationAnalyticsResponse
     func fetchRetro2025Dashboard(startDate: String, endDate: String) async throws -> Retro2025DashboardResponse
+    
+    // Release Rollout
+    func fetchHourlyVersionData(date: String) async throws -> HourlyVersionResponse
+    func fetchDailyVersionAdoption(days: Int) async throws -> [DailyVersionData]
+    func fetchVersionDistribution() async throws -> VersionDistributionResponse
 }
 
 final class AnalyticsRepository: AnalyticsRepositoryProtocol {
@@ -225,6 +230,208 @@ final class AnalyticsRepository: AnalyticsRepositoryProtocol {
             return response
         } catch {
             print("❌ [Navigation Analytics] Failed: \(error)")
+            print("   Error type: \(type(of: error))")
+            print("   Error description: \(error.localizedDescription)")
+            throw error
+        }
+    }
+    
+    // MARK: - Release Rollout
+    
+    func fetchHourlyVersionData(date: String) async throws -> HourlyVersionResponse {
+        let urlString = serverPath + "v4/version-signals-hourly/\(date)/\(Secrets.analyticsPassword)"
+        print("🔍 [Hourly Version] Fetching from: \(urlString)")
+        
+        guard let url = URL(string: urlString) else {
+            print("❌ [Hourly Version] Invalid URL: \(urlString)")
+            throw AnalyticsError.invalidURL
+        }
+        
+        do {
+            let (data, response) = try await URLSession.shared.data(from: url)
+            
+            // Log HTTP response status
+            if let httpResponse = response as? HTTPURLResponse {
+                print("🔍 [Hourly Version] HTTP Status: \(httpResponse.statusCode)")
+                if httpResponse.statusCode != 200 {
+                    print("⚠️ [Hourly Version] Non-200 status code received")
+                }
+            }
+            
+            // Log raw response
+            if let jsonString = String(data: data, encoding: .utf8) {
+                print("🔍 [Hourly Version] Raw JSON response (\(data.count) bytes):")
+                print(jsonString)
+            }
+            
+            // Try to parse as dictionary to see structure
+            if let jsonObject = try? JSONSerialization.jsonObject(with: data) as? [String: Any] {
+                print("🔍 [Hourly Version] JSON keys found: \(jsonObject.keys.sorted())")
+            }
+            
+            let decoder = JSONDecoder()
+            let decodedResponse = try decoder.decode(HourlyVersionResponse.self, from: data)
+            print("✅ [Hourly Version] Success:")
+            print("   - Date: \(decodedResponse.date)")
+            print("   - Hours with data: \(decodedResponse.hours.count)")
+            print("   - Versions: \(decodedResponse.dayTotals.count)")
+            decodedResponse.dayTotals.prefix(5).forEach { version in
+                print("      • \(version.appVersion): \(version.uniqueUsers) users")
+            }
+            return decodedResponse
+        } catch let decodingError as DecodingError {
+            print("❌ [Hourly Version] Decoding Error:")
+            switch decodingError {
+            case .keyNotFound(let key, let context):
+                print("   Key '\(key.stringValue)' not found: \(context.debugDescription)")
+                print("   Coding path: \(context.codingPath.map { $0.stringValue }.joined(separator: " -> "))")
+            case .typeMismatch(let type, let context):
+                print("   Type mismatch for \(type): \(context.debugDescription)")
+                print("   Coding path: \(context.codingPath.map { $0.stringValue }.joined(separator: " -> "))")
+            case .valueNotFound(let type, let context):
+                print("   Value of type \(type) not found: \(context.debugDescription)")
+                print("   Coding path: \(context.codingPath.map { $0.stringValue }.joined(separator: " -> "))")
+            case .dataCorrupted(let context):
+                print("   Data corrupted: \(context.debugDescription)")
+                print("   Coding path: \(context.codingPath.map { $0.stringValue }.joined(separator: " -> "))")
+            @unknown default:
+                print("   Unknown decoding error: \(decodingError)")
+            }
+            throw decodingError
+        } catch {
+            print("❌ [Hourly Version] Failed: \(error)")
+            print("   Error type: \(type(of: error))")
+            print("   Error description: \(error.localizedDescription)")
+            throw error
+        }
+    }
+    
+    func fetchDailyVersionAdoption(days: Int) async throws -> [DailyVersionData] {
+        let urlString = serverPath + "v4/version-adoption-daily/\(days)/\(Secrets.analyticsPassword)"
+        print("🔍 [Daily Version] Fetching from: \(urlString)")
+        
+        guard let url = URL(string: urlString) else {
+            print("❌ [Daily Version] Invalid URL: \(urlString)")
+            throw AnalyticsError.invalidURL
+        }
+        
+        do {
+            let (data, response) = try await URLSession.shared.data(from: url)
+            
+            // Log HTTP response status
+            if let httpResponse = response as? HTTPURLResponse {
+                print("🔍 [Daily Version] HTTP Status: \(httpResponse.statusCode)")
+                if httpResponse.statusCode != 200 {
+                    print("⚠️ [Daily Version] Non-200 status code received")
+                }
+            }
+            
+            // Log raw response
+            if let jsonString = String(data: data, encoding: .utf8) {
+                print("🔍 [Daily Version] Raw JSON response (\(data.count) bytes):")
+                print(jsonString)
+            }
+            
+            // Try to parse as dictionary to see structure
+            if let jsonObject = try? JSONSerialization.jsonObject(with: data) as? [String: Any] {
+                print("🔍 [Daily Version] JSON keys found: \(jsonObject.keys.sorted())")
+            }
+            
+            let decoder = JSONDecoder()
+            let decodedResponse = try decoder.decode(DailyVersionAdoptionResponse.self, from: data)
+            print("✅ [Daily Version] Success:")
+            print("   - Days: \(decodedResponse.data.count)")
+            return decodedResponse.data
+        } catch let decodingError as DecodingError {
+            print("❌ [Daily Version] Decoding Error:")
+            switch decodingError {
+            case .keyNotFound(let key, let context):
+                print("   Key '\(key.stringValue)' not found: \(context.debugDescription)")
+                print("   Coding path: \(context.codingPath.map { $0.stringValue }.joined(separator: " -> "))")
+            case .typeMismatch(let type, let context):
+                print("   Type mismatch for \(type): \(context.debugDescription)")
+                print("   Coding path: \(context.codingPath.map { $0.stringValue }.joined(separator: " -> "))")
+            case .valueNotFound(let type, let context):
+                print("   Value of type \(type) not found: \(context.debugDescription)")
+                print("   Coding path: \(context.codingPath.map { $0.stringValue }.joined(separator: " -> "))")
+            case .dataCorrupted(let context):
+                print("   Data corrupted: \(context.debugDescription)")
+                print("   Coding path: \(context.codingPath.map { $0.stringValue }.joined(separator: " -> "))")
+            @unknown default:
+                print("   Unknown decoding error: \(decodingError)")
+            }
+            throw decodingError
+        } catch {
+            print("❌ [Daily Version] Failed: \(error)")
+            print("   Error type: \(type(of: error))")
+            print("   Error description: \(error.localizedDescription)")
+            throw error
+        }
+    }
+    
+    func fetchVersionDistribution() async throws -> VersionDistributionResponse {
+        let urlString = serverPath + "v4/version-distribution/\(Secrets.analyticsPassword)"
+        print("🔍 [Version Distribution] Fetching from: \(urlString)")
+        
+        guard let url = URL(string: urlString) else {
+            print("❌ [Version Distribution] Invalid URL: \(urlString)")
+            throw AnalyticsError.invalidURL
+        }
+        
+        do {
+            let (data, response) = try await URLSession.shared.data(from: url)
+            
+            // Log HTTP response status
+            if let httpResponse = response as? HTTPURLResponse {
+                print("🔍 [Version Distribution] HTTP Status: \(httpResponse.statusCode)")
+                if httpResponse.statusCode != 200 {
+                    print("⚠️ [Version Distribution] Non-200 status code received")
+                }
+            }
+            
+            // Log raw response
+            if let jsonString = String(data: data, encoding: .utf8) {
+                print("🔍 [Version Distribution] Raw JSON response (\(data.count) bytes):")
+                print(jsonString)
+            }
+            
+            // Try to parse as dictionary to see structure
+            if let jsonObject = try? JSONSerialization.jsonObject(with: data) as? [String: Any] {
+                print("🔍 [Version Distribution] JSON keys found: \(jsonObject.keys.sorted())")
+            }
+            
+            let decoder = JSONDecoder()
+            let decodedResponse = try decoder.decode(VersionDistributionResponse.self, from: data)
+            print("✅ [Version Distribution] Success:")
+            print("   - Date: \(decodedResponse.date)")
+            print("   - Total Users: \(decodedResponse.totalUsers)")
+            print("   - Versions: \(decodedResponse.versions.count)")
+            decodedResponse.versions.prefix(5).forEach { version in
+                let pct = version.percentage.map { String(format: "%.1f%%", $0) } ?? "N/A"
+                print("      • \(version.appVersion): \(version.uniqueUsers) users (\(pct))")
+            }
+            return decodedResponse
+        } catch let decodingError as DecodingError {
+            print("❌ [Version Distribution] Decoding Error:")
+            switch decodingError {
+            case .keyNotFound(let key, let context):
+                print("   Key '\(key.stringValue)' not found: \(context.debugDescription)")
+                print("   Coding path: \(context.codingPath.map { $0.stringValue }.joined(separator: " -> "))")
+            case .typeMismatch(let type, let context):
+                print("   Type mismatch for \(type): \(context.debugDescription)")
+                print("   Coding path: \(context.codingPath.map { $0.stringValue }.joined(separator: " -> "))")
+            case .valueNotFound(let type, let context):
+                print("   Value of type \(type) not found: \(context.debugDescription)")
+                print("   Coding path: \(context.codingPath.map { $0.stringValue }.joined(separator: " -> "))")
+            case .dataCorrupted(let context):
+                print("   Data corrupted: \(context.debugDescription)")
+                print("   Coding path: \(context.codingPath.map { $0.stringValue }.joined(separator: " -> "))")
+            @unknown default:
+                print("   Unknown decoding error: \(decodingError)")
+            }
+            throw decodingError
+        } catch {
+            print("❌ [Version Distribution] Failed: \(error)")
             print("   Error type: \(type(of: error))")
             print("   Error description: \(error.localizedDescription)")
             throw error
