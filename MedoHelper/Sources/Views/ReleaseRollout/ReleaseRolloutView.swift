@@ -367,6 +367,8 @@ struct ReleaseRolloutView: View {
 struct HourlyAdoptionChart: View {
     let response: HourlyVersionResponse
     
+    @State private var hoveredHour: Int?
+    
     // Get all unique versions sorted by total users (from dayTotals)
     private var allVersions: [String] {
         response.dayTotals.map { $0.appVersion }
@@ -377,6 +379,45 @@ struct HourlyAdoptionChart: View {
         VersionColorProvider.colorMap(for: allVersions)
     }
     
+    // Timezone offset in hours from UTC
+    private var timezoneOffsetHours: Int {
+        TimeZone.current.secondsFromGMT() / 3600
+    }
+    
+    // Current timezone abbreviation
+    private var timezoneAbbreviation: String {
+        TimeZone.current.abbreviation() ?? "Local"
+    }
+    
+    // Convert UTC hour to local hour
+    private func utcToLocal(_ utcHour: Int) -> Int {
+        let localHour = utcHour + timezoneOffsetHours
+        if localHour < 0 {
+            return localHour + 24
+        } else if localHour >= 24 {
+            return localHour - 24
+        }
+        return localHour
+    }
+    
+    // Convert local hour back to UTC for data lookup
+    private func localToUtc(_ localHour: Int) -> Int {
+        let utcHour = localHour - timezoneOffsetHours
+        if utcHour < 0 {
+            return utcHour + 24
+        } else if utcHour >= 24 {
+            return utcHour - 24
+        }
+        return utcHour
+    }
+    
+    // Get total users for a specific local hour
+    private func totalUsers(forLocalHour localHour: Int) -> Int {
+        let utcHour = localToUtc(localHour)
+        guard let slot = response.hours.first(where: { $0.hour == utcHour }) else { return 0 }
+        return slot.versions.reduce(0) { $0 + $1.uniqueUsers }
+    }
+    
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             HStack {
@@ -385,6 +426,11 @@ struct HourlyAdoptionChart: View {
                     .font(.title2)
                 Text("Adoção por Hora - \(response.date)")
                     .font(.headline)
+                
+                Text("(\(timezoneAbbreviation))")
+                    .font(.subheadline)
+                    .foregroundColor(.secondary)
+                
                 Spacer()
             }
             .padding(.horizontal)
@@ -395,13 +441,36 @@ struct HourlyAdoptionChart: View {
                     .frame(height: 250)
                     .frame(maxWidth: .infinity)
             } else {
-                Chart(response.hours) { slot in
-                    ForEach(slot.versions, id: \.appVersion) { versionStat in
-                        BarMark(
-                            x: .value("Hora", slot.hour),
-                            y: .value("Usuários", versionStat.uniqueUsers)
-                        )
-                        .foregroundStyle(by: .value("Versão", versionStat.appVersion))
+                Chart {
+                    ForEach(response.hours) { slot in
+                        let localHour = utcToLocal(slot.hour)
+                        ForEach(slot.versions, id: \.appVersion) { versionStat in
+                            BarMark(
+                                x: .value("Hora", localHour),
+                                y: .value("Usuários", versionStat.uniqueUsers)
+                            )
+                            .foregroundStyle(by: .value("Versão", versionStat.appVersion))
+                        }
+                    }
+                    
+                    // Vertical rule mark on hover
+                    if let localHour = hoveredHour {
+                        RuleMark(x: .value("Hora", localHour))
+                            .foregroundStyle(.white.opacity(0.8))
+                            .lineStyle(StrokeStyle(lineWidth: 2, dash: [5, 3]))
+                            .annotation(position: .top, alignment: .center) {
+                                VStack(spacing: 2) {
+                                    Text(String(format: "%02d:00", localHour))
+                                        .font(.caption)
+                                        .fontWeight(.semibold)
+                                    Text("\(totalUsers(forLocalHour: localHour)) usuários")
+                                        .font(.caption2)
+                                        .foregroundColor(.secondary)
+                                }
+                                .padding(.horizontal, 8)
+                                .padding(.vertical, 4)
+                                .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 6))
+                            }
                     }
                 }
                 .chartForegroundStyleScale(
@@ -417,6 +486,26 @@ struct HourlyAdoptionChart: View {
                                     .font(.caption2)
                             }
                         }
+                    }
+                }
+                .chartXScale(domain: 0...23)
+                .chartOverlay { proxy in
+                    GeometryReader { geometry in
+                        Rectangle()
+                            .fill(.clear)
+                            .contentShape(Rectangle())
+                            .onContinuousHover { phase in
+                                switch phase {
+                                case .active(let location):
+                                    let plotAreaFrame = geometry[proxy.plotFrame!]
+                                    let relativeX = location.x - plotAreaFrame.origin.x
+                                    if let hour: Int = proxy.value(atX: relativeX) {
+                                        hoveredHour = max(0, min(23, hour))
+                                    }
+                                case .ended:
+                                    hoveredHour = nil
+                                }
+                            }
                     }
                 }
                 .frame(height: 250)
