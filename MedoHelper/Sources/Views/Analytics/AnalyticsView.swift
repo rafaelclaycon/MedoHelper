@@ -23,7 +23,12 @@ struct AnalyticsView: View {
     @State private var topSharedSounds: LoadingState<[SharedSoundRank]> = .loading
     @State private var deviceAnalytics: LoadingState<DeviceAnalyticsResponse> = .loading
     @State private var navigationAnalytics: LoadingState<NavigationAnalyticsResponse> = .loading
-    @State private var retro2025: LoadingState<Retro2025DashboardResponse> = .loading
+    
+    // Release Rollout states
+    @State private var rolloutSelectedDate: Date = Date()
+    @State private var hourlyData: LoadingState<HourlyVersionResponse> = .loading
+    @State private var dailyAdoption: LoadingState<[DailyVersionData]> = .loading
+    @State private var distribution: LoadingState<VersionDistributionResponse> = .loading
     
     @State private var lastUpdated: Date?
     @State private var selectedTimeSpan: AnalyticsTimeSpan = .today
@@ -83,9 +88,15 @@ struct AnalyticsView: View {
                     }
                     .frame(maxWidth: .infinity)
                     
-                    // Retro2025 Section Column (Right)
-                    retro2025Section
-                        .frame(maxWidth: .infinity)
+                    // Release Rollout Column (Right)
+                    VStack(spacing: 20) {
+                        rolloutHeaderSection
+                        distributionCardsSection
+                        hourlyChartSection
+                        versionPieChartSection
+                        dailyTrendSection
+                    }
+                    .frame(maxWidth: .infinity)
                 }
             }
             .padding(.vertical)
@@ -213,23 +224,174 @@ struct AnalyticsView: View {
         }
     }
     
-    @ViewBuilder
-    private var retro2025Section: some View {
-        switch retro2025 {
-        case .loading:
-            VStack(spacing: 20) {
-                SectionLoadingView(title: "Retro2025", icon: "calendar.badge.clock", color: .purple)
+    // MARK: - Release Rollout Section Views
+    
+    private var rolloutHeaderSection: some View {
+        HStack {
+            HStack {
+                Image(systemName: "arrow.up.circle")
+                    .foregroundColor(.green)
+                    .font(.title2)
+                Text("Release Rollout")
+                    .font(.headline)
             }
-        case .loaded(let dashboard):
-            Retro2025Section(dashboard: dashboard)
+            
+            Spacer()
+            
+            DatePicker(
+                "Data",
+                selection: $rolloutSelectedDate,
+                in: ...Date(),
+                displayedComponents: .date
+            )
+            .datePickerStyle(.compact)
+            .labelsHidden()
+            .onChange(of: rolloutSelectedDate) { _, _ in
+                fetchHourlyData()
+            }
+            
+            Button(action: fetchRolloutData) {
+                Image(systemName: "arrow.clockwise")
+            }
+            .buttonStyle(.bordered)
+        }
+        .padding(.horizontal)
+    }
+    
+    @ViewBuilder
+    private var distributionCardsSection: some View {
+        switch distribution {
+        case .loading:
+            VStack(spacing: 16) {
+                StatCardLoading(title: "Versão Mais Recente", icon: "arrow.up.circle.fill", color: .green)
+                StatCardLoading(title: "Total de Usuários Hoje", icon: "person.2.fill", color: .blue)
+            }
+        case .loaded(let response):
+            let latestVersion = response.versions.first
+            VStack(spacing: 16) {
+                if let latest = latestVersion {
+                    VStack(alignment: .leading, spacing: 8) {
+                        HStack {
+                            Image(systemName: "arrow.up.circle.fill")
+                                .foregroundColor(.green)
+                                .font(.title2)
+                            Text("Versão \(latest.appVersion)")
+                                .font(.headline)
+                        }
+                        
+                        HStack(spacing: 20) {
+                            VStack(alignment: .leading) {
+                                Text("\(latest.uniqueUsers)")
+                                    .font(.system(size: 32, weight: .bold))
+                                Text("usuários")
+                                    .font(.caption)
+                                    .foregroundColor(.secondary)
+                            }
+                            
+                            if let pct = latest.percentage {
+                                VStack(alignment: .leading) {
+                                    Text(String(format: "%.1f%%", pct))
+                                        .font(.system(size: 32, weight: .bold))
+                                        .foregroundColor(.green)
+                                    Text("do total")
+                                        .font(.caption)
+                                        .foregroundColor(.secondary)
+                                }
+                            }
+                        }
+                    }
+                    .padding()
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .background(platterColor)
+                    .cornerRadius(12)
+                }
+                
+                VStack(alignment: .leading, spacing: 8) {
+                    HStack {
+                        Image(systemName: "person.2.fill")
+                            .foregroundColor(.blue)
+                            .font(.title2)
+                        Text("Total Hoje")
+                            .font(.headline)
+                    }
+                    
+                    Text("\(response.totalUsers)")
+                        .font(.system(size: 32, weight: .bold))
+                    Text("usuários ativos")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                }
+                .padding()
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .background(platterColor)
+                .cornerRadius(12)
+            }
+            .padding(.horizontal)
+        case .error(let message):
+            VStack(spacing: 16) {
+                StatCardError(title: "Versão Mais Recente", icon: "arrow.up.circle.fill", color: .green, message: message) {
+                    fetchDistribution()
+                }
+                StatCardError(title: "Total de Usuários Hoje", icon: "person.2.fill", color: .blue, message: message) {
+                    fetchDistribution()
+                }
+            }
+        }
+    }
+    
+    @ViewBuilder
+    private var hourlyChartSection: some View {
+        switch hourlyData {
+        case .loading:
+            SectionLoadingView(title: "Adoção por Hora", icon: "clock.fill", color: .green)
+        case .loaded(let response):
+            HourlyAdoptionChart(response: response)
         case .error(let message):
             SectionErrorView(
-                title: "Retro2025",
-                icon: "calendar.badge.clock",
+                title: "Adoção por Hora",
+                icon: "clock.fill",
+                color: .green,
+                message: message
+            ) {
+                fetchHourlyData()
+            }
+        }
+    }
+    
+    @ViewBuilder
+    private var versionPieChartSection: some View {
+        switch distribution {
+        case .loading:
+            SectionLoadingView(title: "Distribuição de Versões", icon: "chart.pie.fill", color: .purple)
+        case .loaded(let response):
+            VersionPieChart(versions: response.versions, totalUsers: response.totalUsers)
+        case .error(let message):
+            SectionErrorView(
+                title: "Distribuição de Versões",
+                icon: "chart.pie.fill",
                 color: .purple,
                 message: message
             ) {
-                fetchRetro2025()
+                fetchDistribution()
+            }
+        }
+    }
+    
+    @ViewBuilder
+    private var dailyTrendSection: some View {
+        switch dailyAdoption {
+        case .loading:
+            SectionLoadingView(title: "Tendência - 7 Dias", icon: "chart.line.uptrend.xyaxis", color: .blue)
+        case .loaded(let data):
+            DailyVersionTrendChart(dailyData: data)
+        case .error(let message):
+            SectionErrorView(
+                title: "Tendência - 7 Dias",
+                icon: "chart.line.uptrend.xyaxis",
+                color: .blue,
+                message: message
+            ) {
+                fetchDailyAdoption()
             }
         }
     }
@@ -243,7 +405,7 @@ struct AnalyticsView: View {
         fetchTopSharedSounds()
         fetchDeviceAnalytics()
         fetchNavigationAnalytics()
-        fetchRetro2025()
+        fetchRolloutData()
     }
     
     private func fetchActiveUsers() {
@@ -326,20 +488,67 @@ struct AnalyticsView: View {
         }
     }
     
-    private func fetchRetro2025() {
+    // MARK: - Release Rollout Fetch Methods
+    
+    private func fetchRolloutData() {
+        fetchHourlyData()
+        fetchDistribution()
+        fetchDailyAdoption()
+    }
+    
+    private func fetchHourlyData() {
         Task {
-            retro2025 = .loading
+            hourlyData = .loading
             do {
-                let dashboard = try await repository.fetchRetro2025Dashboard(startDate: "2025-01-01", endDate: "2026-12-31")
+                let dateString = formatDate(rolloutSelectedDate)
+                let response = try await repository.fetchHourlyVersionData(date: dateString)
                 await MainActor.run {
-                    retro2025 = .loaded(dashboard)
+                    hourlyData = .loaded(response)
                 }
             } catch {
                 await MainActor.run {
-                    retro2025 = .error(error.localizedDescription)
+                    hourlyData = .error(error.localizedDescription)
                 }
             }
         }
+    }
+    
+    private func fetchDistribution() {
+        Task {
+            distribution = .loading
+            do {
+                let response = try await repository.fetchVersionDistribution()
+                await MainActor.run {
+                    distribution = .loaded(response)
+                }
+            } catch {
+                await MainActor.run {
+                    distribution = .error(error.localizedDescription)
+                }
+            }
+        }
+    }
+    
+    private func fetchDailyAdoption() {
+        Task {
+            dailyAdoption = .loading
+            do {
+                let data = try await repository.fetchDailyVersionAdoption(days: 7)
+                await MainActor.run {
+                    dailyAdoption = .loaded(data)
+                }
+            } catch {
+                await MainActor.run {
+                    dailyAdoption = .error(error.localizedDescription)
+                }
+            }
+        }
+    }
+    
+    private func formatDate(_ date: Date) -> String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd"
+        return formatter.string(from: date)
     }
     
     private func formattedTime(_ date: Date) -> String {

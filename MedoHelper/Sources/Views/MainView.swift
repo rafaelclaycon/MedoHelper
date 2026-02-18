@@ -4,7 +4,7 @@ struct MainView: View {
 
     enum AppTab: Int {
 
-        case sounds, authors, reactions, songs, musicGenres, updateEvents, testVersion, analytics, releaseRollout
+        case sounds, authors, reactions, songs, musicGenres, updateEvents, testVersion, analytics
     }
 
     @State private var tabSelection: AppTab = .sounds
@@ -51,10 +51,6 @@ struct MainView: View {
             
             Tab("Estatísticas", systemImage: "chart.line.uptrend.xyaxis", value: .analytics) {
                 AnalyticsView()
-            }
-            
-            Tab("Release Rollout", systemImage: "arrow.up.circle", value: .releaseRollout) {
-                ReleaseRolloutView()
             }
         }
         .tabViewStyle(.sidebarAdaptable)
