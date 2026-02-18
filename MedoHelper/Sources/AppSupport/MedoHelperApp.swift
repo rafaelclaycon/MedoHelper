@@ -9,8 +9,8 @@ import SwiftUI
 
 // MARK: - Server Configuration
 
-public let baseURL: String = CommandLine.arguments.contains("-USE_LOCAL_SERVER") ? "http://127.0.0.1:8080/" : "http://medodelirioios.com:8080/"
-public let serverPath: String = CommandLine.arguments.contains("-USE_LOCAL_SERVER") ? "http://127.0.0.1:8080/api/" : "http://medodelirioios.com:8080/api/"
+public let baseURL: String = CommandLine.arguments.contains("-USE_LOCAL_SERVER") ? "http://127.0.0.1:8080/" : "https://api.medodelirioios.com/"
+public let serverPath: String = CommandLine.arguments.contains("-USE_LOCAL_SERVER") ? "http://127.0.0.1:8080/api/" : "https://api.medodelirioios.com/api/"
 
 // Note: API passwords are now stored in Secrets.xcconfig and accessed via the Secrets enum.
 // See MedoHelper/Configuration/Secrets.xcconfig.template for setup instructions.
