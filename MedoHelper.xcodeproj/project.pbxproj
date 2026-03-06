@@ -10,7 +10,9 @@
 		D91298AC2CCB49EC003CC5E5 /* ReactionRepositoryMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = D91298AB2CCB49EC003CC5E5 /* ReactionRepositoryMock.swift */; };
 		D94A4234283DC94D00A504BD /* ReactionsCRUDViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D94A4233283DC94D00A504BD /* ReactionsCRUDViewModelTests.swift */; };
 		D953D99C2D4EB42000CF8689 /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = D953D99B2D4EB42000CF8689 /* Kingfisher */; };
-		D9A9E7FD2D5A518200AEAAC6 /* WatchMedoHelper Watch App.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = D9A9E7F02D5A518000AEAAC6 /* WatchMedoHelper Watch App.app */; platformFilter = ios; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		D9D100EB2F55440100706E60 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D9D100EA2F55440100706E60 /* WidgetKit.framework */; };
+		D9D100ED2F55440100706E60 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D9D100EC2F55440100706E60 /* SwiftUI.framework */; };
+		D9D101002F55450000706E60 /* MedoHelperWidgetExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = D9D100E82F55440100706E60 /* MedoHelperWidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -21,25 +23,25 @@
 			remoteGlobalIDString = D94A421D283DC94B00A504BD;
 			remoteInfo = MedoHelper;
 		};
-		D9A9E7FB2D5A518200AEAAC6 /* PBXContainerItemProxy */ = {
+		D9D101022F55450000706E60 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = D94A4216283DC94B00A504BD /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = D9A9E7EF2D5A518000AEAAC6;
-			remoteInfo = "WatchMedoHelper Watch App";
+			remoteGlobalIDString = D9D100E72F55440100706E60;
+			remoteInfo = MedoHelperWidgetExtension;
 		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
-		D9A9E8012D5A518200AEAAC6 /* Embed Watch Content */ = {
+		D9D101012F55450000706E60 /* Embed Foundation Extensions */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
-			dstPath = "$(CONTENTS_FOLDER_PATH)/Watch";
-			dstSubfolderSpec = 16;
+			dstPath = "";
+			dstSubfolderSpec = 13;
 			files = (
-				D9A9E7FD2D5A518200AEAAC6 /* WatchMedoHelper Watch App.app in Embed Watch Content */,
+				D9D101002F55450000706E60 /* MedoHelperWidgetExtension.appex in Embed Foundation Extensions */,
 			);
-			name = "Embed Watch Content";
+			name = "Embed Foundation Extensions";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXCopyFilesBuildPhase section */
@@ -50,7 +52,9 @@
 		D94A421E283DC94B00A504BD /* MedoHelper.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MedoHelper.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D94A422F283DC94D00A504BD /* MedoHelperTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MedoHelperTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		D94A4233283DC94D00A504BD /* ReactionsCRUDViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReactionsCRUDViewModelTests.swift; sourceTree = "<group>"; };
-		D9A9E7F02D5A518000AEAAC6 /* WatchMedoHelper Watch App.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "WatchMedoHelper Watch App.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		D9D100E82F55440100706E60 /* MedoHelperWidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = MedoHelperWidgetExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		D9D100EA2F55440100706E60 /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
+		D9D100EC2F55440100706E60 /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -63,11 +67,18 @@
 			);
 			target = D94A421D283DC94B00A504BD /* MedoHelper */;
 		};
+		D9D100FF2F55440A00706E60 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = D9D100E72F55440100706E60 /* MedoHelperWidgetExtension */;
+		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		D905EBA82F4686FC00190A03 /* MedoHelper */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (D905EBFC2F4686FC00190A03 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = MedoHelper; sourceTree = "<group>"; };
-		D9A9E7F12D5A518000AEAAC6 /* WatchMedoHelper Watch App */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = "WatchMedoHelper Watch App"; sourceTree = "<group>"; };
+		D9D100EE2F55440100706E60 /* MedoHelperWidget */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (D9D100FF2F55440A00706E60 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = MedoHelperWidget; sourceTree = "<group>"; };
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -86,10 +97,12 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		D9A9E7ED2D5A518000AEAAC6 /* Frameworks */ = {
+		D9D100E52F55440100706E60 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D9D100ED2F55440100706E60 /* SwiftUI.framework in Frameworks */,
+				D9D100EB2F55440100706E60 /* WidgetKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -142,7 +155,8 @@
 				D91298A82CCB3B71003CC5E5 /* MedoHelper.xctestplan */,
 				D905EBA82F4686FC00190A03 /* MedoHelper */,
 				D94A4232283DC94D00A504BD /* MedoHelperTests */,
-				D9A9E7F12D5A518000AEAAC6 /* WatchMedoHelper Watch App */,
+				D9D100EE2F55440100706E60 /* MedoHelperWidget */,
+				D9D100E92F55440100706E60 /* Frameworks */,
 				D94A421F283DC94B00A504BD /* Products */,
 			);
 			sourceTree = "<group>";
@@ -152,7 +166,7 @@
 			children = (
 				D94A421E283DC94B00A504BD /* MedoHelper.app */,
 				D94A422F283DC94D00A504BD /* MedoHelperTests.xctest */,
-				D9A9E7F02D5A518000AEAAC6 /* WatchMedoHelper Watch App.app */,
+				D9D100E82F55440100706E60 /* MedoHelperWidgetExtension.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -166,6 +180,15 @@
 			path = MedoHelperTests;
 			sourceTree = "<group>";
 		};
+		D9D100E92F55440100706E60 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				D9D100EA2F55440100706E60 /* WidgetKit.framework */,
+				D9D100EC2F55440100706E60 /* SwiftUI.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -176,12 +199,12 @@
 				D94A421A283DC94B00A504BD /* Sources */,
 				D94A421B283DC94B00A504BD /* Frameworks */,
 				D94A421C283DC94B00A504BD /* Resources */,
-				D9A9E8012D5A518200AEAAC6 /* Embed Watch Content */,
+				D9D101012F55450000706E60 /* Embed Foundation Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
-				D9A9E7FC2D5A518200AEAAC6 /* PBXTargetDependency */,
+				D9D101032F55450000706E60 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				D905EBA82F4686FC00190A03 /* MedoHelper */,
@@ -209,27 +232,27 @@
 			productReference = D94A422F283DC94D00A504BD /* MedoHelperTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
-		D9A9E7EF2D5A518000AEAAC6 /* WatchMedoHelper Watch App */ = {
+		D9D100E72F55440100706E60 /* MedoHelperWidgetExtension */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = D9A9E7FE2D5A518200AEAAC6 /* Build configuration list for PBXNativeTarget "WatchMedoHelper Watch App" */;
+			buildConfigurationList = D9D100FE2F55440A00706E60 /* Build configuration list for PBXNativeTarget "MedoHelperWidgetExtension" */;
 			buildPhases = (
-				D9A9E7EC2D5A518000AEAAC6 /* Sources */,
-				D9A9E7ED2D5A518000AEAAC6 /* Frameworks */,
-				D9A9E7EE2D5A518000AEAAC6 /* Resources */,
+				D9D100E42F55440100706E60 /* Sources */,
+				D9D100E52F55440100706E60 /* Frameworks */,
+				D9D100E62F55440100706E60 /* Resources */,
 			);
 			buildRules = (
 			);
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
-				D9A9E7F12D5A518000AEAAC6 /* WatchMedoHelper Watch App */,
+				D9D100EE2F55440100706E60 /* MedoHelperWidget */,
 			);
-			name = "WatchMedoHelper Watch App";
+			name = MedoHelperWidgetExtension;
 			packageProductDependencies = (
 			);
-			productName = "WatchMedoHelper Watch App";
-			productReference = D9A9E7F02D5A518000AEAAC6 /* WatchMedoHelper Watch App.app */;
-			productType = "com.apple.product-type.application";
+			productName = MedoHelperWidgetExtension;
+			productReference = D9D100E82F55440100706E60 /* MedoHelperWidgetExtension.appex */;
+			productType = "com.apple.product-type.app-extension";
 		};
 /* End PBXNativeTarget section */
 
@@ -238,8 +261,8 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
-				LastSwiftUpdateCheck = 1620;
-				LastUpgradeCheck = 1500;
+				LastSwiftUpdateCheck = 2630;
+				LastUpgradeCheck = 2620;
 				TargetAttributes = {
 					D94A421D283DC94B00A504BD = {
 						CreatedOnToolsVersion = 13.4;
@@ -248,8 +271,8 @@
 						CreatedOnToolsVersion = 13.4;
 						TestTargetID = D94A421D283DC94B00A504BD;
 					};
-					D9A9E7EF2D5A518000AEAAC6 = {
-						CreatedOnToolsVersion = 16.2;
+					D9D100E72F55440100706E60 = {
+						CreatedOnToolsVersion = 26.3;
 					};
 				};
 			};
@@ -271,7 +294,7 @@
 			targets = (
 				D94A421D283DC94B00A504BD /* MedoHelper */,
 				D94A422E283DC94D00A504BD /* MedoHelperTests */,
-				D9A9E7EF2D5A518000AEAAC6 /* WatchMedoHelper Watch App */,
+				D9D100E72F55440100706E60 /* MedoHelperWidgetExtension */,
 			);
 		};
 /* End PBXProject section */
@@ -291,7 +314,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		D9A9E7EE2D5A518000AEAAC6 /* Resources */ = {
+		D9D100E62F55440100706E60 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -317,7 +340,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		D9A9E7EC2D5A518000AEAAC6 /* Sources */ = {
+		D9D100E42F55440100706E60 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -332,11 +355,10 @@
 			target = D94A421D283DC94B00A504BD /* MedoHelper */;
 			targetProxy = D94A4230283DC94D00A504BD /* PBXContainerItemProxy */;
 		};
-		D9A9E7FC2D5A518200AEAAC6 /* PBXTargetDependency */ = {
+		D9D101032F55450000706E60 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			platformFilter = ios;
-			target = D9A9E7EF2D5A518000AEAAC6 /* WatchMedoHelper Watch App */;
-			targetProxy = D9A9E7FB2D5A518200AEAAC6 /* PBXContainerItemProxy */;
+			target = D9D100E72F55440100706E60 /* MedoHelperWidgetExtension */;
+			targetProxy = D9D101022F55450000706E60 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -376,6 +398,7 @@
 				COPY_PHASE_STRIP = NO;
 				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = L8X3H5XA82;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
@@ -398,6 +421,7 @@
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = macosx;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
@@ -438,6 +462,7 @@
 				COPY_PHASE_STRIP = NO;
 				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = L8X3H5XA82;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
@@ -453,6 +478,7 @@
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = macosx;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
 			};
@@ -472,9 +498,15 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_ASSET_PATHS = "\"MedoHelper/Sources/AppSupport/Preview Content\"";
-				DEVELOPMENT_TEAM = L8X3H5XA82;
+				ENABLE_APP_SANDBOX = YES;
+				ENABLE_FILE_ACCESS_DOWNLOADS_FOLDER = readwrite;
+				ENABLE_FILE_ACCESS_MOVIES_FOLDER = readwrite;
+				ENABLE_FILE_ACCESS_MUSIC_FOLDER = readwrite;
+				ENABLE_FILE_ACCESS_PICTURE_FOLDER = readwrite;
 				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_OUTGOING_NETWORK_CONNECTIONS = YES;
 				ENABLE_PREVIEWS = YES;
+				ENABLE_USER_SELECTED_FILES = readwrite;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = MedoHelper/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = MedoHelper;
@@ -512,9 +544,15 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_ASSET_PATHS = "\"MedoHelper/Sources/AppSupport/Preview Content\"";
-				DEVELOPMENT_TEAM = L8X3H5XA82;
+				ENABLE_APP_SANDBOX = YES;
+				ENABLE_FILE_ACCESS_DOWNLOADS_FOLDER = readwrite;
+				ENABLE_FILE_ACCESS_MOVIES_FOLDER = readwrite;
+				ENABLE_FILE_ACCESS_MUSIC_FOLDER = readwrite;
+				ENABLE_FILE_ACCESS_PICTURE_FOLDER = readwrite;
 				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_OUTGOING_NETWORK_CONNECTIONS = YES;
 				ENABLE_PREVIEWS = YES;
+				ENABLE_USER_SELECTED_FILES = readwrite;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = MedoHelper/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = MedoHelper;
@@ -545,7 +583,6 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEAD_CODE_STRIPPING = YES;
-				DEVELOPMENT_TEAM = L8X3H5XA82;
 				GENERATE_INFOPLIST_FILE = YES;
 				MACOSX_DEPLOYMENT_TARGET = 14.2;
 				MARKETING_VERSION = 1.0;
@@ -564,7 +601,6 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEAD_CODE_STRIPPING = YES;
-				DEVELOPMENT_TEAM = L8X3H5XA82;
 				GENERATE_INFOPLIST_FILE = YES;
 				MACOSX_DEPLOYMENT_TARGET = 14.2;
 				MARKETING_VERSION = 1.0;
@@ -576,75 +612,85 @@
 			};
 			name = Release;
 		};
-		D9A9E7FF2D5A518200AEAAC6 /* Debug */ = {
+		D9D100FC2F55440A00706E60 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReferenceAnchor = D905EBA82F4686FC00190A03 /* MedoHelper */;
+			baseConfigurationReferenceRelativePath = Configuration/Secrets.xcconfig;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_ASSET_PATHS = "\"WatchMedoHelper Watch App/Preview Content\"";
-				DEVELOPMENT_TEAM = L8X3H5XA82;
-				ENABLE_PREVIEWS = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu17;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = "WatchMedoHelper-Watch-App-Info.plist";
-				INFOPLIST_KEY_CFBundleDisplayName = WatchMedoHelper;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
-				INFOPLIST_KEY_WKCompanionAppBundleIdentifier = com.rafaelschmitt.MedoHelper;
+				INFOPLIST_FILE = MedoHelperWidget/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = MedoHelperWidget;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 18.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+					"@executable_path/../Frameworks",
 				);
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 15.0;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.rafaelschmitt.MedoHelper.watchkitapp;
+				PRODUCT_BUNDLE_IDENTIFIER = com.rafaelschmitt.MedoHelper.MedoHelperWidget;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = watchos;
 				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+				SUPPORTS_MACCATALYST = NO;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = 4;
-				WATCHOS_DEPLOYMENT_TARGET = 11.2;
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
 		};
-		D9A9E8002D5A518200AEAAC6 /* Release */ = {
+		D9D100FD2F55440A00706E60 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReferenceAnchor = D905EBA82F4686FC00190A03 /* MedoHelper */;
+			baseConfigurationReferenceRelativePath = Configuration/Secrets.xcconfig;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_ASSET_PATHS = "\"WatchMedoHelper Watch App/Preview Content\"";
-				DEVELOPMENT_TEAM = L8X3H5XA82;
-				ENABLE_PREVIEWS = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu17;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = "WatchMedoHelper-Watch-App-Info.plist";
-				INFOPLIST_KEY_CFBundleDisplayName = WatchMedoHelper;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
-				INFOPLIST_KEY_WKCompanionAppBundleIdentifier = com.rafaelschmitt.MedoHelper;
+				INFOPLIST_FILE = MedoHelperWidget/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = MedoHelperWidget;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 18.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+					"@executable_path/../Frameworks",
 				);
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 15.0;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.rafaelschmitt.MedoHelper.watchkitapp;
+				PRODUCT_BUNDLE_IDENTIFIER = com.rafaelschmitt.MedoHelper.MedoHelperWidget;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = watchos;
 				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+				SUPPORTS_MACCATALYST = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = 4;
+				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
-				WATCHOS_DEPLOYMENT_TARGET = 11.2;
 			};
 			name = Release;
 		};
@@ -678,11 +724,11 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		D9A9E7FE2D5A518200AEAAC6 /* Build configuration list for PBXNativeTarget "WatchMedoHelper Watch App" */ = {
+		D9D100FE2F55440A00706E60 /* Build configuration list for PBXNativeTarget "MedoHelperWidgetExtension" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				D9A9E7FF2D5A518200AEAAC6 /* Debug */,
-				D9A9E8002D5A518200AEAAC6 /* Release */,
+				D9D100FC2F55440A00706E60 /* Debug */,
+				D9D100FD2F55440A00706E60 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

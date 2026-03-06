@@ -19,6 +19,12 @@ protocol AnalyticsRepositoryProtocol {
     func fetchHourlyVersionData(date: String) async throws -> HourlyVersionResponse
     func fetchDailyVersionAdoption(days: Int) async throws -> [DailyVersionData]
     func fetchVersionDistribution() async throws -> VersionDistributionResponse
+    
+    // Episodes
+    func fetchEpisodeAnalytics() async throws -> EpisodeAnalyticsResponse
+    
+    // Reactions
+    func fetchTopReactions() async throws -> [ServerReaction]
 }
 
 final class AnalyticsRepository: AnalyticsRepositoryProtocol {
@@ -434,6 +440,50 @@ final class AnalyticsRepository: AnalyticsRepositoryProtocol {
             print("❌ [Version Distribution] Failed: \(error)")
             print("   Error type: \(type(of: error))")
             print("   Error description: \(error.localizedDescription)")
+            throw error
+        }
+    }
+    // MARK: - Episodes
+    
+    func fetchEpisodeAnalytics() async throws -> EpisodeAnalyticsResponse {
+        let urlString = serverPath + "v4/episode-analytics/\(Secrets.analyticsPassword)"
+        print("🔍 [Episode Analytics] Fetching from: \(urlString)")
+        
+        guard let url = URL(string: urlString) else {
+            print("❌ [Episode Analytics] Invalid URL: \(urlString)")
+            throw AnalyticsError.invalidURL
+        }
+        
+        do {
+            let response: EpisodeAnalyticsResponse = try await apiClient.get(from: url)
+            print("✅ [Episode Analytics] Success: \(response.totalUniqueUsers) unique users, \(response.usersWhoPlayed) played, \(response.usersWhoBookmarked) bookmarked")
+            return response
+        } catch {
+            print("❌ [Episode Analytics] Failed: \(error)")
+            throw error
+        }
+    }
+    
+    // MARK: - Reactions
+    
+    func fetchTopReactions() async throws -> [ServerReaction] {
+        let urlString = serverPath + "v4/top-3-reactions"
+        print("🔍 [Top Reactions] Fetching from: \(urlString)")
+        
+        guard let url = URL(string: urlString) else {
+            print("❌ [Top Reactions] Invalid URL: \(urlString)")
+            throw AnalyticsError.invalidURL
+        }
+        
+        do {
+            let reactions: [ServerReaction] = try await apiClient.getArray(from: url)
+            print("✅ [Top Reactions] Success: \(reactions.count) reactions")
+            reactions.forEach { reaction in
+                print("   • \(reaction.title)")
+            }
+            return reactions
+        } catch {
+            print("❌ [Top Reactions] Failed: \(error)")
             throw error
         }
     }

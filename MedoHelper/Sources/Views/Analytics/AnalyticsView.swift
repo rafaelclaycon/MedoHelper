@@ -17,6 +17,8 @@ private let platterColor = Color.gray.opacity(0.3)
 
 struct AnalyticsView: View {
     
+    @Environment(\.horizontalSizeClass) private var horizontalSizeClass
+    
     // Individual loading states for each section
     @State private var activeUsers: LoadingState<Int> = .loading
     @State private var dailyUserCounts: LoadingState<[DailyUserCount]> = .loading
@@ -29,6 +31,9 @@ struct AnalyticsView: View {
     @State private var hourlyData: LoadingState<HourlyVersionResponse> = .loading
     @State private var dailyAdoption: LoadingState<[DailyVersionData]> = .loading
     @State private var distribution: LoadingState<VersionDistributionResponse> = .loading
+    
+    // Episode states
+    @State private var episodeAnalytics: LoadingState<EpisodeAnalyticsResponse> = .loading
     
     @State private var lastUpdated: Date?
     @State private var selectedTimeSpan: AnalyticsTimeSpan = .today
@@ -67,34 +72,36 @@ struct AnalyticsView: View {
                     .padding(.horizontal)
                 }
                 
-                // Side-by-side layout
-                HStack(alignment: .top, spacing: 20) {
+                // Adaptive layout: VStack on iPhone, HStack on iPad/Mac
+                let layout = horizontalSizeClass == .compact
+                    ? AnyLayout(VStackLayout(spacing: 20))
+                    : AnyLayout(HStackLayout(alignment: .top, spacing: 20))
+                
+                layout {
                     // Regular Analytics Column (Left)
                     VStack(alignment: .leading, spacing: 20) {
-                        // Active Users Card
                         activeUsersSection
-                        
-                        // 30-Day User Trend Chart
                         dailyUserCountsSection
-                        
-                        // Top Shared Sounds
                         topSharedSoundsSection
-                        
-                        // Device & System Analytics
                         deviceAnalyticsSection
-                        
-                        // Navigation Analytics
                         navigationAnalyticsSection
                     }
                     .frame(maxWidth: .infinity)
                     
-                    // Release Rollout Column (Right)
+                    // Release Rollout Column (Center)
                     VStack(spacing: 20) {
                         rolloutHeaderSection
                         distributionCardsSection
                         hourlyChartSection
                         versionPieChartSection
                         dailyTrendSection
+                    }
+                    .frame(maxWidth: .infinity)
+                    
+                    // Episodes Column (Right)
+                    VStack(spacing: 20) {
+                        episodeHeaderSection
+                        episodeAnalyticsSection
                     }
                     .frame(maxWidth: .infinity)
                 }
@@ -396,6 +403,86 @@ struct AnalyticsView: View {
         }
     }
     
+    // MARK: - Episode Section Views
+    
+    private var episodeHeaderSection: some View {
+        HStack {
+            HStack {
+                Image(systemName: "play.circle")
+                    .foregroundColor(.red)
+                    .font(.title2)
+                Text("Episódios")
+                    .font(.headline)
+            }
+            
+            Spacer()
+            
+            Button(action: fetchEpisodeAnalytics) {
+                Image(systemName: "arrow.clockwise")
+            }
+            .buttonStyle(.bordered)
+        }
+        .padding(.horizontal)
+    }
+    
+    @ViewBuilder
+    private var episodeAnalyticsSection: some View {
+        switch episodeAnalytics {
+        case .loading:
+            VStack(spacing: 12) {
+                StatCardLoading(title: "Total de Usuários Únicos", icon: "person.2.fill", color: .red)
+                SectionLoadingView(title: "Usuários Únicos - Últimos 30 Dias", icon: "chart.line.uptrend.xyaxis", color: .red)
+                StatCardLoading(title: "Reproduziram", icon: "play.circle.fill", color: .red)
+                StatCardLoading(title: "Favoritaram", icon: "bookmark.fill", color: .red)
+            }
+        case .loaded(let response):
+            let playedPct = response.totalUniqueUsers > 0
+                ? Double(response.usersWhoPlayed) / Double(response.totalUniqueUsers) * 100
+                : 0
+            let bookmarkedPct = response.totalUniqueUsers > 0
+                ? Double(response.usersWhoBookmarked) / Double(response.totalUniqueUsers) * 100
+                : 0
+            
+            VStack(spacing: 12) {
+                StatCard(title: "Total de Usuários Únicos", value: "\(response.totalUniqueUsers)", icon: "person.2.fill", color: .red)
+                
+                if !response.dailyUniqueUsers.isEmpty {
+                    EpisodeDailyUsersChart(dailyUsers: response.dailyUniqueUsers)
+                }
+                
+                HStack(spacing: 12) {
+                    EpisodeMiniStatCard(
+                        title: "Reproduziram",
+                        value: "\(response.usersWhoPlayed)",
+                        subtitle: String(format: "%.0f%% do total", playedPct),
+                        icon: "play.circle.fill",
+                        color: .red
+                    )
+                    EpisodeMiniStatCard(
+                        title: "Favoritaram",
+                        value: "\(response.usersWhoBookmarked)",
+                        subtitle: String(format: "%.0f%% do total", bookmarkedPct),
+                        icon: "bookmark.fill",
+                        color: .red
+                    )
+                }
+                .padding(.horizontal)
+                
+                HStack(spacing: 12) {
+                    EpisodeMiniStatCard(title: "Média Reproduções/Usuário", value: String(format: "%.2f", response.averagePlaysPerUser), icon: "arrow.triangle.2.circlepath", color: .red)
+                    EpisodeMiniStatCard(title: "Média Favoritos/Usuário", value: String(format: "%.2f", response.averageBookmarksPerUser), icon: "bookmark.circle.fill", color: .red)
+                }
+                .padding(.horizontal)
+            }
+        case .error(let message):
+            VStack(spacing: 12) {
+                StatCardError(title: "Total de Usuários Únicos", icon: "person.2.fill", color: .red, message: message) {
+                    fetchEpisodeAnalytics()
+                }
+            }
+        }
+    }
+    
     // MARK: - Fetch Methods
     
     private func fetchAllSections() {
@@ -406,6 +493,7 @@ struct AnalyticsView: View {
         fetchDeviceAnalytics()
         fetchNavigationAnalytics()
         fetchRolloutData()
+        fetchEpisodeAnalytics()
     }
     
     private func fetchActiveUsers() {
@@ -549,6 +637,22 @@ struct AnalyticsView: View {
         let formatter = DateFormatter()
         formatter.dateFormat = "yyyy-MM-dd"
         return formatter.string(from: date)
+    }
+    
+    private func fetchEpisodeAnalytics() {
+        Task {
+            episodeAnalytics = .loading
+            do {
+                let response = try await repository.fetchEpisodeAnalytics()
+                await MainActor.run {
+                    episodeAnalytics = .loaded(response)
+                }
+            } catch {
+                await MainActor.run {
+                    episodeAnalytics = .error(error.localizedDescription)
+                }
+            }
+        }
     }
     
     private func formattedTime(_ date: Date) -> String {
@@ -1148,6 +1252,181 @@ struct DailyUserCountChart: View {
         displayFormatter.dateStyle = .medium
         displayFormatter.timeStyle = .none
         return displayFormatter.string(from: date)
+    }
+}
+
+// MARK: - Episode Daily Users Chart
+
+struct EpisodeDailyUsersChart: View {
+    let dailyUsers: [EpisodeDailyUserCount]
+    @State private var selectedDate: Date?
+    
+    var selectedDataPoint: EpisodeDailyUserCount? {
+        guard let selectedDate = selectedDate else { return nil }
+        return dailyUsers.first { dataPoint in
+            guard let dateValue = dataPoint.dateValue else { return false }
+            return Calendar.current.isDate(dateValue, inSameDayAs: selectedDate)
+        }
+    }
+    
+    var medianValue: Int {
+        let sortedCounts = dailyUsers.map { $0.activeUsers }.filter { $0 > 0 }.sorted()
+        let count = sortedCounts.count
+        if count == 0 {
+            return 0
+        } else if count % 2 == 0 {
+            return (sortedCounts[count / 2 - 1] + sortedCounts[count / 2]) / 2
+        } else {
+            return sortedCounts[count / 2]
+        }
+    }
+    
+    var body: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            HStack {
+                Image(systemName: "chart.line.uptrend.xyaxis")
+                    .foregroundColor(.red)
+                    .font(.title2)
+                Text("Usuários Únicos - Últimos 30 Dias")
+                    .font(.headline)
+                Spacer()
+                
+                if let selected = selectedDataPoint {
+                    VStack(alignment: .trailing, spacing: 2) {
+                        Text(formattedDate(selected.date))
+                            .font(.caption)
+                            .fontWeight(.semibold)
+                        Text("\(selected.activeUsers) usuários")
+                            .font(.caption2)
+                            .foregroundColor(.secondary)
+                    }
+                }
+            }
+            .padding(.horizontal)
+            
+            Chart {
+                ForEach(dailyUsers) { dataPoint in
+                    LineMark(
+                        x: .value("Data", dataPoint.dateValue ?? Date(), unit: .day),
+                        y: .value("Usuários", dataPoint.activeUsers)
+                    )
+                    .foregroundStyle(.red)
+                    .interpolationMethod(.catmullRom)
+                    
+                    AreaMark(
+                        x: .value("Data", dataPoint.dateValue ?? Date(), unit: .day),
+                        y: .value("Usuários", dataPoint.activeUsers)
+                    )
+                    .foregroundStyle(
+                        LinearGradient(
+                            colors: [.red.opacity(0.3), .red.opacity(0.0)],
+                            startPoint: .top,
+                            endPoint: .bottom
+                        )
+                    )
+                    .interpolationMethod(.catmullRom)
+                    
+                    if let selectedDate = selectedDate,
+                       let dateValue = dataPoint.dateValue,
+                       Calendar.current.isDate(dateValue, inSameDayAs: selectedDate) {
+                        PointMark(
+                            x: .value("Data", dateValue, unit: .day),
+                            y: .value("Usuários", dataPoint.activeUsers)
+                        )
+                        .foregroundStyle(.red)
+                        .symbolSize(100)
+                    }
+                }
+                
+                if let selectedDate = selectedDate {
+                    RuleMark(x: .value("Data", selectedDate, unit: .day))
+                        .foregroundStyle(.red.opacity(0.5))
+                        .lineStyle(StrokeStyle(lineWidth: 2, dash: [5, 3]))
+                }
+                
+                RuleMark(y: .value("Mediana", medianValue))
+                    .foregroundStyle(.orange.opacity(0.7))
+                    .lineStyle(StrokeStyle(lineWidth: 2, dash: [8, 4]))
+                    .annotation(position: .top, alignment: .trailing) {
+                        Text("Mediana: \(medianValue)")
+                            .font(.caption2)
+                            .fontWeight(.semibold)
+                            .foregroundColor(.orange)
+                            .padding(4)
+                            .background(Color.orange.opacity(0.1))
+                            .cornerRadius(4)
+                    }
+            }
+            .chartXSelection(value: $selectedDate)
+            .chartXAxis {
+                AxisMarks(values: .stride(by: .day, count: 5)) { value in
+                    AxisGridLine()
+                    AxisValueLabel(format: .dateTime.month().day(), centered: true)
+                }
+            }
+            .chartYAxis {
+                AxisMarks { value in
+                    AxisGridLine()
+                    AxisValueLabel()
+                }
+            }
+            .frame(height: 200)
+        }
+        .padding()
+        .background(platterColor)
+        .cornerRadius(12)
+        .padding(.horizontal)
+    }
+    
+    private func formattedDate(_ dateString: String) -> String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd"
+        guard let date = formatter.date(from: dateString) else {
+            return dateString
+        }
+        
+        let displayFormatter = DateFormatter()
+        displayFormatter.dateStyle = .medium
+        displayFormatter.timeStyle = .none
+        return displayFormatter.string(from: date)
+    }
+}
+
+// MARK: - Episode Mini Stat Card
+
+struct EpisodeMiniStatCard: View {
+    let title: String
+    let value: String
+    var subtitle: String? = nil
+    let icon: String
+    let color: Color
+
+    var body: some View {
+        HStack(spacing: 12) {
+            Image(systemName: icon)
+                .font(.system(size: 24))
+                .foregroundColor(color)
+                .frame(width: 36)
+
+            VStack(alignment: .leading, spacing: 2) {
+                Text(title)
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+                    .lineLimit(1)
+                Text(value)
+                    .font(.system(size: 22, weight: .bold))
+                if let subtitle {
+                    Text(subtitle)
+                        .font(.subheadline)
+                        .foregroundColor(.secondary)
+                }
+            }
+
+            Spacer()
+        }
+        .padding()
+        .background(platterColor)
+        .cornerRadius(12)
     }
 }
 
