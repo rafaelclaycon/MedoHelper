@@ -87,3 +87,85 @@ struct TimezoneStat: Codable, Identifiable, Equatable {
     let timezone: String
     let count: Int
 }
+
+// MARK: - Monthly Count (shared by device model and iOS version history)
+
+struct MonthlyCount: Codable, Identifiable, Equatable {
+    var id: String { month }
+    let month: String
+    let count: Int
+    let total: Int
+
+    var percentage: Double {
+        guard total > 0 else { return 0 }
+        return Double(count) / Double(total) * 100
+    }
+
+    var dateValue: Date? {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM"
+        return formatter.date(from: month)
+    }
+}
+
+typealias DeviceModelMonthlyCount = MonthlyCount
+typealias IOSVersionMonthlyCount = MonthlyCount
+
+// MARK: - Device Model History
+
+struct DeviceModelHistoryResponse: Codable, Equatable {
+    let modelName: String
+    let history: [MonthlyCount]
+
+    enum CodingKeys: String, CodingKey {
+        case modelName = "model_name"
+        case history
+    }
+}
+
+// MARK: - iOS Version History
+
+struct IOSVersionHistoryResponse: Codable, Equatable {
+    let majorVersion: String
+    let history: [MonthlyCount]
+
+    enum CodingKeys: String, CodingKey {
+        case majorVersion = "major_version"
+        case history
+    }
+}
+
+// MARK: - iOS Version Device Breakdown
+
+struct IOSVersionDeviceBreakdownResponse: Codable, Equatable {
+    let majorVersion: String
+    let devices: [IOSVersionDeviceHistory]
+
+    enum CodingKeys: String, CodingKey {
+        case majorVersion = "major_version"
+        case devices
+    }
+}
+
+struct IOSVersionDeviceHistory: Codable, Identifiable, Equatable {
+    var id: String { modelName }
+    let modelName: String
+    let history: [IOSVersionDeviceMonthlyCount]
+
+    enum CodingKeys: String, CodingKey {
+        case modelName = "model_name"
+        case history
+    }
+}
+
+struct IOSVersionDeviceMonthlyCount: Codable, Identifiable, Equatable {
+    var id: String { month }
+    let month: String
+    let count: Int
+
+    var dateValue: Date? {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM"
+        return formatter.date(from: month)
+    }
+}

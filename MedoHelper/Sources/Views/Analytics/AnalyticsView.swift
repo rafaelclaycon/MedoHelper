@@ -34,6 +34,7 @@ struct AnalyticsView: View {
     
     // Episode states
     @State private var episodeAnalytics: LoadingState<EpisodeAnalyticsResponse> = .loading
+    @State private var transcriptStatuses: LoadingState<[PodcastEpisode]> = .loading
     
     @State private var lastUpdated: Date?
     @State private var selectedTimeSpan: AnalyticsTimeSpan = .today
@@ -102,6 +103,7 @@ struct AnalyticsView: View {
                     VStack(spacing: 20) {
                         episodeHeaderSection
                         episodeAnalyticsSection
+                        transcriptStatusSection
                     }
                     .frame(maxWidth: .infinity)
                 }
@@ -199,7 +201,7 @@ struct AnalyticsView: View {
         case .loading:
             SectionLoadingView(title: "Dispositivos e Sistema", icon: "iphone", color: .blue)
         case .loaded(let analytics):
-            DeviceAnalyticsSection(analytics: analytics)
+            DeviceAnalyticsSection(analytics: analytics, repository: repository)
         case .error(let message):
             SectionErrorView(
                 title: "Dispositivos e Sistema",
@@ -417,7 +419,10 @@ struct AnalyticsView: View {
             
             Spacer()
             
-            Button(action: fetchEpisodeAnalytics) {
+            Button {
+                fetchEpisodeAnalytics()
+                fetchTranscriptStatuses()
+            } label: {
                 Image(systemName: "arrow.clockwise")
             }
             .buttonStyle(.bordered)
@@ -483,6 +488,52 @@ struct AnalyticsView: View {
         }
     }
     
+    @ViewBuilder
+    private var transcriptStatusSection: some View {
+        switch transcriptStatuses {
+        case .loading:
+            SectionLoadingView(title: "Status de Transcrições", icon: "text.document", color: .teal)
+        case .loaded(let episodes):
+            VStack(alignment: .leading, spacing: 12) {
+                HStack {
+                    Image(systemName: "text.document")
+                        .foregroundColor(.teal)
+                        .font(.title2)
+                    Text("Status de Transcrições")
+                        .font(.headline)
+                    
+                    Spacer()
+                    
+                    let transcribed = episodes.filter(\.isTranscribed).count
+                    Text("\(transcribed)/\(episodes.count)")
+                        .font(.caption)
+                        .fontWeight(.semibold)
+                        .foregroundColor(transcribed == episodes.count ? .green : .orange)
+                }
+                .padding(.horizontal)
+                
+                VStack(spacing: 6) {
+                    ForEach(episodes) { episode in
+                        TranscriptStatusRow(episode: episode)
+                    }
+                }
+            }
+            .padding()
+            .background(platterColor)
+            .cornerRadius(12)
+            .padding(.horizontal)
+        case .error(let message):
+            SectionErrorView(
+                title: "Status de Transcrições",
+                icon: "text.document",
+                color: .teal,
+                message: message
+            ) {
+                fetchTranscriptStatuses()
+            }
+        }
+    }
+    
     // MARK: - Fetch Methods
     
     private func fetchAllSections() {
@@ -494,6 +545,7 @@ struct AnalyticsView: View {
         fetchNavigationAnalytics()
         fetchRolloutData()
         fetchEpisodeAnalytics()
+        fetchTranscriptStatuses()
     }
     
     private func fetchActiveUsers() {
@@ -650,6 +702,22 @@ struct AnalyticsView: View {
             } catch {
                 await MainActor.run {
                     episodeAnalytics = .error(error.localizedDescription)
+                }
+            }
+        }
+    }
+    
+    private func fetchTranscriptStatuses() {
+        Task {
+            transcriptStatuses = .loading
+            do {
+                let statuses = try await repository.fetchTranscriptStatuses()
+                await MainActor.run {
+                    transcriptStatuses = .loaded(statuses)
+                }
+            } catch {
+                await MainActor.run {
+                    transcriptStatuses = .error(error.localizedDescription)
                 }
             }
         }
@@ -1128,6 +1196,20 @@ struct DailyUserCountChart: View {
         }
     }
     
+    var sundayDates: [Date] {
+        dailyUserCounts.compactMap { dataPoint -> Date? in
+            guard let date = dataPoint.dateValue else { return nil }
+            return Calendar.current.component(.weekday, from: date) == 1 ? date : nil
+        }
+    }
+    
+    var fridayDates: [Date] {
+        dailyUserCounts.compactMap { dataPoint -> Date? in
+            guard let date = dataPoint.dateValue else { return nil }
+            return Calendar.current.component(.weekday, from: date) == 6 ? date : nil
+        }
+    }
+    
     var medianValue: Int {
         let sortedCounts = dailyUserCounts.map { $0.count }.sorted()
         let count = sortedCounts.count
@@ -1219,17 +1301,37 @@ struct DailyUserCountChart: View {
                             .background(Color.orange.opacity(0.1))
                             .cornerRadius(4)
                     }
+                
+                ForEach(sundayDates, id: \.self) { sunday in
+                    RuleMark(x: .value("Domingo", sunday, unit: .day))
+                        .foregroundStyle(.purple.opacity(0.3))
+                        .lineStyle(StrokeStyle(lineWidth: 1, dash: [4, 3]))
+                        .annotation(position: .top, alignment: .center, spacing: 0) {
+                            Text("D")
+                                .font(.system(size: 8, weight: .semibold))
+                                .foregroundColor(.purple)
+                        }
+                }
+                
+                ForEach(fridayDates, id: \.self) { friday in
+                    RuleMark(x: .value("Sexta", friday, unit: .day))
+                        .foregroundStyle(.green.opacity(0.3))
+                        .lineStyle(StrokeStyle(lineWidth: 1, dash: [4, 3]))
+                        .annotation(position: .top, alignment: .center, spacing: 0) {
+                            Text("S")
+                                .font(.system(size: 8, weight: .semibold))
+                                .foregroundColor(.green)
+                        }
+                }
             }
             .chartXSelection(value: $selectedDate)
             .chartXAxis {
                 AxisMarks(values: .stride(by: .day, count: 5)) { value in
-                    AxisGridLine()
                     AxisValueLabel(format: .dateTime.month().day(), centered: true)
                 }
             }
             .chartYAxis {
                 AxisMarks { value in
-                    AxisGridLine()
                     AxisValueLabel()
                 }
             }
@@ -1430,13 +1532,70 @@ struct EpisodeMiniStatCard: View {
     }
 }
 
+// MARK: - Transcript Status Row
+
+struct TranscriptStatusRow: View {
+    let episode: PodcastEpisode
+
+    var body: some View {
+        HStack(spacing: 10) {
+            Image(systemName: episode.isTranscribed ? "checkmark.circle.fill" : "xmark.circle.fill")
+                .foregroundColor(episode.isTranscribed ? .green : .red)
+                .font(.system(size: 16))
+
+            VStack(alignment: .leading, spacing: 2) {
+                Text(episode.title)
+                    .font(.subheadline)
+                    .lineLimit(1)
+                if let pubDate = episode.pubDate {
+                    Text(pubDate, style: .date)
+                        .font(.caption2)
+                        .foregroundColor(.secondary)
+                }
+            }
+
+            Spacer()
+
+            Text(episode.id)
+                .font(.caption2)
+                .foregroundColor(.secondary)
+                .monospaced()
+        }
+        .padding(.horizontal)
+        .padding(.vertical, 4)
+    }
+}
+
 // MARK: - Device Analytics Section
+
+private let bogusIOSVersions: Set<String> = ["1", "19"]
+
+/// Maps an iOS major version to the device models for which it is the last supported version.
+private let lastSupportedIOSVersion: [String: Set<String>] = [
+    "15": ["iPhone 6s", "iPhone 6s Plus", "iPhone 7", "iPhone 7 Plus", "iPhone SE"],
+    "16": ["iPhone 8", "iPhone 8 Plus", "iPhone X"],
+    "18": ["iPhone XR", "iPhone XS", "iPhone XS Max"],
+    "26": ["iPhone 11", "iPhone 11 Pro", "iPhone 11 Pro Max", "iPhone SE (2nd generation)"],
+]
 
 struct DeviceAnalyticsSection: View {
     let analytics: DeviceAnalyticsResponse
-    
-    init(analytics: DeviceAnalyticsResponse) {
+    let repository: AnalyticsRepositoryProtocol
+    @State private var showAllDeviceModels = false
+    @State private var selectedModel: DeviceModelStat?
+    @State private var showCombinedChart = false
+    @State private var showModelSearch = false
+    @State private var selectedVersion: IOSVersionStat?
+    @State private var showCombinedVersionChart = false
+    @State private var showVersionSearch = false
+
+    private var filteredIOSVersions: [IOSVersionStat] {
+        analytics.topIOSVersions.filter { !bogusIOSVersions.contains($0.majorVersion) }
+    }
+
+    init(analytics: DeviceAnalyticsResponse, repository: AnalyticsRepositoryProtocol) {
         self.analytics = analytics
+        self.repository = repository
         print("🔍 [DeviceAnalyticsSection] Initialized")
         print("   - iOS Versions: \(analytics.topIOSVersions.count) items")
         print("   - Device Models: \(analytics.topDeviceModels.count) items")
@@ -1460,8 +1619,8 @@ struct DeviceAnalyticsSection: View {
             }
             
             // Top iOS Versions
-            if !analytics.topIOSVersions.isEmpty {
-                let totalIOSVersions = analytics.topIOSVersions.reduce(0) { $0 + $1.count }
+            if !filteredIOSVersions.isEmpty {
+                let totalIOSVersions = filteredIOSVersions.reduce(0) { $0 + $1.count }
                 VStack(alignment: .leading, spacing: 12) {
                     HStack {
                         Image(systemName: "app.badge")
@@ -1474,10 +1633,52 @@ struct DeviceAnalyticsSection: View {
                     .padding(.horizontal)
                     
                     VStack(spacing: 8) {
-                        ForEach(analytics.topIOSVersions) { version in
-                            IOSVersionRow(version: version, totalCount: totalIOSVersions)
+                        ForEach(filteredIOSVersions) { version in
+                            Button {
+                                selectedVersion = version
+                            } label: {
+                                IOSVersionRow(version: version, totalCount: totalIOSVersions)
+                            }
+                            .buttonStyle(.plain)
                         }
                     }
+                    
+                    let versionsPct = totalIOSVersions > 0
+                        ? 100.0
+                        : 0.0
+                    Text("As \(filteredIOSVersions.count) versões exibidas representam \(String(format: "%.1f", versionsPct))% do total.")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                        .padding(.horizontal)
+                    
+                    HStack(spacing: 12) {
+                        Button {
+                            showCombinedVersionChart = true
+                        } label: {
+                            HStack {
+                                Image(systemName: "chart.xyaxis.line")
+                                Text("Ver Todos Combinados")
+                            }
+                            .font(.subheadline)
+                            .frame(maxWidth: .infinity)
+                        }
+                        .buttonStyle(.bordered)
+                        .tint(.blue)
+                        
+                        Button {
+                            showVersionSearch = true
+                        } label: {
+                            HStack {
+                                Image(systemName: "magnifyingglass")
+                                Text("Buscar Versão")
+                            }
+                            .font(.subheadline)
+                            .frame(maxWidth: .infinity)
+                        }
+                        .buttonStyle(.bordered)
+                        .tint(.blue)
+                    }
+                    .padding(.top, 4)
                 }
                 .padding()
                 .background(platterColor)
@@ -1503,10 +1704,78 @@ struct DeviceAnalyticsSection: View {
                     .padding(.horizontal)
                     
                     VStack(spacing: 8) {
-                        ForEach(Array(analytics.topDeviceModels.prefix(5))) { model in
-                            DeviceModelRow(model: model, totalCount: totalDeviceModels)
+                        let visibleModels = showAllDeviceModels
+                            ? analytics.topDeviceModels
+                            : Array(analytics.topDeviceModels.prefix(5))
+                        ForEach(Array(visibleModels.enumerated()), id: \.element.id) { index, model in
+                            Button {
+                                selectedModel = model
+                            } label: {
+                                DeviceModelRow(model: model, rank: index + 1, totalCount: totalDeviceModels)
+                            }
+                            .buttonStyle(.plain)
                         }
                     }
+                    
+                    let visibleCount = showAllDeviceModels
+                        ? analytics.topDeviceModels.count
+                        : min(5, analytics.topDeviceModels.count)
+                    let visibleSum = analytics.topDeviceModels.prefix(visibleCount).reduce(0) { $0 + $1.count }
+                    let visiblePct = totalDeviceModels > 0
+                        ? Double(visibleSum) / Double(totalDeviceModels) * 100
+                        : 0
+                    
+                    Text("Os \(visibleCount) dispositivos exibidos representam \(String(format: "%.1f", visiblePct))% do total.")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                        .padding(.horizontal)
+                    
+                    if analytics.topDeviceModels.count > 5 {
+                        Button {
+                            withAnimation(.easeInOut(duration: 0.25)) {
+                                showAllDeviceModels.toggle()
+                            }
+                        } label: {
+                            HStack {
+                                Text(showAllDeviceModels ? "Mostrar menos" : "Mostrar mais")
+                                Image(systemName: showAllDeviceModels ? "chevron.up" : "chevron.down")
+                            }
+                            .font(.subheadline)
+                            .foregroundColor(.green)
+                            .frame(maxWidth: .infinity)
+                            .padding(.top, 4)
+                        }
+                        .buttonStyle(.plain)
+                    }
+                    
+                    HStack(spacing: 12) {
+                        Button {
+                            showCombinedChart = true
+                        } label: {
+                            HStack {
+                                Image(systemName: "chart.xyaxis.line")
+                                Text("Ver Todos Combinados")
+                            }
+                            .font(.subheadline)
+                            .frame(maxWidth: .infinity)
+                        }
+                        .buttonStyle(.bordered)
+                        .tint(.green)
+                        
+                        Button {
+                            showModelSearch = true
+                        } label: {
+                            HStack {
+                                Image(systemName: "magnifyingglass")
+                                Text("Buscar Modelo")
+                            }
+                            .font(.subheadline)
+                            .frame(maxWidth: .infinity)
+                        }
+                        .buttonStyle(.bordered)
+                        .tint(.green)
+                    }
+                    .padding(.top, 4)
                 }
                 .padding()
                 .background(platterColor)
@@ -1557,6 +1826,1401 @@ struct DeviceAnalyticsSection: View {
         .onAppear {
             print("🔍 [DeviceAnalyticsSection] Full section appeared")
         }
+        .sheet(item: $selectedModel) { model in
+            DeviceModelHistorySheet(
+                modelName: model.modelName,
+                repository: repository
+            )
+        }
+        .sheet(isPresented: $showCombinedChart) {
+            DeviceModelCombinedSheet(
+                models: analytics.topDeviceModels,
+                repository: repository
+            )
+        }
+        .sheet(isPresented: $showModelSearch) {
+            DeviceModelSearchSheet(repository: repository)
+        }
+        .sheet(item: $selectedVersion) { version in
+            IOSVersionHistorySheet(
+                majorVersion: version.majorVersion,
+                repository: repository
+            )
+        }
+        .sheet(isPresented: $showCombinedVersionChart) {
+            IOSVersionCombinedSheet(
+                versions: filteredIOSVersions,
+                repository: repository
+            )
+        }
+        .sheet(isPresented: $showVersionSearch) {
+            IOSVersionSearchSheet(repository: repository)
+        }
+    }
+}
+
+// MARK: - Device Model History Sheet
+
+struct DeviceModelHistorySheet: View {
+    let modelName: String
+    let repository: AnalyticsRepositoryProtocol
+    @State private var historyState: LoadingState<DeviceModelHistoryResponse> = .loading
+    @Environment(\.dismiss) private var dismiss
+
+    var body: some View {
+        VStack(spacing: 0) {
+            HStack {
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(modelName)
+                        .font(.title2)
+                        .fontWeight(.bold)
+                    Text("% do total de usuários ao longo do tempo")
+                        .font(.subheadline)
+                        .foregroundColor(.secondary)
+                }
+                Spacer()
+                Button { dismiss() } label: {
+                    Image(systemName: "xmark.circle.fill")
+                        .font(.title2)
+                        .foregroundColor(.secondary)
+                }
+                .buttonStyle(.plain)
+            }
+            .padding()
+
+            Divider()
+
+            switch historyState {
+            case .loading:
+                Spacer()
+                ProgressView()
+                    .scaleEffect(1.5)
+                Spacer()
+            case .loaded(let response):
+                if response.history.isEmpty {
+                    Spacer()
+                    VStack(spacing: 12) {
+                        Image(systemName: "chart.line.downtrend.xyaxis")
+                            .font(.largeTitle)
+                            .foregroundColor(.secondary)
+                        Text("Sem dados históricos para este dispositivo.")
+                            .foregroundColor(.secondary)
+                    }
+                    Spacer()
+                } else {
+                    DeviceModelHistoryChart(history: response.history)
+                        .padding()
+                }
+            case .error(let message):
+                Spacer()
+                VStack(spacing: 12) {
+                    Image(systemName: "exclamationmark.triangle")
+                        .font(.largeTitle)
+                        .foregroundColor(.orange)
+                    Text(message)
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                        .multilineTextAlignment(.center)
+                    Button("Tentar Novamente") {
+                        fetchHistory()
+                    }
+                    .buttonStyle(.bordered)
+                }
+                Spacer()
+            }
+        }
+        .frame(width: 900, height: 600)
+        .onAppear {
+            fetchHistory()
+        }
+    }
+
+    private func fetchHistory() {
+        Task {
+            historyState = .loading
+            do {
+                let response = try await repository.fetchDeviceModelHistory(modelName: modelName)
+                await MainActor.run {
+                    historyState = .loaded(response)
+                }
+            } catch {
+                await MainActor.run {
+                    historyState = .error(error.localizedDescription)
+                }
+            }
+        }
+    }
+}
+
+// MARK: - Device Model History Chart
+
+struct DeviceModelHistoryChart: View {
+    let history: [DeviceModelMonthlyCount]
+    @State private var selectedMonth: Date?
+    @State private var showTrendLine = false
+
+    var selectedDataPoint: DeviceModelMonthlyCount? {
+        guard let selectedMonth else { return nil }
+        return history.first { dataPoint in
+            guard let dateValue = dataPoint.dateValue else { return false }
+            return Calendar.current.isDate(dateValue, equalTo: selectedMonth, toGranularity: .month)
+        }
+    }
+
+    var medianCount: Int {
+        let sorted = history.map(\.count).filter { $0 > 0 }.sorted()
+        let n = sorted.count
+        if n == 0 {
+            return 0
+        } else if n % 2 == 0 {
+            return (sorted[n / 2 - 1] + sorted[n / 2]) / 2
+        } else {
+            return sorted[n / 2]
+        }
+    }
+
+    var medianAsPercentage: Double {
+        guard medianCount > 0 else { return 0 }
+        let nearestMonth = history.min(by: { abs($0.count - medianCount) < abs($1.count - medianCount) })
+        return nearestMonth?.percentage ?? 0
+    }
+
+    var trendLine: [(date: Date, value: Double)] {
+        let points: [(x: Double, y: Double, date: Date)] = history.compactMap { entry in
+            guard let date = entry.dateValue else { return nil }
+            return (x: date.timeIntervalSince1970, y: entry.percentage, date: date)
+        }
+        guard points.count >= 2 else { return [] }
+
+        let n = Double(points.count)
+        let sumX = points.reduce(0.0) { $0 + $1.x }
+        let sumY = points.reduce(0.0) { $0 + $1.y }
+        let sumXY = points.reduce(0.0) { $0 + $1.x * $1.y }
+        let sumX2 = points.reduce(0.0) { $0 + $1.x * $1.x }
+
+        let denominator = n * sumX2 - sumX * sumX
+        guard denominator != 0 else { return [] }
+
+        let slope = (n * sumXY - sumX * sumY) / denominator
+        let intercept = (sumY - slope * sumX) / n
+
+        return points.map { p in
+            (date: p.date, value: slope * p.x + intercept)
+        }
+    }
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            HStack {
+                Image(systemName: "chart.line.uptrend.xyaxis")
+                    .foregroundColor(.green)
+                    .font(.title2)
+                Text("% do Total de Usuários por Mês")
+                    .font(.headline)
+                Spacer()
+
+                if let selected = selectedDataPoint {
+                    VStack(alignment: .trailing, spacing: 2) {
+                        Text(formattedMonth(selected.month))
+                            .font(.caption)
+                            .fontWeight(.semibold)
+                        Text("\(String(format: "%.1f", selected.percentage))% (\(selected.count) de \(selected.total))")
+                            .font(.caption2)
+                            .foregroundColor(.secondary)
+                    }
+                }
+
+                Button {
+                    withAnimation(.easeInOut(duration: 0.2)) {
+                        showTrendLine.toggle()
+                    }
+                } label: {
+                    Image(systemName: showTrendLine ? "line.diagonal" : "line.diagonal")
+                        .foregroundColor(showTrendLine ? .blue : .secondary)
+                        .padding(6)
+                        .background(showTrendLine ? Color.blue.opacity(0.15) : Color.clear)
+                        .cornerRadius(6)
+                }
+                .buttonStyle(.plain)
+                .help("Linha de tendência")
+            }
+
+            Chart {
+                ForEach(history) { dataPoint in
+                    LineMark(
+                        x: .value("Mês", dataPoint.dateValue ?? Date(), unit: .month),
+                        y: .value("%", dataPoint.percentage)
+                    )
+                    .foregroundStyle(.green)
+                    .interpolationMethod(.catmullRom)
+
+                    AreaMark(
+                        x: .value("Mês", dataPoint.dateValue ?? Date(), unit: .month),
+                        y: .value("%", dataPoint.percentage)
+                    )
+                    .foregroundStyle(
+                        LinearGradient(
+                            colors: [.green.opacity(0.3), .green.opacity(0.0)],
+                            startPoint: .top,
+                            endPoint: .bottom
+                        )
+                    )
+                    .interpolationMethod(.catmullRom)
+
+                    if let selectedMonth,
+                       let dateValue = dataPoint.dateValue,
+                       Calendar.current.isDate(dateValue, equalTo: selectedMonth, toGranularity: .month) {
+                        PointMark(
+                            x: .value("Mês", dateValue, unit: .month),
+                            y: .value("%", dataPoint.percentage)
+                        )
+                        .foregroundStyle(.green)
+                        .symbolSize(100)
+                    }
+                }
+
+                if let selectedMonth {
+                    RuleMark(x: .value("Mês", selectedMonth, unit: .month))
+                        .foregroundStyle(.green.opacity(0.5))
+                        .lineStyle(StrokeStyle(lineWidth: 2, dash: [5, 3]))
+                }
+
+                if medianCount > 0 {
+                    RuleMark(y: .value("Mediana", medianAsPercentage))
+                        .foregroundStyle(.orange.opacity(0.7))
+                        .lineStyle(StrokeStyle(lineWidth: 2, dash: [8, 4]))
+                        .annotation(position: .top, alignment: .trailing) {
+                            Text("Mediana: \(medianCount) usuários")
+                                .font(.caption2)
+                                .fontWeight(.semibold)
+                                .foregroundColor(.orange)
+                                .padding(4)
+                                .background(Color.orange.opacity(0.1))
+                                .cornerRadius(4)
+                        }
+                }
+
+                if showTrendLine {
+                    let trend = trendLine
+                    ForEach(Array(trend.enumerated()), id: \.offset) { _, point in
+                        LineMark(
+                            x: .value("Mês", point.date, unit: .month),
+                            y: .value("Tendência", point.value)
+                        )
+                        .foregroundStyle(.blue.opacity(0.7))
+                        .lineStyle(StrokeStyle(lineWidth: 2, dash: [6, 3]))
+                    }
+                }
+            }
+            .chartXSelection(value: $selectedMonth)
+            .chartXAxis {
+                let strideCount = history.count > 18 ? 3 : (history.count > 10 ? 2 : 1)
+                AxisMarks(values: .stride(by: .month, count: strideCount)) { _ in
+                    AxisGridLine()
+                    AxisValueLabel(format: .dateTime.month(.abbreviated).year(.twoDigits), centered: true)
+                }
+            }
+            .chartYAxis {
+                AxisMarks { value in
+                    AxisGridLine()
+                    if let pct = value.as(Double.self) {
+                        AxisValueLabel {
+                            Text("\(String(format: "%.0f", pct))%")
+                        }
+                    }
+                }
+            }
+            .frame(height: 250)
+        }
+    }
+
+    private func formattedMonth(_ monthString: String) -> String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM"
+        guard let date = formatter.date(from: monthString) else { return monthString }
+        let displayFormatter = DateFormatter()
+        displayFormatter.dateFormat = "MMMM yyyy"
+        return displayFormatter.string(from: date)
+    }
+}
+
+// MARK: - Combined Device Model Data Point
+
+struct CombinedModelDataPoint: Identifiable {
+    var id: String { "\(modelName)-\(month)" }
+    let modelName: String
+    let month: String
+    let percentage: Double
+    var count: Int?
+
+    var dateValue: Date? {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM"
+        return formatter.date(from: month)
+    }
+}
+
+// MARK: - Device Model Combined Sheet
+
+struct DeviceModelCombinedSheet: View {
+    let models: [DeviceModelStat]
+    let repository: AnalyticsRepositoryProtocol
+    @State private var dataPoints: [CombinedModelDataPoint] = []
+    @State private var isLoading = true
+    @State private var errorMessage: String?
+    @Environment(\.dismiss) private var dismiss
+
+    private let colorPalette: [Color] = [
+        .blue, .orange, .green, .red, .purple,
+        .pink, .yellow, .teal, .indigo, .cyan
+    ]
+
+    var body: some View {
+        VStack(spacing: 0) {
+            HStack {
+                VStack(alignment: .leading, spacing: 4) {
+                    Text("Top \(models.count) Dispositivos - Evolução")
+                        .font(.title2)
+                        .fontWeight(.bold)
+                    Text("% do total de usuários ao longo do tempo")
+                        .font(.subheadline)
+                        .foregroundColor(.secondary)
+                }
+                Spacer()
+                Button { dismiss() } label: {
+                    Image(systemName: "xmark.circle.fill")
+                        .font(.title2)
+                        .foregroundColor(.secondary)
+                }
+                .buttonStyle(.plain)
+            }
+            .padding()
+
+            Divider()
+
+            if isLoading {
+                Spacer()
+                ProgressView()
+                    .scaleEffect(1.5)
+                Spacer()
+            } else if let errorMessage {
+                Spacer()
+                VStack(spacing: 12) {
+                    Image(systemName: "exclamationmark.triangle")
+                        .font(.largeTitle)
+                        .foregroundColor(.orange)
+                    Text(errorMessage)
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                        .multilineTextAlignment(.center)
+                    Button("Tentar Novamente") {
+                        fetchAll()
+                    }
+                    .buttonStyle(.bordered)
+                }
+                Spacer()
+            } else if dataPoints.isEmpty {
+                Spacer()
+                Text("Sem dados disponíveis.")
+                    .foregroundColor(.secondary)
+                Spacer()
+            } else {
+                let modelNames = models.map(\.modelName)
+                let colorRange = modelNames.indices.map { colorPalette[$0 % colorPalette.count] }
+
+                ScrollView {
+                    VStack(alignment: .leading, spacing: 16) {
+                        let months = Set(dataPoints.map(\.month)).sorted()
+                        let strideCount = months.count > 18 ? 3 : (months.count > 10 ? 2 : 1)
+
+                        Chart(dataPoints) { point in
+                            AreaMark(
+                                x: .value("Mês", point.dateValue ?? Date(), unit: .month),
+                                y: .value("%", point.percentage)
+                            )
+                            .foregroundStyle(by: .value("Modelo", point.modelName))
+                            .interpolationMethod(.catmullRom)
+                        }
+                        .chartForegroundStyleScale(domain: modelNames, range: colorRange)
+                        .chartLegend(.hidden)
+                        .chartXAxis {
+                            AxisMarks(values: .stride(by: .month, count: strideCount)) { _ in
+                                AxisGridLine()
+                                AxisValueLabel(format: .dateTime.month(.abbreviated).year(.twoDigits), centered: true)
+                            }
+                        }
+                        .chartYAxis {
+                            AxisMarks { value in
+                                AxisGridLine()
+                                if let pct = value.as(Double.self) {
+                                    AxisValueLabel {
+                                        Text("\(String(format: "%.0f", pct))%")
+                                    }
+                                }
+                            }
+                        }
+                        .frame(height: 350)
+                        .padding()
+
+                        VStack(alignment: .leading, spacing: 6) {
+                            ForEach(Array(modelNames.enumerated()), id: \.element) { index, name in
+                                HStack(spacing: 8) {
+                                    Circle()
+                                        .fill(colorPalette[index % colorPalette.count])
+                                        .frame(width: 10, height: 10)
+                                    Text(name)
+                                        .font(.caption)
+                                }
+                            }
+                        }
+                        .padding(.horizontal)
+                    }
+                    .padding(.bottom)
+                }
+            }
+        }
+        .frame(width: 900, height: 600)
+        .onAppear {
+            fetchAll()
+        }
+    }
+
+    private func fetchAll() {
+        Task {
+            isLoading = true
+            errorMessage = nil
+
+            do {
+                let results = try await withThrowingTaskGroup(of: DeviceModelHistoryResponse.self, returning: [DeviceModelHistoryResponse].self) { group in
+                    for model in models {
+                        group.addTask {
+                            try await repository.fetchDeviceModelHistory(modelName: model.modelName)
+                        }
+                    }
+                    var collected: [DeviceModelHistoryResponse] = []
+                    for try await result in group {
+                        collected.append(result)
+                    }
+                    return collected
+                }
+
+                let points = results.flatMap { response in
+                    response.history.map { entry in
+                        CombinedModelDataPoint(
+                            modelName: response.modelName,
+                            month: entry.month,
+                            percentage: entry.percentage
+                        )
+                    }
+                }
+
+                await MainActor.run {
+                    dataPoints = points.sorted { $0.month < $1.month }
+                    isLoading = false
+                }
+            } catch {
+                await MainActor.run {
+                    errorMessage = error.localizedDescription
+                    isLoading = false
+                }
+            }
+        }
+    }
+}
+
+// MARK: - Device Model Search Sheet
+
+struct DeviceModelSearchSheet: View {
+    let repository: AnalyticsRepositoryProtocol
+    @State private var allModelNames: LoadingState<[String]> = .loading
+    @State private var selectedModelName: String?
+    @State private var historyState: HistoryState = .idle
+    @Environment(\.dismiss) private var dismiss
+
+    enum HistoryState {
+        case idle
+        case loading
+        case loaded(DeviceModelHistoryResponse)
+        case error(String)
+    }
+
+    var body: some View {
+        VStack(spacing: 0) {
+            HStack {
+                VStack(alignment: .leading, spacing: 4) {
+                    Text("Buscar Modelo")
+                        .font(.title2)
+                        .fontWeight(.bold)
+                    Text("Selecione um modelo para ver seu histórico")
+                        .font(.subheadline)
+                        .foregroundColor(.secondary)
+                }
+                Spacer()
+                Button { dismiss() } label: {
+                    Image(systemName: "xmark.circle.fill")
+                        .font(.title2)
+                        .foregroundColor(.secondary)
+                }
+                .buttonStyle(.plain)
+            }
+            .padding()
+
+            switch allModelNames {
+            case .loading:
+                HStack {
+                    ProgressView()
+                        .controlSize(.small)
+                    Text("Carregando modelos...")
+                        .font(.subheadline)
+                        .foregroundColor(.secondary)
+                }
+                .padding(.horizontal)
+                .padding(.bottom)
+            case .loaded(let names):
+                let grouped = Self.groupDeviceModels(names)
+
+                HStack {
+                    Picker("Modelo", selection: $selectedModelName) {
+                        Text("Selecione um modelo...")
+                            .tag(nil as String?)
+
+                        ForEach(grouped, id: \.label) { group in
+                            if !group.models.isEmpty {
+                                Section(group.label) {
+                                    ForEach(group.models, id: \.self) { name in
+                                        Text(name).tag(name as String?)
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    .labelsHidden()
+                    .onChange(of: selectedModelName) { _, newValue in
+                        if let name = newValue {
+                            fetchHistory(for: name)
+                        }
+                    }
+                }
+                .padding(.horizontal)
+                .padding(.bottom)
+            case .error(let message):
+                HStack {
+                    Image(systemName: "exclamationmark.triangle")
+                        .foregroundColor(.orange)
+                    Text(message)
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                    Button("Tentar Novamente") {
+                        loadModelNames()
+                    }
+                    .buttonStyle(.bordered)
+                    .controlSize(.small)
+                }
+                .padding(.horizontal)
+                .padding(.bottom)
+            }
+
+            Divider()
+
+            Group {
+                switch historyState {
+                case .idle:
+                    VStack {
+                        Spacer()
+                        VStack(spacing: 12) {
+                            Image(systemName: "iphone")
+                                .font(.largeTitle)
+                                .foregroundColor(.secondary)
+                            Text("Selecione um modelo acima para ver o histórico.")
+                                .foregroundColor(.secondary)
+                        }
+                        Spacer()
+                    }
+                case .loading:
+                    VStack {
+                        Spacer()
+                        ProgressView()
+                            .scaleEffect(1.5)
+                        Spacer()
+                    }
+                case .loaded(let response):
+                    if response.history.isEmpty {
+                        VStack {
+                            Spacer()
+                            VStack(spacing: 12) {
+                                Image(systemName: "chart.line.downtrend.xyaxis")
+                                    .font(.largeTitle)
+                                    .foregroundColor(.secondary)
+                                Text("Sem dados históricos para este modelo.")
+                                    .foregroundColor(.secondary)
+                            }
+                            Spacer()
+                        }
+                    } else {
+                        VStack(alignment: .leading, spacing: 8) {
+                            Text(response.modelName)
+                                .font(.headline)
+                                .padding(.horizontal)
+                                .padding(.top)
+                            DeviceModelHistoryChart(history: response.history)
+                                .padding()
+                        }
+                    }
+                case .error(let message):
+                    VStack {
+                        Spacer()
+                        VStack(spacing: 12) {
+                            Image(systemName: "exclamationmark.triangle")
+                                .font(.largeTitle)
+                                .foregroundColor(.orange)
+                            Text(message)
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                                .multilineTextAlignment(.center)
+                            Button("Tentar Novamente") {
+                                if let name = selectedModelName {
+                                    fetchHistory(for: name)
+                                }
+                            }
+                            .buttonStyle(.bordered)
+                        }
+                        Spacer()
+                    }
+                }
+            }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+        }
+        .frame(width: 900, height: 600)
+        .onAppear {
+            loadModelNames()
+        }
+    }
+
+    private func loadModelNames() {
+        Task {
+            allModelNames = .loading
+            do {
+                let names = try await repository.fetchAllDeviceModelNames()
+                await MainActor.run {
+                    allModelNames = .loaded(names)
+                }
+            } catch {
+                await MainActor.run {
+                    allModelNames = .error(error.localizedDescription)
+                }
+            }
+        }
+    }
+
+    private func fetchHistory(for modelName: String) {
+        Task {
+            historyState = .loading
+            do {
+                let response = try await repository.fetchDeviceModelHistory(modelName: modelName)
+                await MainActor.run {
+                    historyState = .loaded(response)
+                }
+            } catch {
+                await MainActor.run {
+                    historyState = .error(error.localizedDescription)
+                }
+            }
+        }
+    }
+
+    // MARK: - Device Grouping
+
+    struct DeviceGroup {
+        let label: String
+        let models: [String]
+    }
+
+    private static let yearDevices: [(year: Int, devices: [String])] = [
+        (2014, ["iPad Air 2"]),
+        (2015, ["iPhone 6s", "iPhone 6s Plus", "iPad mini 4", "iPad Pro (12.9-inch) (1st generation)"]),
+        (2016, ["iPhone 7", "iPhone 7 Plus", "iPhone SE", "iPad Pro (9.7-inch)"]),
+        (2017, ["iPhone 8", "iPhone 8 Plus", "iPhone X", "iPad (5th generation)", "iPad Pro (10.5-inch)", "iPad Pro (12.9-inch) (2nd generation)"]),
+        (2018, ["iPhone XR", "iPhone XS", "iPhone XS Max", "iPad (6th generation)", "iPad Pro (11-inch) (1st generation)", "iPad Pro (12.9-inch) (3rd generation)"]),
+        (2019, ["iPhone 11", "iPhone 11 Pro", "iPhone 11 Pro Max", "iPod touch (7th generation)", "iPad mini (5th generation)", "iPad (7th generation)", "iPad Air (3rd generation)"]),
+        (2020, ["iPhone 12", "iPhone 12 mini", "iPhone 12 Pro", "iPhone 12 Pro Max", "iPhone SE (2nd generation)", "iPad (8th generation)", "iPad Air (4th generation)", "iPad Pro (11-inch) (2nd generation)", "iPad Pro (12.9-inch) (4th generation)"]),
+        (2021, ["iPhone 13", "iPhone 13 mini", "iPhone 13 Pro", "iPhone 13 Pro Max", "iPad mini (6th generation)", "iPad (9th generation)", "iPad Air (5th generation)", "iPad Pro (11-inch) (3rd generation)", "iPad Pro (12.9-inch) (5th generation)"]),
+        (2022, ["iPhone 14", "iPhone 14 Plus", "iPhone 14 Pro", "iPhone 14 Pro Max", "iPhone SE (3rd generation)", "iPad (10th generation)", "iPad Pro (12.9-inch) (6th generation)", "iPad Pro (11-inch) (4th generation)"]),
+        (2023, ["iPhone 15", "iPhone 15 Plus", "iPhone 15 Pro", "iPhone 15 Pro Max"]),
+        (2024, ["iPhone 16", "iPhone 16 Plus", "iPhone 16 Pro", "iPhone 16 Pro Max", "iPad mini (A17 Pro)", "iPad Air 11-inch (M2)", "iPad Air 13-inch (M2)", "iPad Pro 11-inch (M4)", "iPad Pro 13-inch (M4)"]),
+        (2025, ["iPhone 16e", "iPhone 17", "iPhone 17 Pro", "iPhone 17 Pro Max", "iPhone Air", "iPad (A16)", "iPad Air 11-inch (M3)", "iPad Air 13-inch (M3)"]),
+        (2026, ["iPhone 17e"]),
+    ]
+
+    static func groupDeviceModels(_ names: [String]) -> [DeviceGroup] {
+        let filtered = names.filter { !$0.hasPrefix("Simulator") }
+
+        let otherPrefixes = ["Apple TV", "Apple Vision", "Mac"]
+        let rawPattern = /^[A-Za-z]+\d+,\d+$/
+
+        let isOther: (String) -> Bool = { name in otherPrefixes.contains { name.hasPrefix($0) } }
+        let isRaw: (String) -> Bool = { name in name.wholeMatch(of: rawPattern) != nil }
+
+        let assignedToYear = Set(yearDevices.flatMap(\.devices))
+
+        var groups: [DeviceGroup] = []
+
+        for (year, devices) in yearDevices {
+            let matching = filtered.filter { devices.contains($0) }
+            let sorted = matching.sorted { a, b in
+                let aIsIPhone = a.hasPrefix("iPhone")
+                let bIsIPhone = b.hasPrefix("iPhone")
+                if aIsIPhone != bIsIPhone { return aIsIPhone }
+                return a < b
+            }
+            groups.append(DeviceGroup(label: "\(year)", models: sorted))
+        }
+
+        let ungrouped = filtered.filter { name in
+            !isOther(name) && !isRaw(name) && !assignedToYear.contains(name)
+        }
+        if !ungrouped.isEmpty {
+            groups.insert(DeviceGroup(label: "Sem Ano", models: ungrouped), at: 0)
+        }
+
+        groups.append(DeviceGroup(label: "Outros", models: filtered.filter { isOther($0) }))
+        groups.append(DeviceGroup(label: "Raw", models: filtered.filter { isRaw($0) }))
+
+        return groups
+    }
+}
+
+// MARK: - iOS Version History Sheet
+
+struct IOSVersionHistorySheet: View {
+    let majorVersion: String
+    let repository: AnalyticsRepositoryProtocol
+    @State private var historyState: LoadingState<IOSVersionHistoryResponse> = .loading
+    @State private var breakdownState: LoadingState<IOSVersionDeviceBreakdownResponse> = .loading
+    @State private var selectedTab = 0
+    @State private var hoveredDate: Date?
+    @Environment(\.dismiss) private var dismiss
+
+    private let colorPalette: [Color] = [
+        .blue, .orange, .green, .red, .purple,
+        .pink, .yellow, .teal, .indigo, .cyan
+    ]
+
+    var body: some View {
+        VStack(spacing: 0) {
+            HStack {
+                VStack(alignment: .leading, spacing: 4) {
+                    Text("iOS \(majorVersion)")
+                        .font(.title2)
+                        .fontWeight(.bold)
+                    Text("% do total de usuários ao longo do tempo")
+                        .font(.subheadline)
+                        .foregroundColor(.secondary)
+                }
+                Spacer()
+                Button { dismiss() } label: {
+                    Image(systemName: "xmark.circle.fill")
+                        .font(.title2)
+                        .foregroundColor(.secondary)
+                }
+                .buttonStyle(.plain)
+            }
+            .padding()
+
+            Picker("", selection: $selectedTab) {
+                Text("Tendência").tag(0)
+                Text("Dispositivos").tag(1)
+            }
+            .pickerStyle(.segmented)
+            .padding(.horizontal)
+            .padding(.bottom, 8)
+
+            Divider()
+
+            if selectedTab == 0 {
+                switch historyState {
+                case .loading:
+                    Spacer()
+                    ProgressView().scaleEffect(1.5)
+                    Spacer()
+                case .loaded(let response):
+                    if response.history.isEmpty {
+                        Spacer()
+                        emptyView("Sem dados históricos para esta versão.")
+                        Spacer()
+                    } else {
+                        DeviceModelHistoryChart(history: response.history)
+                            .padding()
+                    }
+                case .error(let message):
+                    Spacer()
+                    errorView(message) { fetchHistory() }
+                    Spacer()
+                }
+            } else {
+                switch breakdownState {
+                case .loading:
+                    Spacer()
+                    ProgressView().scaleEffect(1.5)
+                    Spacer()
+                case .loaded(let response):
+                    if response.devices.isEmpty {
+                        Spacer()
+                        emptyView("Sem dados de dispositivos para esta versão.")
+                        Spacer()
+                    } else {
+                        deviceBreakdownChart(response: response)
+                    }
+                case .error(let message):
+                    Spacer()
+                    errorView(message) { fetchBreakdown() }
+                    Spacer()
+                }
+            }
+        }
+        .frame(width: 900, height: 600)
+        .onAppear {
+            fetchHistory()
+            fetchBreakdown()
+        }
+    }
+
+    @ViewBuilder
+    private func deviceBreakdownChart(response: IOSVersionDeviceBreakdownResponse) -> some View {
+        let topDevices = Array(response.devices.prefix(10))
+        let deviceNames = topDevices.map(\.modelName)
+        let colorRange = deviceNames.indices.map { colorPalette[$0 % colorPalette.count] }
+
+        let dataPoints: [CombinedModelDataPoint] = topDevices.flatMap { device in
+            let totalPerMonth: [String: Int] = {
+                var totals: [String: Int] = [:]
+                for d in topDevices {
+                    for entry in d.history {
+                        totals[entry.month, default: 0] += entry.count
+                    }
+                }
+                return totals
+            }()
+            return device.history.map { entry in
+                let total = totalPerMonth[entry.month] ?? 1
+                let pct = Double(entry.count) / Double(total) * 100
+                return CombinedModelDataPoint(
+                    modelName: device.modelName,
+                    month: entry.month,
+                    percentage: pct,
+                    count: entry.count
+                )
+            }
+        }
+        .sorted { $0.month < $1.month }
+
+        let months = Set(dataPoints.map(\.month)).sorted()
+        let strideCount = months.count > 18 ? 3 : (months.count > 10 ? 2 : 1)
+
+        ScrollView {
+            VStack(alignment: .leading, spacing: 16) {
+                Chart(dataPoints) { point in
+                    AreaMark(
+                        x: .value("Mês", point.dateValue ?? Date(), unit: .month),
+                        y: .value("%", point.percentage)
+                    )
+                    .foregroundStyle(by: .value("Modelo", point.modelName))
+                    .interpolationMethod(.catmullRom)
+                }
+                .chartForegroundStyleScale(domain: deviceNames, range: colorRange)
+                .chartLegend(.hidden)
+                .chartXSelection(value: $hoveredDate)
+                .chartXAxis {
+                    AxisMarks(values: .stride(by: .month, count: strideCount)) { _ in
+                        AxisGridLine()
+                        AxisValueLabel(format: .dateTime.month(.abbreviated).year(.twoDigits), centered: true)
+                    }
+                }
+                .chartYAxis {
+                    AxisMarks { value in
+                        AxisGridLine()
+                        if let pct = value.as(Double.self) {
+                            AxisValueLabel {
+                                Text("\(String(format: "%.0f", pct))%")
+                            }
+                        }
+                    }
+                }
+                .frame(height: 350)
+                .padding()
+
+                let endOfLifeDevices = lastSupportedIOSVersion[majorVersion] ?? []
+
+                if let hoveredDate {
+                    let hoveredMonth: String = {
+                        let fmt = DateFormatter()
+                        fmt.dateFormat = "yyyy-MM"
+                        return fmt.string(from: hoveredDate)
+                    }()
+                    let hoveredPoints = dataPoints
+                        .filter { $0.month == hoveredMonth }
+                        .sorted { $0.percentage > $1.percentage }
+
+                    if !hoveredPoints.isEmpty {
+                        VStack(alignment: .leading, spacing: 6) {
+                            Text(formattedMonth(hoveredMonth))
+                                .font(.caption)
+                                .fontWeight(.semibold)
+
+                            ForEach(hoveredPoints, id: \.modelName) { point in
+                                HStack(spacing: 8) {
+                                    Circle()
+                                        .fill(colorForDevice(point.modelName, in: deviceNames))
+                                        .frame(width: 10, height: 10)
+                                    Text(point.modelName)
+                                        .font(.caption)
+                                    if endOfLifeDevices.contains(point.modelName) {
+                                        Text("Última versão")
+                                            .font(.system(size: 9, weight: .semibold))
+                                            .foregroundColor(.white)
+                                            .padding(.horizontal, 6)
+                                            .padding(.vertical, 2)
+                                            .background(Capsule().fill(.red))
+                                    }
+                                    Spacer()
+                                    if let count = point.count {
+                                        Text("\(count)")
+                                            .font(.caption)
+                                            .foregroundColor(.secondary)
+                                    }
+                                    Text(String(format: "%.1f%%", point.percentage))
+                                        .font(.caption)
+                                        .foregroundColor(.secondary)
+                                }
+                            }
+                        }
+                        .padding(.horizontal)
+                        .padding(.vertical, 8)
+                        .background(RoundedRectangle(cornerRadius: 8).fill(Color(nsColor: .controlBackgroundColor)))
+                        .padding(.horizontal)
+                    }
+                }
+
+                VStack(alignment: .leading, spacing: 6) {
+                    ForEach(Array(deviceNames.enumerated()), id: \.element) { index, name in
+                        HStack(spacing: 8) {
+                            Circle()
+                                .fill(colorPalette[index % colorPalette.count])
+                                .frame(width: 10, height: 10)
+                            Text(name)
+                                .font(.caption)
+                            if endOfLifeDevices.contains(name) {
+                                Text("Última versão")
+                                    .font(.system(size: 9, weight: .semibold))
+                                    .foregroundColor(.white)
+                                    .padding(.horizontal, 6)
+                                    .padding(.vertical, 2)
+                                    .background(Capsule().fill(.red))
+                            }
+                        }
+                    }
+                }
+                .padding(.horizontal)
+            }
+            .padding(.bottom)
+        }
+    }
+
+    @ViewBuilder
+    private func emptyView(_ text: String) -> some View {
+        VStack(spacing: 12) {
+            Image(systemName: "chart.line.downtrend.xyaxis")
+                .font(.largeTitle)
+                .foregroundColor(.secondary)
+            Text(text)
+                .foregroundColor(.secondary)
+        }
+    }
+
+    @ViewBuilder
+    private func errorView(_ message: String, retry: @escaping () -> Void) -> some View {
+        VStack(spacing: 12) {
+            Image(systemName: "exclamationmark.triangle")
+                .font(.largeTitle)
+                .foregroundColor(.orange)
+            Text(message)
+                .font(.caption)
+                .foregroundColor(.secondary)
+                .multilineTextAlignment(.center)
+            Button("Tentar Novamente", action: retry)
+                .buttonStyle(.bordered)
+        }
+    }
+
+    private func fetchHistory() {
+        Task {
+            historyState = .loading
+            do {
+                let response = try await repository.fetchIOSVersionHistory(majorVersion: majorVersion)
+                await MainActor.run { historyState = .loaded(response) }
+            } catch {
+                await MainActor.run { historyState = .error(error.localizedDescription) }
+            }
+        }
+    }
+
+    private func fetchBreakdown() {
+        Task {
+            breakdownState = .loading
+            do {
+                let response = try await repository.fetchIOSVersionDeviceBreakdown(majorVersion: majorVersion)
+                await MainActor.run { breakdownState = .loaded(response) }
+            } catch {
+                await MainActor.run { breakdownState = .error(error.localizedDescription) }
+            }
+        }
+    }
+
+    private func formattedMonth(_ monthString: String) -> String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM"
+        guard let date = formatter.date(from: monthString) else { return monthString }
+        let displayFormatter = DateFormatter()
+        displayFormatter.dateFormat = "MMMM yyyy"
+        return displayFormatter.string(from: date)
+    }
+
+    private func colorForDevice(_ name: String, in deviceNames: [String]) -> Color {
+        guard let idx = deviceNames.firstIndex(of: name) else { return .gray }
+        return colorPalette[idx % colorPalette.count]
+    }
+}
+
+// MARK: - iOS Version Combined Sheet
+
+struct IOSVersionCombinedSheet: View {
+    let versions: [IOSVersionStat]
+    let repository: AnalyticsRepositoryProtocol
+    @State private var dataPoints: [CombinedModelDataPoint] = []
+    @State private var isLoading = true
+    @State private var errorMessage: String?
+    @Environment(\.dismiss) private var dismiss
+
+    private let colorPalette: [Color] = [
+        .blue, .orange, .green, .red, .purple,
+        .pink, .yellow, .teal, .indigo, .cyan
+    ]
+
+    var body: some View {
+        VStack(spacing: 0) {
+            HStack {
+                VStack(alignment: .leading, spacing: 4) {
+                    Text("Todas as Versões iOS - Evolução")
+                        .font(.title2)
+                        .fontWeight(.bold)
+                    Text("% do total de usuários ao longo do tempo")
+                        .font(.subheadline)
+                        .foregroundColor(.secondary)
+                }
+                Spacer()
+                Button { dismiss() } label: {
+                    Image(systemName: "xmark.circle.fill")
+                        .font(.title2)
+                        .foregroundColor(.secondary)
+                }
+                .buttonStyle(.plain)
+            }
+            .padding()
+
+            Divider()
+
+            if isLoading {
+                Spacer()
+                ProgressView().scaleEffect(1.5)
+                Spacer()
+            } else if let errorMessage {
+                Spacer()
+                VStack(spacing: 12) {
+                    Image(systemName: "exclamationmark.triangle")
+                        .font(.largeTitle)
+                        .foregroundColor(.orange)
+                    Text(errorMessage)
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                    Button("Tentar Novamente") { fetchAll() }
+                        .buttonStyle(.bordered)
+                }
+                Spacer()
+            } else if dataPoints.isEmpty {
+                Spacer()
+                Text("Sem dados disponíveis.")
+                    .foregroundColor(.secondary)
+                Spacer()
+            } else {
+                let versionNames = versions.map { "iOS \($0.majorVersion)" }
+                let colorRange = versionNames.indices.map { colorPalette[$0 % colorPalette.count] }
+
+                ScrollView {
+                    VStack(alignment: .leading, spacing: 16) {
+                        let months = Set(dataPoints.map(\.month)).sorted()
+                        let strideCount = months.count > 18 ? 3 : (months.count > 10 ? 2 : 1)
+
+                        Chart(dataPoints) { point in
+                            AreaMark(
+                                x: .value("Mês", point.dateValue ?? Date(), unit: .month),
+                                y: .value("%", point.percentage)
+                            )
+                            .foregroundStyle(by: .value("Versão", point.modelName))
+                            .interpolationMethod(.catmullRom)
+                        }
+                        .chartForegroundStyleScale(domain: versionNames, range: colorRange)
+                        .chartLegend(.hidden)
+                        .chartXAxis {
+                            AxisMarks(values: .stride(by: .month, count: strideCount)) { _ in
+                                AxisGridLine()
+                                AxisValueLabel(format: .dateTime.month(.abbreviated).year(.twoDigits), centered: true)
+                            }
+                        }
+                        .chartYAxis {
+                            AxisMarks { value in
+                                AxisGridLine()
+                                if let pct = value.as(Double.self) {
+                                    AxisValueLabel {
+                                        Text("\(String(format: "%.0f", pct))%")
+                                    }
+                                }
+                            }
+                        }
+                        .frame(height: 350)
+                        .padding()
+
+                        VStack(alignment: .leading, spacing: 6) {
+                            ForEach(Array(versionNames.enumerated()), id: \.element) { index, name in
+                                HStack(spacing: 8) {
+                                    Circle()
+                                        .fill(colorPalette[index % colorPalette.count])
+                                        .frame(width: 10, height: 10)
+                                    Text(name)
+                                        .font(.caption)
+                                }
+                            }
+                        }
+                        .padding(.horizontal)
+                    }
+                    .padding(.bottom)
+                }
+            }
+        }
+        .frame(width: 900, height: 600)
+        .onAppear { fetchAll() }
+    }
+
+    private func fetchAll() {
+        Task {
+            isLoading = true
+            errorMessage = nil
+
+            do {
+                let results = try await withThrowingTaskGroup(of: IOSVersionHistoryResponse.self, returning: [IOSVersionHistoryResponse].self) { group in
+                    for version in versions {
+                        group.addTask {
+                            try await repository.fetchIOSVersionHistory(majorVersion: version.majorVersion)
+                        }
+                    }
+                    var collected: [IOSVersionHistoryResponse] = []
+                    for try await result in group {
+                        collected.append(result)
+                    }
+                    return collected
+                }
+
+                let points = results.flatMap { response in
+                    response.history.map { entry in
+                        CombinedModelDataPoint(
+                            modelName: "iOS \(response.majorVersion)",
+                            month: entry.month,
+                            percentage: entry.percentage
+                        )
+                    }
+                }
+
+                await MainActor.run {
+                    dataPoints = points.sorted { $0.month < $1.month }
+                    isLoading = false
+                }
+            } catch {
+                await MainActor.run {
+                    errorMessage = error.localizedDescription
+                    isLoading = false
+                }
+            }
+        }
+    }
+}
+
+// MARK: - iOS Version Search Sheet
+
+struct IOSVersionSearchSheet: View {
+    let repository: AnalyticsRepositoryProtocol
+    @State private var allVersions: LoadingState<[String]> = .loading
+    @State private var selectedVersion: String?
+    @State private var historyState: LoadingState<IOSVersionHistoryResponse> = .loading
+    @Environment(\.dismiss) private var dismiss
+
+    var body: some View {
+        VStack(spacing: 0) {
+            HStack {
+                VStack(alignment: .leading, spacing: 4) {
+                    Text("Buscar Versão iOS")
+                        .font(.title2)
+                        .fontWeight(.bold)
+                    Text("Selecione uma versão para ver seu histórico")
+                        .font(.subheadline)
+                        .foregroundColor(.secondary)
+                }
+                Spacer()
+                Button { dismiss() } label: {
+                    Image(systemName: "xmark.circle.fill")
+                        .font(.title2)
+                        .foregroundColor(.secondary)
+                }
+                .buttonStyle(.plain)
+            }
+            .padding()
+
+            switch allVersions {
+            case .loading:
+                HStack {
+                    ProgressView().controlSize(.small)
+                    Text("Carregando versões...")
+                        .font(.subheadline)
+                        .foregroundColor(.secondary)
+                }
+                .padding(.horizontal)
+                .padding(.bottom)
+            case .loaded(let versions):
+                HStack {
+                    Picker("Versão", selection: $selectedVersion) {
+                        Text("Selecione uma versão...")
+                            .tag(nil as String?)
+                        ForEach(versions, id: \.self) { version in
+                            Text("iOS \(version)").tag(version as String?)
+                        }
+                    }
+                    .labelsHidden()
+                    .onChange(of: selectedVersion) { _, newValue in
+                        if let version = newValue {
+                            fetchHistory(for: version)
+                        }
+                    }
+                }
+                .padding(.horizontal)
+                .padding(.bottom)
+            case .error(let message):
+                HStack {
+                    Image(systemName: "exclamationmark.triangle")
+                        .foregroundColor(.orange)
+                    Text(message)
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                    Button("Tentar Novamente") { loadVersions() }
+                        .buttonStyle(.bordered)
+                        .controlSize(.small)
+                }
+                .padding(.horizontal)
+                .padding(.bottom)
+            }
+
+            Divider()
+
+            Group {
+                switch historyState {
+                case .loading:
+                    if selectedVersion == nil {
+                        VStack {
+                            Spacer()
+                            VStack(spacing: 12) {
+                                Image(systemName: "app.badge")
+                                    .font(.largeTitle)
+                                    .foregroundColor(.secondary)
+                                Text("Selecione uma versão acima para ver o histórico.")
+                                    .foregroundColor(.secondary)
+                            }
+                            Spacer()
+                        }
+                    } else {
+                        VStack {
+                            Spacer()
+                            ProgressView().scaleEffect(1.5)
+                            Spacer()
+                        }
+                    }
+                case .loaded(let response):
+                    if response.history.isEmpty {
+                        VStack {
+                            Spacer()
+                            VStack(spacing: 12) {
+                                Image(systemName: "chart.line.downtrend.xyaxis")
+                                    .font(.largeTitle)
+                                    .foregroundColor(.secondary)
+                                Text("Sem dados históricos para esta versão.")
+                                    .foregroundColor(.secondary)
+                            }
+                            Spacer()
+                        }
+                    } else {
+                        VStack(alignment: .leading, spacing: 8) {
+                            Text("iOS \(response.majorVersion)")
+                                .font(.headline)
+                                .padding(.horizontal)
+                                .padding(.top)
+                            DeviceModelHistoryChart(history: response.history)
+                                .padding()
+                        }
+                    }
+                case .error(let message):
+                    VStack {
+                        Spacer()
+                        VStack(spacing: 12) {
+                            Image(systemName: "exclamationmark.triangle")
+                                .font(.largeTitle)
+                                .foregroundColor(.orange)
+                            Text(message)
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                                .multilineTextAlignment(.center)
+                            Button("Tentar Novamente") {
+                                if let v = selectedVersion { fetchHistory(for: v) }
+                            }
+                            .buttonStyle(.bordered)
+                        }
+                        Spacer()
+                    }
+                }
+            }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+        }
+        .frame(width: 900, height: 600)
+        .onAppear { loadVersions() }
+    }
+
+    private func loadVersions() {
+        Task {
+            allVersions = .loading
+            do {
+                let versions = try await repository.fetchAllIOSVersions()
+                    .filter { !bogusIOSVersions.contains($0) }
+                await MainActor.run { allVersions = .loaded(versions) }
+            } catch {
+                await MainActor.run { allVersions = .error(error.localizedDescription) }
+            }
+        }
+    }
+
+    private func fetchHistory(for majorVersion: String) {
+        Task {
+            historyState = .loading
+            do {
+                let response = try await repository.fetchIOSVersionHistory(majorVersion: majorVersion)
+                await MainActor.run { historyState = .loaded(response) }
+            } catch {
+                await MainActor.run { historyState = .error(error.localizedDescription) }
+            }
+        }
     }
 }
 
@@ -1605,6 +3269,7 @@ struct IOSVersionRow: View {
 
 struct DeviceModelRow: View {
     let model: DeviceModelStat
+    let rank: Int
     let totalCount: Int
     
     var percentage: Double {
@@ -1614,6 +3279,12 @@ struct DeviceModelRow: View {
     
     var body: some View {
         HStack {
+            Text("\(rank)")
+                .font(.caption)
+                .fontWeight(.semibold)
+                .foregroundColor(.secondary)
+                .frame(width: 24, alignment: .center)
+            
             Image(systemName: "iphone")
                 .foregroundColor(.green)
                 .font(.title3)

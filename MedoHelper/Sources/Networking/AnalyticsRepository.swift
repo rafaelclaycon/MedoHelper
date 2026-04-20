@@ -12,6 +12,11 @@ protocol AnalyticsRepositoryProtocol {
     func fetchDailyUserCountsLast30Days() async throws -> [DailyUserCount]
     func fetchTopSharedSounds(date: String) async throws -> [SharedSoundRank]
     func fetchDeviceAnalytics() async throws -> DeviceAnalyticsResponse
+    func fetchDeviceModelHistory(modelName: String) async throws -> DeviceModelHistoryResponse
+    func fetchAllDeviceModelNames() async throws -> [String]
+    func fetchIOSVersionHistory(majorVersion: String) async throws -> IOSVersionHistoryResponse
+    func fetchAllIOSVersions() async throws -> [String]
+    func fetchIOSVersionDeviceBreakdown(majorVersion: String) async throws -> IOSVersionDeviceBreakdownResponse
     func fetchNavigationAnalytics() async throws -> NavigationAnalyticsResponse
     func fetchRetro2025Dashboard(startDate: String, endDate: String) async throws -> Retro2025DashboardResponse
     
@@ -22,6 +27,7 @@ protocol AnalyticsRepositoryProtocol {
     
     // Episodes
     func fetchEpisodeAnalytics() async throws -> EpisodeAnalyticsResponse
+    func fetchTranscriptStatuses() async throws -> [PodcastEpisode]
     
     // Reactions
     func fetchTopReactions() async throws -> [ServerReaction]
@@ -202,6 +208,108 @@ final class AnalyticsRepository: AnalyticsRepositoryProtocol {
         }
     }
     
+    func fetchDeviceModelHistory(modelName: String) async throws -> DeviceModelHistoryResponse {
+        guard let encodedName = modelName.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) else {
+            throw AnalyticsError.invalidURL
+        }
+        let urlString = serverPath + "v3/device-model-history/\(encodedName)/\(Secrets.analyticsPassword)"
+        print("🔍 [Device Model History] Fetching from: \(urlString)")
+
+        guard let url = URL(string: urlString) else {
+            print("❌ [Device Model History] Invalid URL: \(urlString)")
+            throw AnalyticsError.invalidURL
+        }
+
+        do {
+            let (data, _) = try await URLSession.shared.data(from: url)
+            let decoder = JSONDecoder()
+            let response = try decoder.decode(DeviceModelHistoryResponse.self, from: data)
+            print("✅ [Device Model History] Success: \(response.history.count) months for \(response.modelName)")
+            return response
+        } catch {
+            print("❌ [Device Model History] Failed: \(error)")
+            throw error
+        }
+    }
+
+    func fetchAllDeviceModelNames() async throws -> [String] {
+        let urlString = serverPath + "v3/all-device-model-names/\(Secrets.analyticsPassword)"
+        print("🔍 [All Device Models] Fetching from: \(urlString)")
+
+        guard let url = URL(string: urlString) else {
+            print("❌ [All Device Models] Invalid URL: \(urlString)")
+            throw AnalyticsError.invalidURL
+        }
+
+        do {
+            let names: [String] = try await apiClient.getArray(from: url)
+            print("✅ [All Device Models] Success: \(names.count) models")
+            return names
+        } catch {
+            print("❌ [All Device Models] Failed: \(error)")
+            throw error
+        }
+    }
+
+    func fetchIOSVersionHistory(majorVersion: String) async throws -> IOSVersionHistoryResponse {
+        let urlString = serverPath + "v3/ios-version-history/\(majorVersion)/\(Secrets.analyticsPassword)"
+        print("🔍 [iOS Version History] Fetching from: \(urlString)")
+
+        guard let url = URL(string: urlString) else {
+            print("❌ [iOS Version History] Invalid URL: \(urlString)")
+            throw AnalyticsError.invalidURL
+        }
+
+        do {
+            let (data, _) = try await URLSession.shared.data(from: url)
+            let response = try JSONDecoder().decode(IOSVersionHistoryResponse.self, from: data)
+            print("✅ [iOS Version History] Success: \(response.history.count) months for iOS \(response.majorVersion)")
+            return response
+        } catch {
+            print("❌ [iOS Version History] Failed: \(error)")
+            throw error
+        }
+    }
+
+    func fetchAllIOSVersions() async throws -> [String] {
+        let urlString = serverPath + "v3/all-ios-versions/\(Secrets.analyticsPassword)"
+        print("🔍 [All iOS Versions] Fetching from: \(urlString)")
+
+        guard let url = URL(string: urlString) else {
+            print("❌ [All iOS Versions] Invalid URL: \(urlString)")
+            throw AnalyticsError.invalidURL
+        }
+
+        do {
+            let versions: [String] = try await apiClient.getArray(from: url)
+            print("✅ [All iOS Versions] Success: \(versions.count) versions")
+            return versions
+        } catch {
+            print("❌ [All iOS Versions] Failed: \(error)")
+            throw error
+        }
+    }
+
+    func fetchIOSVersionDeviceBreakdown(majorVersion: String) async throws -> IOSVersionDeviceBreakdownResponse {
+        let urlString = serverPath + "v3/ios-version-device-breakdown/\(majorVersion)/\(Secrets.analyticsPassword)"
+        print("🔍 [iOS Version Breakdown] Fetching from: \(urlString)")
+
+        guard let url = URL(string: urlString) else {
+            print("❌ [iOS Version Breakdown] Invalid URL: \(urlString)")
+            throw AnalyticsError.invalidURL
+        }
+
+        do {
+            let (data, _) = try await URLSession.shared.data(from: url)
+            let response = try JSONDecoder().decode(IOSVersionDeviceBreakdownResponse.self, from: data)
+            print("✅ [iOS Version Breakdown] Success: \(response.devices.count) devices for iOS \(response.majorVersion)")
+            return response
+        } catch {
+            print("❌ [iOS Version Breakdown] Failed: \(error)")
+            throw error
+        }
+    }
+
     func fetchNavigationAnalytics() async throws -> NavigationAnalyticsResponse {
         let urlString = serverPath + "v3/navigation-analytics/\(Secrets.analyticsPassword)"
         print("🔍 [Navigation Analytics] Fetching from: \(urlString)")
@@ -462,6 +570,19 @@ final class AnalyticsRepository: AnalyticsRepositoryProtocol {
             print("❌ [Episode Analytics] Failed: \(error)")
             throw error
         }
+    }
+    
+    func fetchTranscriptStatuses() async throws -> [PodcastEpisode] {
+        print("🔍 [Transcripts] Fetching RSS feed and checking transcript files...")
+        let parser = PodcastFeedParser()
+        let episodes = try await parser.fetchLatestEpisodes()
+        print("✅ [Transcripts] Parsed \(episodes.count) episodes from feed")
+
+        let checker = TranscriptChecker()
+        let results = await checker.checkTranscripts(for: episodes)
+        let transcribed = results.filter(\.isTranscribed).count
+        print("✅ [Transcripts] \(transcribed)/\(results.count) episodes have transcripts")
+        return results
     }
     
     // MARK: - Reactions
