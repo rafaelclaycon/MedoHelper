@@ -7,9 +7,10 @@
 
 import Foundation
 
-struct PodcastEpisode: Identifiable, Equatable {
+struct PodcastEpisode: Identifiable, Equatable, Hashable {
     let id: String
     let title: String
     let pubDate: Date?
+    var audioURL: URL?
     var isTranscribed: Bool = false
 }

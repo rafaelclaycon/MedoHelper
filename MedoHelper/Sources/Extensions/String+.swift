@@ -17,6 +17,19 @@ extension String {
     func preparedForComparison() -> String {
         return self.lowercased().removingDiacritics()
     }
+
+    /// Aggressive normalization used for transcript/search matching:
+    /// lowercase, strip diacritics, drop non-alphanumeric characters,
+    /// and collapse repeated whitespace.
+    func normalizedForSearch() -> String {
+        return self
+            .lowercased()
+            .folding(options: .diacriticInsensitive, locale: .current)
+            .replacingOccurrences(of: "[^a-z0-9 ]", with: "", options: .regularExpression)
+            .components(separatedBy: .whitespaces)
+            .filter { !$0.isEmpty }
+            .joined(separator: " ")
+    }
 }
 
 extension String {

@@ -4,7 +4,7 @@ struct MainView: View {
 
     enum AppTab: Int {
 
-        case sounds, authors, reactions, songs, musicGenres, updateEvents, testVersion, analytics
+        case sounds, authors, reactions, songs, musicGenres, updateEvents, soundRequests, testVersion, analytics
     }
 
     @State private var tabSelection: AppTab = .sounds
@@ -35,7 +35,11 @@ struct MainView: View {
             Tab("Eventos de Atualização", systemImage: "clock.arrow.2.circlepath", value: .updateEvents) {
                 UpdateEventListView()
             }
-            
+
+            Tab("Pedidos", systemImage: "tray.and.arrow.down", value: .soundRequests) {
+                SoundRequestsView()
+            }
+
             Tab("Versão de teste", systemImage: "hammer", value: .testVersion) {
                 TestVersionView()
             }

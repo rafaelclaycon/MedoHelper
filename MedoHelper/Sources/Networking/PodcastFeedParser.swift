@@ -19,10 +19,14 @@ final class PodcastFeedParser: NSObject, XMLParserDelegate {
     private var currentTitle = ""
     private var currentGUID = ""
     private var currentPubDate = ""
+    private var currentEnclosureURL: String = ""
 
     private var continuation: CheckedContinuation<[PodcastEpisode], Error>?
 
-    init(maxEpisodes: Int = 10) {
+    /// - Parameter maxEpisodes: how many episodes to parse before stopping.
+    ///   Defaults to `.max` which reads the whole feed; pass a small number
+    ///   (e.g. `10`) when you only need a recent slice.
+    init(maxEpisodes: Int = .max) {
         self.maxEpisodes = maxEpisodes
     }
 
@@ -56,6 +60,9 @@ final class PodcastFeedParser: NSObject, XMLParserDelegate {
             currentTitle = ""
             currentGUID = ""
             currentPubDate = ""
+            currentEnclosureURL = ""
+        } else if insideItem, elementName == "enclosure", let url = attributes["url"] {
+            currentEnclosureURL = url
         }
     }
 
@@ -86,7 +93,8 @@ final class PodcastFeedParser: NSObject, XMLParserDelegate {
         let episode = PodcastEpisode(
             id: episodeID,
             title: currentTitle.trimmingCharacters(in: .whitespacesAndNewlines),
-            pubDate: parseRSSDate(currentPubDate.trimmingCharacters(in: .whitespacesAndNewlines))
+            pubDate: parseRSSDate(currentPubDate.trimmingCharacters(in: .whitespacesAndNewlines)),
+            audioURL: URL(string: currentEnclosureURL.trimmingCharacters(in: .whitespacesAndNewlines))
         )
         episodes.append(episode)
 

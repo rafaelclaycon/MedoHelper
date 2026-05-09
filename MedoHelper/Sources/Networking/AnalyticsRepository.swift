@@ -574,7 +574,7 @@ final class AnalyticsRepository: AnalyticsRepositoryProtocol {
     
     func fetchTranscriptStatuses() async throws -> [PodcastEpisode] {
         print("🔍 [Transcripts] Fetching RSS feed and checking transcript files...")
-        let parser = PodcastFeedParser()
+        let parser = PodcastFeedParser(maxEpisodes: 10)
         let episodes = try await parser.fetchLatestEpisodes()
         print("✅ [Transcripts] Parsed \(episodes.count) episodes from feed")
 
