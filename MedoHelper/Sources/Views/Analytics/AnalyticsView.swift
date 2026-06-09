@@ -22,7 +22,6 @@ struct AnalyticsView: View {
     // Individual loading states for each section
     @State private var activeUsers: LoadingState<Int> = .loading
     @State private var dailyUserCounts: LoadingState<[DailyUserCount]> = .loading
-    @State private var topSharedSounds: LoadingState<[SharedSoundRank]> = .loading
     @State private var deviceAnalytics: LoadingState<DeviceAnalyticsResponse> = .loading
     @State private var navigationAnalytics: LoadingState<NavigationAnalyticsResponse> = .loading
     
@@ -59,7 +58,6 @@ struct AnalyticsView: View {
                 .padding(.horizontal)
                 .onChange(of: selectedTimeSpan) { _, _ in
                     fetchActiveUsers()
-                    fetchTopSharedSounds()
                 }
                 
                 // Header with last updated time
@@ -83,7 +81,6 @@ struct AnalyticsView: View {
                     VStack(alignment: .leading, spacing: 20) {
                         activeUsersSection
                         dailyUserCountsSection
-                        topSharedSoundsSection
                         deviceAnalyticsSection
                         navigationAnalyticsSection
                     }
@@ -153,44 +150,6 @@ struct AnalyticsView: View {
                 message: message
             ) {
                 fetchDailyUserCounts()
-            }
-        }
-    }
-    
-    @ViewBuilder
-    private var topSharedSoundsSection: some View {
-        switch topSharedSounds {
-        case .loading:
-            SectionLoadingView(title: selectedTimeSpan.topSoundsTitle, icon: "arrow.up.message.fill", color: .orange)
-        case .loaded(let sounds):
-            VStack(alignment: .leading, spacing: 12) {
-                HStack {
-                    Image(systemName: "arrow.up.message.fill")
-                        .foregroundColor(.orange)
-                        .font(.title2)
-                    Text(selectedTimeSpan.topSoundsTitle)
-                        .font(.headline)
-                }
-                .padding(.horizontal)
-                
-                VStack(spacing: 8) {
-                    ForEach(sounds) { sound in
-                        SharedSoundRow(sound: sound)
-                    }
-                }
-            }
-            .padding()
-            .background(platterColor)
-            .cornerRadius(12)
-            .padding(.horizontal)
-        case .error(let message):
-            SectionErrorView(
-                title: selectedTimeSpan.topSoundsTitle,
-                icon: "arrow.up.message.fill",
-                color: .orange,
-                message: message
-            ) {
-                fetchTopSharedSounds()
             }
         }
     }
@@ -540,7 +499,6 @@ struct AnalyticsView: View {
         lastUpdated = Date()
         fetchActiveUsers()
         fetchDailyUserCounts()
-        fetchTopSharedSounds()
         fetchDeviceAnalytics()
         fetchNavigationAnalytics()
         fetchRolloutData()
@@ -575,22 +533,6 @@ struct AnalyticsView: View {
             } catch {
                 await MainActor.run {
                     dailyUserCounts = .error(error.localizedDescription)
-                }
-            }
-        }
-    }
-    
-    private func fetchTopSharedSounds() {
-        Task {
-            topSharedSounds = .loading
-            do {
-                let sounds = try await repository.fetchTopSharedSounds(date: selectedTimeSpan.startDateString)
-                await MainActor.run {
-                    topSharedSounds = .loaded(sounds)
-                }
-            } catch {
-                await MainActor.run {
-                    topSharedSounds = .error(error.localizedDescription)
                 }
             }
         }
