@@ -39,7 +39,7 @@ struct AnalyticsView: View {
     @State private var selectedTimeSpan: AnalyticsTimeSpan = .today
     
     private let repository: AnalyticsRepositoryProtocol
-    private let timer = Timer.publish(every: 300, on: .main, in: .common).autoconnect()
+    private let timer = Timer.publish(every: 600, on: .main, in: .common).autoconnect()
 
     init(repository: AnalyticsRepositoryProtocol = AnalyticsRepository()) {
         self.repository = repository
