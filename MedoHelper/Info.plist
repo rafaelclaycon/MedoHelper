@@ -8,6 +8,8 @@
 	<string>$(REACTIONS_PASSWORD)</string>
 	<key>AnalyticsPassword</key>
 	<string>$(ANALYTICS_PASSWORD)</string>
+	<key>DonorsPassword</key>
+	<string>$(DONORS_PASSWORD)</string>
 	<key>NSAppTransportSecurity</key>
 	<dict>
 		<key>NSAllowsArbitraryLoads</key>

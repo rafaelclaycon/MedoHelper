@@ -36,4 +36,13 @@ enum Secrets {
         }
         return value
     }()
+
+    static let donorsPassword: String = {
+        guard let value = Bundle.main.infoDictionary?["DonorsPassword"] as? String,
+              !value.isEmpty,
+              !value.hasPrefix("$(") else {
+            fatalError("Missing DonorsPassword in Info.plist. Make sure Secrets.xcconfig exists and is configured.")
+        }
+        return value
+    }()
 }
