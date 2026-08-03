@@ -28,6 +28,7 @@ protocol AnalyticsRepositoryProtocol {
     // Episodes
     func fetchEpisodeAnalytics() async throws -> EpisodeAnalyticsResponse
     func fetchTranscriptStatuses() async throws -> [PodcastEpisode]
+    func fetchShareClipAnalytics() async throws -> ShareClipAnalyticsResponse
     
     // Reactions
     func fetchTopReactions() async throws -> [ServerReaction]
@@ -585,6 +586,25 @@ final class AnalyticsRepository: AnalyticsRepositoryProtocol {
         return results
     }
     
+    func fetchShareClipAnalytics() async throws -> ShareClipAnalyticsResponse {
+        let urlString = serverPath + "v4/share-clip-analytics/\(Secrets.analyticsPassword)"
+        print("🔍 [Share Clip Analytics] Fetching from: \(urlString)")
+
+        guard let url = URL(string: urlString) else {
+            print("❌ [Share Clip Analytics] Invalid URL: \(urlString)")
+            throw AnalyticsError.invalidURL
+        }
+
+        do {
+            let response: ShareClipAnalyticsResponse = try await apiClient.get(from: url)
+            print("✅ [Share Clip Analytics] Success: \(response.tapCount) taps, \(response.sharedCount) shares")
+            return response
+        } catch {
+            print("❌ [Share Clip Analytics] Failed: \(error)")
+            throw error
+        }
+    }
+
     // MARK: - Reactions
     
     func fetchTopReactions() async throws -> [ServerReaction] {

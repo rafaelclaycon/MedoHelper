@@ -17,8 +17,6 @@ private let platterColor = Color.gray.opacity(0.3)
 
 struct AnalyticsView: View {
     
-    @Environment(\.horizontalSizeClass) private var horizontalSizeClass
-    
     // Individual loading states for each section
     @State private var activeUsers: LoadingState<Int> = .loading
     @State private var dailyUserCounts: LoadingState<[DailyUserCount]> = .loading
@@ -34,9 +32,11 @@ struct AnalyticsView: View {
     // Episode states
     @State private var episodeAnalytics: LoadingState<EpisodeAnalyticsResponse> = .loading
     @State private var transcriptStatuses: LoadingState<[PodcastEpisode]> = .loading
+    @State private var shareClipAnalytics: LoadingState<ShareClipAnalyticsResponse> = .loading
     
     @State private var lastUpdated: Date?
     @State private var selectedTimeSpan: AnalyticsTimeSpan = .today
+    @State private var containerWidth: CGFloat = 0
     
     private let repository: AnalyticsRepositoryProtocol
     private let timer = Timer.publish(every: 600, on: .main, in: .common).autoconnect()
@@ -71,13 +71,15 @@ struct AnalyticsView: View {
                     .padding(.horizontal)
                 }
                 
-                // Adaptive layout: VStack on iPhone, HStack on iPad/Mac
-                let layout = horizontalSizeClass == .compact
-                    ? AnyLayout(VStackLayout(spacing: 20))
-                    : AnyLayout(HStackLayout(alignment: .top, spacing: 20))
-                
-                layout {
-                    // Regular Analytics Column (Left)
+                // Adaptive column layout: number of columns scales with available width
+                let columnCount = columnCount(for: containerWidth)
+                let gridColumns = Array(
+                    repeating: GridItem(.flexible(), spacing: 20, alignment: .top),
+                    count: columnCount
+                )
+
+                LazyVGrid(columns: gridColumns, alignment: .leading, spacing: 20) {
+                    // Regular Analytics Column
                     VStack(alignment: .leading, spacing: 20) {
                         activeUsersSection
                         dailyUserCountsSection
@@ -85,8 +87,8 @@ struct AnalyticsView: View {
                         navigationAnalyticsSection
                     }
                     .frame(maxWidth: .infinity)
-                    
-                    // Release Rollout Column (Center)
+
+                    // Release Rollout Column
                     VStack(spacing: 20) {
                         rolloutHeaderSection
                         distributionCardsSection
@@ -95,18 +97,24 @@ struct AnalyticsView: View {
                         dailyTrendSection
                     }
                     .frame(maxWidth: .infinity)
-                    
-                    // Episodes Column (Right)
+
+                    // Episodes Column
                     VStack(spacing: 20) {
                         episodeHeaderSection
                         episodeAnalyticsSection
                         transcriptStatusSection
+                        shareClipAnalyticsSection
                     }
                     .frame(maxWidth: .infinity)
                 }
             }
             .padding(.vertical)
             .padding(.horizontal)
+            .onGeometryChange(for: CGFloat.self) { proxy in
+                proxy.size.width
+            } action: { newWidth in
+                containerWidth = newWidth
+            }
         }
         .navigationTitle("Estatísticas do App")
         .onAppear {
@@ -117,6 +125,26 @@ struct AnalyticsView: View {
         }
     }
     
+    // MARK: - Layout
+
+    /// Each column needs roughly 320pt to display charts and cards comfortably.
+    private func columnCount(for width: CGFloat) -> Int {
+        let minColumnWidth: CGFloat = 320
+        let spacing: CGFloat = 20
+        guard width > 0 else { return 1 }
+
+        var columns = 3
+        while columns > 1 {
+            let totalSpacing = spacing * CGFloat(columns - 1)
+            let columnWidth = (width - totalSpacing) / CGFloat(columns)
+            if columnWidth >= minColumnWidth {
+                break
+            }
+            columns -= 1
+        }
+        return columns
+    }
+
     // MARK: - Section Views
     
     @ViewBuilder
@@ -493,8 +521,93 @@ struct AnalyticsView: View {
         }
     }
     
+    @ViewBuilder
+    private var shareClipAnalyticsSection: some View {
+        switch shareClipAnalytics {
+        case .loading:
+            VStack(spacing: 12) {
+                StatCardLoading(title: "Toques em Compartilhar Clipe", icon: "film.fill", color: .indigo)
+                SectionLoadingView(title: "Compartilhamentos - Últimos 30 Dias", icon: "chart.line.uptrend.xyaxis", color: .indigo)
+                StatCardLoading(title: "Compartilhados", icon: "square.and.arrow.up.fill", color: .indigo)
+            }
+        case .loaded(let response):
+            VStack(spacing: 12) {
+                HStack {
+                    Image(systemName: "film.fill")
+                        .foregroundColor(.indigo)
+                        .font(.title2)
+                    Text("Compartilhar Clipe")
+                        .font(.headline)
+                    Spacer()
+                }
+                .padding(.horizontal)
+
+                StatCard(title: "Toques em \"Compartilhar Clipe\"", value: "\(response.tapCount)", icon: "hand.tap.fill", color: .indigo)
+
+                if !response.dailySharesLast30Days.isEmpty {
+                    ShareClipDailyChart(dailyShares: response.dailySharesLast30Days)
+                }
+
+                HStack(spacing: 12) {
+                    EpisodeMiniStatCard(
+                        title: "Compartilhados",
+                        value: "\(response.sharedCount)",
+                        subtitle: String(format: "%.0f%% de conversão", response.conversionRate * 100),
+                        icon: "square.and.arrow.up.fill",
+                        color: .indigo
+                    )
+                    EpisodeMiniStatCard(
+                        title: "Falhas na Geração",
+                        value: "\(response.generationFailedCount)",
+                        icon: "exclamationmark.triangle.fill",
+                        color: .indigo
+                    )
+                }
+                .padding(.horizontal)
+
+                HStack(spacing: 12) {
+                    EpisodeMiniStatCard(
+                        title: "Com Transcrição",
+                        value: "\(response.sharedWithTranscriptCount)",
+                        icon: "text.quote",
+                        color: .indigo
+                    )
+                    EpisodeMiniStatCard(
+                        title: "Sem Transcrição",
+                        value: "\(response.sharedWithoutTranscriptCount)",
+                        icon: "text.slash",
+                        color: .indigo
+                    )
+                }
+                .padding(.horizontal)
+
+                HStack(spacing: 12) {
+                    EpisodeMiniStatCard(
+                        title: "Pedido de Apoio Exibido",
+                        value: "\(response.supportPromptShownCount)",
+                        icon: "heart.fill",
+                        color: .indigo
+                    )
+                    EpisodeMiniStatCard(
+                        title: "\"O Que Há de Novo\" Dispensado",
+                        value: "\(response.whatsNewDismissedCount)",
+                        icon: "sparkles",
+                        color: .indigo
+                    )
+                }
+                .padding(.horizontal)
+            }
+        case .error(let message):
+            VStack(spacing: 12) {
+                StatCardError(title: "Toques em Compartilhar Clipe", icon: "film.fill", color: .indigo, message: message) {
+                    fetchShareClipAnalytics()
+                }
+            }
+        }
+    }
+
     // MARK: - Fetch Methods
-    
+
     private func fetchAllSections() {
         lastUpdated = Date()
         fetchActiveUsers()
@@ -504,6 +617,7 @@ struct AnalyticsView: View {
         fetchRolloutData()
         fetchEpisodeAnalytics()
         fetchTranscriptStatuses()
+        fetchShareClipAnalytics()
     }
     
     private func fetchActiveUsers() {
@@ -665,6 +779,22 @@ struct AnalyticsView: View {
         }
     }
     
+    private func fetchShareClipAnalytics() {
+        Task {
+            shareClipAnalytics = .loading
+            do {
+                let response = try await repository.fetchShareClipAnalytics()
+                await MainActor.run {
+                    shareClipAnalytics = .loaded(response)
+                }
+            } catch {
+                await MainActor.run {
+                    shareClipAnalytics = .error(error.localizedDescription)
+                }
+            }
+        }
+    }
+
     private func formattedTime(_ date: Date) -> String {
         let formatter = DateFormatter()
         formatter.timeStyle = .short
@@ -1313,6 +1443,20 @@ struct EpisodeDailyUsersChart: View {
         }
     }
     
+    var sundayDates: [Date] {
+        dailyUsers.compactMap { dataPoint -> Date? in
+            guard let date = dataPoint.dateValue else { return nil }
+            return Calendar.current.component(.weekday, from: date) == 1 ? date : nil
+        }
+    }
+
+    var fridayDates: [Date] {
+        dailyUsers.compactMap { dataPoint -> Date? in
+            guard let date = dataPoint.dateValue else { return nil }
+            return Calendar.current.component(.weekday, from: date) == 6 ? date : nil
+        }
+    }
+
     var medianValue: Int {
         let sortedCounts = dailyUsers.map { $0.activeUsers }.filter { $0 > 0 }.sorted()
         let count = sortedCounts.count
@@ -1400,6 +1544,28 @@ struct EpisodeDailyUsersChart: View {
                             .background(Color.orange.opacity(0.1))
                             .cornerRadius(4)
                     }
+
+                ForEach(sundayDates, id: \.self) { sunday in
+                    RuleMark(x: .value("Domingo", sunday, unit: .day))
+                        .foregroundStyle(.purple.opacity(0.3))
+                        .lineStyle(StrokeStyle(lineWidth: 1, dash: [4, 3]))
+                        .annotation(position: .top, alignment: .center, spacing: 0) {
+                            Text("D")
+                                .font(.system(size: 8, weight: .semibold))
+                                .foregroundColor(.purple)
+                        }
+                }
+
+                ForEach(fridayDates, id: \.self) { friday in
+                    RuleMark(x: .value("Sexta", friday, unit: .day))
+                        .foregroundStyle(.green.opacity(0.3))
+                        .lineStyle(StrokeStyle(lineWidth: 1, dash: [4, 3]))
+                        .annotation(position: .top, alignment: .center, spacing: 0) {
+                            Text("S")
+                                .font(.system(size: 8, weight: .semibold))
+                                .foregroundColor(.green)
+                        }
+                }
             }
             .chartXSelection(value: $selectedDate)
             .chartXAxis {
@@ -1429,6 +1595,118 @@ struct EpisodeDailyUsersChart: View {
             return dateString
         }
         
+        let displayFormatter = DateFormatter()
+        displayFormatter.dateStyle = .medium
+        displayFormatter.timeStyle = .none
+        return displayFormatter.string(from: date)
+    }
+}
+
+// MARK: - Share Clip Daily Chart
+
+struct ShareClipDailyChart: View {
+    let dailyShares: [ShareClipDailyCount]
+    @State private var selectedDate: Date?
+
+    var selectedDataPoint: ShareClipDailyCount? {
+        guard let selectedDate = selectedDate else { return nil }
+        return dailyShares.first { dataPoint in
+            guard let dateValue = dataPoint.dateValue else { return false }
+            return Calendar.current.isDate(dateValue, inSameDayAs: selectedDate)
+        }
+    }
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            HStack {
+                Image(systemName: "chart.line.uptrend.xyaxis")
+                    .foregroundColor(.indigo)
+                    .font(.title2)
+                Text("Compartilhamentos - Últimos 30 Dias")
+                    .font(.headline)
+                Spacer()
+
+                if let selected = selectedDataPoint {
+                    VStack(alignment: .trailing, spacing: 2) {
+                        Text(formattedDate(selected.date))
+                            .font(.caption)
+                            .fontWeight(.semibold)
+                        Text("\(selected.activeUsers) compartilhamentos")
+                            .font(.caption2)
+                            .foregroundColor(.secondary)
+                    }
+                }
+            }
+            .padding(.horizontal)
+
+            Chart {
+                ForEach(dailyShares) { dataPoint in
+                    LineMark(
+                        x: .value("Data", dataPoint.dateValue ?? Date(), unit: .day),
+                        y: .value("Compartilhamentos", dataPoint.activeUsers)
+                    )
+                    .foregroundStyle(.indigo)
+                    .interpolationMethod(.catmullRom)
+
+                    AreaMark(
+                        x: .value("Data", dataPoint.dateValue ?? Date(), unit: .day),
+                        y: .value("Compartilhamentos", dataPoint.activeUsers)
+                    )
+                    .foregroundStyle(
+                        LinearGradient(
+                            colors: [.indigo.opacity(0.3), .indigo.opacity(0.0)],
+                            startPoint: .top,
+                            endPoint: .bottom
+                        )
+                    )
+                    .interpolationMethod(.catmullRom)
+
+                    if let selectedDate = selectedDate,
+                       let dateValue = dataPoint.dateValue,
+                       Calendar.current.isDate(dateValue, inSameDayAs: selectedDate) {
+                        PointMark(
+                            x: .value("Data", dateValue, unit: .day),
+                            y: .value("Compartilhamentos", dataPoint.activeUsers)
+                        )
+                        .foregroundStyle(.indigo)
+                        .symbolSize(100)
+                    }
+                }
+
+                if let selectedDate = selectedDate {
+                    RuleMark(x: .value("Data", selectedDate, unit: .day))
+                        .foregroundStyle(.indigo.opacity(0.5))
+                        .lineStyle(StrokeStyle(lineWidth: 2, dash: [5, 3]))
+                }
+            }
+            .chartXSelection(value: $selectedDate)
+            .chartXAxis {
+                AxisMarks(values: .stride(by: .day, count: 5)) { value in
+                    AxisGridLine()
+                    AxisValueLabel(format: .dateTime.month().day(), centered: true)
+                }
+            }
+            .chartYAxis {
+                AxisMarks { value in
+                    AxisGridLine()
+                    AxisValueLabel()
+                }
+            }
+            .frame(height: 200)
+        }
+        .padding()
+        .background(platterColor)
+        .cornerRadius(12)
+        .padding(.horizontal)
+    }
+
+    private func formattedDate(_ dateString: String) -> String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd"
+        guard let date = formatter.date(from: dateString) else {
+            return dateString
+        }
+
         let displayFormatter = DateFormatter()
         displayFormatter.dateStyle = .medium
         displayFormatter.timeStyle = .none
