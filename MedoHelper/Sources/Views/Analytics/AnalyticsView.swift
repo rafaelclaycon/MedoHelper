@@ -33,6 +33,7 @@ struct AnalyticsView: View {
     @State private var episodeAnalytics: LoadingState<EpisodeAnalyticsResponse> = .loading
     @State private var transcriptStatuses: LoadingState<[PodcastEpisode]> = .loading
     @State private var shareClipAnalytics: LoadingState<ShareClipAnalyticsResponse> = .loading
+    @State private var chaptersUsageAnalytics: LoadingState<ChaptersUsageAnalyticsResponse> = .loading
     
     @State private var lastUpdated: Date?
     @State private var selectedTimeSpan: AnalyticsTimeSpan = .today
@@ -104,6 +105,7 @@ struct AnalyticsView: View {
                         episodeAnalyticsSection
                         transcriptStatusSection
                         shareClipAnalyticsSection
+                        chaptersUsageAnalyticsSection
                     }
                     .frame(maxWidth: .infinity)
                 }
@@ -606,6 +608,136 @@ struct AnalyticsView: View {
         }
     }
 
+    @ViewBuilder
+    private var chaptersUsageAnalyticsSection: some View {
+        switch chaptersUsageAnalytics {
+        case .loading:
+            VStack(spacing: 12) {
+                StatCardLoading(title: "Toques em Capítulos", icon: "list.bullet.rectangle.fill", color: .purple)
+                SectionLoadingView(title: "Toques em Capítulos - Últimos 30 Dias", icon: "chart.line.uptrend.xyaxis", color: .purple)
+                StatCardLoading(title: "Capítulos Mais Tocados", icon: "star.fill", color: .purple)
+            }
+        case .loaded(let response):
+            VStack(spacing: 12) {
+                HStack {
+                    Image(systemName: "list.bullet.rectangle.fill")
+                        .foregroundColor(.purple)
+                        .font(.title2)
+                    Text("Capítulos")
+                        .font(.headline)
+                    Spacer()
+                }
+                .padding(.horizontal)
+
+                StatCard(title: "Toques em Capítulos", value: "\(response.tapCount)", icon: "hand.tap.fill", color: .purple)
+
+                if !response.dailyChapterTapsLast30Days.isEmpty {
+                    ChaptersDailyChart(dailyTaps: response.dailyChapterTapsLast30Days)
+                }
+
+                HStack(spacing: 12) {
+                    EpisodeMiniStatCard(
+                        title: "Detalhe do Episódio",
+                        value: "\(response.tapCountEpisodeDetail)",
+                        icon: "doc.text.fill",
+                        color: .purple
+                    )
+                    EpisodeMiniStatCard(
+                        title: "Tocando Agora",
+                        value: "\(response.tapCountNowPlaying)",
+                        icon: "play.circle.fill",
+                        color: .purple
+                    )
+                }
+                .padding(.horizontal)
+
+                HStack(spacing: 12) {
+                    EpisodeMiniStatCard(
+                        title: "Capítulo Anterior",
+                        value: "\(response.previousCount)",
+                        icon: "backward.end.fill",
+                        color: .purple
+                    )
+                    EpisodeMiniStatCard(
+                        title: "Próximo Capítulo",
+                        value: "\(response.nextCount)",
+                        icon: "forward.end.fill",
+                        color: .purple
+                    )
+                }
+                .padding(.horizontal)
+
+                HStack(spacing: 12) {
+                    EpisodeMiniStatCard(
+                        title: "Carregados com Sucesso",
+                        value: "\(response.loadedCount)",
+                        subtitle: String(format: "%.0f%% de sucesso", response.loadSuccessRate * 100),
+                        icon: "checkmark.circle.fill",
+                        color: .purple
+                    )
+                    EpisodeMiniStatCard(
+                        title: "Falhas ao Carregar",
+                        value: "\(response.loadFailedCount)",
+                        icon: "exclamationmark.triangle.fill",
+                        color: .purple
+                    )
+                }
+                .padding(.horizontal)
+
+                HStack(spacing: 12) {
+                    EpisodeMiniStatCard(
+                        title: "Lista Ocultada",
+                        value: "\(response.hiddenCount)",
+                        icon: "eye.slash.fill",
+                        color: .purple
+                    )
+                    EpisodeMiniStatCard(
+                        title: "Problema Reportado",
+                        value: "\(response.issueReportedCount)",
+                        icon: "flag.fill",
+                        color: .purple
+                    )
+                }
+                .padding(.horizontal)
+
+                if !response.topChapters.isEmpty {
+                    VStack(alignment: .leading, spacing: 6) {
+                        Text("Capítulos Mais Tocados")
+                            .font(.subheadline)
+                            .fontWeight(.semibold)
+                            .padding(.horizontal)
+
+                        VStack(spacing: 6) {
+                            ForEach(response.topChapters) { chapter in
+                                HStack {
+                                    Text(chapter.title)
+                                        .font(.caption)
+                                        .lineLimit(1)
+                                    Spacer()
+                                    Text("\(chapter.tapCount)")
+                                        .font(.caption)
+                                        .fontWeight(.semibold)
+                                        .foregroundColor(.purple)
+                                }
+                                .padding(.horizontal, 12)
+                                .padding(.vertical, 6)
+                                .background(platterColor)
+                                .cornerRadius(8)
+                            }
+                        }
+                        .padding(.horizontal)
+                    }
+                }
+            }
+        case .error(let message):
+            VStack(spacing: 12) {
+                StatCardError(title: "Toques em Capítulos", icon: "list.bullet.rectangle.fill", color: .purple, message: message) {
+                    fetchChaptersUsageAnalytics()
+                }
+            }
+        }
+    }
+
     // MARK: - Fetch Methods
 
     private func fetchAllSections() {
@@ -618,6 +750,7 @@ struct AnalyticsView: View {
         fetchEpisodeAnalytics()
         fetchTranscriptStatuses()
         fetchShareClipAnalytics()
+        fetchChaptersUsageAnalytics()
     }
     
     private func fetchActiveUsers() {
@@ -790,6 +923,22 @@ struct AnalyticsView: View {
             } catch {
                 await MainActor.run {
                     shareClipAnalytics = .error(error.localizedDescription)
+                }
+            }
+        }
+    }
+
+    private func fetchChaptersUsageAnalytics() {
+        Task {
+            chaptersUsageAnalytics = .loading
+            do {
+                let response = try await repository.fetchChaptersUsageAnalytics()
+                await MainActor.run {
+                    chaptersUsageAnalytics = .loaded(response)
+                }
+            } catch {
+                await MainActor.run {
+                    chaptersUsageAnalytics = .error(error.localizedDescription)
                 }
             }
         }
@@ -1676,6 +1825,118 @@ struct ShareClipDailyChart: View {
                 if let selectedDate = selectedDate {
                     RuleMark(x: .value("Data", selectedDate, unit: .day))
                         .foregroundStyle(.indigo.opacity(0.5))
+                        .lineStyle(StrokeStyle(lineWidth: 2, dash: [5, 3]))
+                }
+            }
+            .chartXSelection(value: $selectedDate)
+            .chartXAxis {
+                AxisMarks(values: .stride(by: .day, count: 5)) { value in
+                    AxisGridLine()
+                    AxisValueLabel(format: .dateTime.month().day(), centered: true)
+                }
+            }
+            .chartYAxis {
+                AxisMarks { value in
+                    AxisGridLine()
+                    AxisValueLabel()
+                }
+            }
+            .frame(height: 200)
+        }
+        .padding()
+        .background(platterColor)
+        .cornerRadius(12)
+        .padding(.horizontal)
+    }
+
+    private func formattedDate(_ dateString: String) -> String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd"
+        guard let date = formatter.date(from: dateString) else {
+            return dateString
+        }
+
+        let displayFormatter = DateFormatter()
+        displayFormatter.dateStyle = .medium
+        displayFormatter.timeStyle = .none
+        return displayFormatter.string(from: date)
+    }
+}
+
+// MARK: - Chapters Daily Chart
+
+struct ChaptersDailyChart: View {
+    let dailyTaps: [ChaptersDailyCount]
+    @State private var selectedDate: Date?
+
+    var selectedDataPoint: ChaptersDailyCount? {
+        guard let selectedDate = selectedDate else { return nil }
+        return dailyTaps.first { dataPoint in
+            guard let dateValue = dataPoint.dateValue else { return false }
+            return Calendar.current.isDate(dateValue, inSameDayAs: selectedDate)
+        }
+    }
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            HStack {
+                Image(systemName: "chart.line.uptrend.xyaxis")
+                    .foregroundColor(.purple)
+                    .font(.title2)
+                Text("Toques em Capítulos - Últimos 30 Dias")
+                    .font(.headline)
+                Spacer()
+
+                if let selected = selectedDataPoint {
+                    VStack(alignment: .trailing, spacing: 2) {
+                        Text(formattedDate(selected.date))
+                            .font(.caption)
+                            .fontWeight(.semibold)
+                        Text("\(selected.tapCount) toques")
+                            .font(.caption2)
+                            .foregroundColor(.secondary)
+                    }
+                }
+            }
+            .padding(.horizontal)
+
+            Chart {
+                ForEach(dailyTaps) { dataPoint in
+                    LineMark(
+                        x: .value("Data", dataPoint.dateValue ?? Date(), unit: .day),
+                        y: .value("Toques", dataPoint.tapCount)
+                    )
+                    .foregroundStyle(.purple)
+                    .interpolationMethod(.catmullRom)
+
+                    AreaMark(
+                        x: .value("Data", dataPoint.dateValue ?? Date(), unit: .day),
+                        y: .value("Toques", dataPoint.tapCount)
+                    )
+                    .foregroundStyle(
+                        LinearGradient(
+                            colors: [.purple.opacity(0.3), .purple.opacity(0.0)],
+                            startPoint: .top,
+                            endPoint: .bottom
+                        )
+                    )
+                    .interpolationMethod(.catmullRom)
+
+                    if let selectedDate = selectedDate,
+                       let dateValue = dataPoint.dateValue,
+                       Calendar.current.isDate(dateValue, inSameDayAs: selectedDate) {
+                        PointMark(
+                            x: .value("Data", dateValue, unit: .day),
+                            y: .value("Toques", dataPoint.tapCount)
+                        )
+                        .foregroundStyle(.purple)
+                        .symbolSize(100)
+                    }
+                }
+
+                if let selectedDate = selectedDate {
+                    RuleMark(x: .value("Data", selectedDate, unit: .day))
+                        .foregroundStyle(.purple.opacity(0.5))
                         .lineStyle(StrokeStyle(lineWidth: 2, dash: [5, 3]))
                 }
             }

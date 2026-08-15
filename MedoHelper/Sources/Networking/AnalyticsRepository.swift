@@ -29,7 +29,8 @@ protocol AnalyticsRepositoryProtocol {
     func fetchEpisodeAnalytics() async throws -> EpisodeAnalyticsResponse
     func fetchTranscriptStatuses() async throws -> [PodcastEpisode]
     func fetchShareClipAnalytics() async throws -> ShareClipAnalyticsResponse
-    
+    func fetchChaptersUsageAnalytics() async throws -> ChaptersUsageAnalyticsResponse
+
     // Reactions
     func fetchTopReactions() async throws -> [ServerReaction]
 }
@@ -605,8 +606,27 @@ final class AnalyticsRepository: AnalyticsRepositoryProtocol {
         }
     }
 
+    func fetchChaptersUsageAnalytics() async throws -> ChaptersUsageAnalyticsResponse {
+        let urlString = serverPath + "v4/chapters-usage-analytics/\(Secrets.analyticsPassword)"
+        print("🔍 [Chapters Usage Analytics] Fetching from: \(urlString)")
+
+        guard let url = URL(string: urlString) else {
+            print("❌ [Chapters Usage Analytics] Invalid URL: \(urlString)")
+            throw AnalyticsError.invalidURL
+        }
+
+        do {
+            let response: ChaptersUsageAnalyticsResponse = try await apiClient.get(from: url)
+            print("✅ [Chapters Usage Analytics] Success: \(response.tapCount) taps, \(response.loadedCount) loaded")
+            return response
+        } catch {
+            print("❌ [Chapters Usage Analytics] Failed: \(error)")
+            throw error
+        }
+    }
+
     // MARK: - Reactions
-    
+
     func fetchTopReactions() async throws -> [ServerReaction] {
         let urlString = serverPath + "v4/top-3-reactions"
         print("🔍 [Top Reactions] Fetching from: \(urlString)")
