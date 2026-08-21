@@ -4,7 +4,7 @@ struct MainView: View {
 
     enum AppTab: Int {
 
-        case analytics, content, authors, reactions, musicGenres, soundRequests, donors
+        case analytics, content, authors, reactions, musicGenres, soundRequests, donors, folderResearch
     }
 
     @State private var tabSelection: AppTab = .analytics
@@ -37,6 +37,10 @@ struct MainView: View {
 
             Tab("Doadores", systemImage: "heart", value: .donors) {
                 DonorsView()
+            }
+
+            Tab("Pesquisa de Pastas", systemImage: "folder.badge.questionmark", value: .folderResearch) {
+                FolderResearchView()
             }
         }
         .tabViewStyle(.sidebarAdaptable)

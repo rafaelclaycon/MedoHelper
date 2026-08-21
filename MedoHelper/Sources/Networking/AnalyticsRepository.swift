@@ -30,6 +30,7 @@ protocol AnalyticsRepositoryProtocol {
     func fetchTranscriptStatuses() async throws -> [PodcastEpisode]
     func fetchShareClipAnalytics() async throws -> ShareClipAnalyticsResponse
     func fetchChaptersUsageAnalytics() async throws -> ChaptersUsageAnalyticsResponse
+    func fetchFolderResearchAnalytics() async throws -> FolderResearchAnalyticsResponse
 
     // Reactions
     func fetchTopReactions() async throws -> [ServerReaction]
@@ -621,6 +622,25 @@ final class AnalyticsRepository: AnalyticsRepositoryProtocol {
             return response
         } catch {
             print("❌ [Chapters Usage Analytics] Failed: \(error)")
+            throw error
+        }
+    }
+
+    func fetchFolderResearchAnalytics() async throws -> FolderResearchAnalyticsResponse {
+        let urlString = serverPath + "v4/folder-research-analytics/\(Secrets.analyticsPassword)"
+        print("🔍 [Folder Research Analytics] Fetching from: \(urlString)")
+
+        guard let url = URL(string: urlString) else {
+            print("❌ [Folder Research Analytics] Invalid URL: \(urlString)")
+            throw AnalyticsError.invalidURL
+        }
+
+        do {
+            let response: FolderResearchAnalyticsResponse = try await apiClient.get(from: url)
+            print("✅ [Folder Research Analytics] Success: \(response.totalUsers) users, \(response.totalFolders) folders")
+            return response
+        } catch {
+            print("❌ [Folder Research Analytics] Failed: \(error)")
             throw error
         }
     }
