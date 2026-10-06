@@ -4,7 +4,7 @@ struct MainView: View {
 
     enum AppTab: Int {
 
-        case analytics, content, authors, reactions, musicGenres, soundRequests, donors, folderResearch
+        case analytics, featureAnalytics, content, authors, reactions, musicGenres, soundRequests, donors, folderResearch
     }
 
     @State private var tabSelection: AppTab = .analytics
@@ -13,6 +13,10 @@ struct MainView: View {
         TabView(selection: $tabSelection) {
             Tab("Estatísticas", systemImage: "chart.line.uptrend.xyaxis", value: .analytics) {
                 AnalyticsView()
+            }
+
+            Tab("Estatísticas por Funcionalidade", systemImage: "chart.bar.doc.horizontal", value: .featureAnalytics) {
+                FeatureAnalyticsView()
             }
 
             Tab("Conteúdo", systemImage: "speaker.wave.3", value: .content) {

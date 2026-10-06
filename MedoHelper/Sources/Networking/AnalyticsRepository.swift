@@ -31,6 +31,10 @@ protocol AnalyticsRepositoryProtocol {
     func fetchShareClipAnalytics() async throws -> ShareClipAnalyticsResponse
     func fetchChaptersUsageAnalytics() async throws -> ChaptersUsageAnalyticsResponse
     func fetchFolderResearchAnalytics() async throws -> FolderResearchAnalyticsResponse
+    func fetchWatchPairingRate(activeDays: Int) async throws -> WatchPairingRateResponse
+
+    // Feature Analytics
+    func fetchElectionLiveAnalytics(since: Date) async throws -> ElectionLiveAnalyticsResponse
 
     // Reactions
     func fetchTopReactions() async throws -> [ServerReaction]
@@ -641,6 +645,47 @@ final class AnalyticsRepository: AnalyticsRepositoryProtocol {
             return response
         } catch {
             print("❌ [Folder Research Analytics] Failed: \(error)")
+            throw error
+        }
+    }
+
+    func fetchWatchPairingRate(activeDays: Int) async throws -> WatchPairingRateResponse {
+        let urlString = serverPath + "v4/watch-pairing-rate/\(Secrets.analyticsPassword)?activeDays=\(activeDays)"
+        print("🔍 [Watch Pairing Rate] Fetching from: \(urlString)")
+
+        guard let url = URL(string: urlString) else {
+            print("❌ [Watch Pairing Rate] Invalid URL: \(urlString)")
+            throw AnalyticsError.invalidURL
+        }
+
+        do {
+            let response: WatchPairingRateResponse = try await apiClient.get(from: url)
+            print("✅ [Watch Pairing Rate] Success: \(response.watchPairedUsers)/\(response.eligibleUsers) eligible (\(response.percentage)%)")
+            return response
+        } catch {
+            print("❌ [Watch Pairing Rate] Failed: \(error)")
+            throw error
+        }
+    }
+
+    // MARK: - Feature Analytics
+
+    func fetchElectionLiveAnalytics(since: Date) async throws -> ElectionLiveAnalyticsResponse {
+        let sinceString = ISO8601DateFormatter().string(from: since)
+        let urlString = serverPath + "v4/election-live-analytics/\(Secrets.analyticsPassword)?since=\(sinceString)"
+        print("🔍 [Election Live Analytics] Fetching from: \(urlString)")
+
+        guard let url = URL(string: urlString) else {
+            print("❌ [Election Live Analytics] Invalid URL: \(urlString)")
+            throw AnalyticsError.invalidURL
+        }
+
+        do {
+            let response: ElectionLiveAnalyticsResponse = try await apiClient.get(from: url)
+            print("✅ [Election Live Analytics] Success: \(response.uniqueStarters) starters, \(response.likelyWatchingNow) watching now")
+            return response
+        } catch {
+            print("❌ [Election Live Analytics] Failed: \(error)")
             throw error
         }
     }

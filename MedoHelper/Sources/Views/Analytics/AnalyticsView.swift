@@ -22,6 +22,7 @@ struct AnalyticsView: View {
     @State private var dailyUserCounts: LoadingState<[DailyUserCount]> = .loading
     @State private var deviceAnalytics: LoadingState<DeviceAnalyticsResponse> = .loading
     @State private var navigationAnalytics: LoadingState<NavigationAnalyticsResponse> = .loading
+    @State private var watchPairingRate: LoadingState<WatchPairingRateResponse> = .loading
     
     // Release Rollout states
     @State private var rolloutSelectedDate: Date = Date()
@@ -85,6 +86,7 @@ struct AnalyticsView: View {
                         activeUsersSection
                         dailyUserCountsSection
                         deviceAnalyticsSection
+                        watchPairingSection
                         navigationAnalyticsSection
                     }
                     .frame(maxWidth: .infinity)
@@ -222,6 +224,25 @@ struct AnalyticsView: View {
         }
     }
     
+    @ViewBuilder
+    private var watchPairingSection: some View {
+        switch watchPairingRate {
+        case .loading:
+            SectionLoadingView(title: "Apple Watch Pareado", icon: "applewatch", color: .blue)
+        case .loaded(let response):
+            WatchPairingCard(response: response)
+        case .error(let message):
+            SectionErrorView(
+                title: "Apple Watch Pareado",
+                icon: "applewatch",
+                color: .blue,
+                message: message
+            ) {
+                fetchWatchPairingRate()
+            }
+        }
+    }
+
     // MARK: - Release Rollout Section Views
     
     private var rolloutHeaderSection: some View {
@@ -746,6 +767,7 @@ struct AnalyticsView: View {
         fetchDailyUserCounts()
         fetchDeviceAnalytics()
         fetchNavigationAnalytics()
+        fetchWatchPairingRate()
         fetchRolloutData()
         fetchEpisodeAnalytics()
         fetchTranscriptStatuses()
@@ -817,6 +839,22 @@ struct AnalyticsView: View {
         }
     }
     
+    private func fetchWatchPairingRate() {
+        Task {
+            watchPairingRate = .loading
+            do {
+                let response = try await repository.fetchWatchPairingRate(activeDays: 30)
+                await MainActor.run {
+                    watchPairingRate = .loaded(response)
+                }
+            } catch {
+                await MainActor.run {
+                    watchPairingRate = .error(error.localizedDescription)
+                }
+            }
+        }
+    }
+
     // MARK: - Release Rollout Fetch Methods
     
     private func fetchRolloutData() {
@@ -2013,6 +2051,49 @@ struct EpisodeMiniStatCard: View {
     }
 }
 
+// MARK: - Watch Pairing Card
+
+struct WatchPairingCard: View {
+    let response: WatchPairingRateResponse
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            HStack {
+                Image(systemName: "applewatch")
+                    .foregroundColor(.blue)
+                    .font(.title2)
+                Text("Apple Watch Pareado")
+                    .font(.headline)
+                Spacer()
+            }
+
+            HStack(alignment: .firstTextBaseline, spacing: 6) {
+                Text(String(format: "%.1f%%", response.percentage))
+                    .font(.system(size: 40, weight: .bold))
+                    .foregroundColor(.blue)
+                Text("dos usuários ativos")
+                    .font(.subheadline)
+                    .foregroundColor(.secondary)
+            }
+
+            Text("\(response.watchPairedUsers) de \(response.eligibleUsers) usuários que reportaram o dado (janela de \(response.activeDays) dias)")
+                .font(.caption)
+                .foregroundColor(.secondary)
+
+            if response.unknownUsers > 0 {
+                Text("\(response.unknownUsers) usuários ativos ainda não reportaram (iPad/Mac ou versão anterior à coleta) — não entram no cálculo.")
+                    .font(.caption2)
+                    .foregroundColor(.secondary)
+            }
+        }
+        .padding()
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(platterColor)
+        .cornerRadius(12)
+        .padding(.horizontal)
+    }
+}
+
 // MARK: - Transcript Status Row
 
 struct TranscriptStatusRow: View {
@@ -3029,7 +3110,7 @@ struct DeviceModelSearchSheet: View {
         (2023, ["iPhone 15", "iPhone 15 Plus", "iPhone 15 Pro", "iPhone 15 Pro Max"]),
         (2024, ["iPhone 16", "iPhone 16 Plus", "iPhone 16 Pro", "iPhone 16 Pro Max", "iPad mini (A17 Pro)", "iPad Air 11-inch (M2)", "iPad Air 13-inch (M2)", "iPad Pro 11-inch (M4)", "iPad Pro 13-inch (M4)"]),
         (2025, ["iPhone 16e", "iPhone 17", "iPhone 17 Pro", "iPhone 17 Pro Max", "iPhone Air", "iPad (A16)", "iPad Air 11-inch (M3)", "iPad Air 13-inch (M3)"]),
-        (2026, ["iPhone 17e"]),
+        (2026, ["iPhone 17e", "iPhone 18 Pro", "iPhone 18 Pro Max", "iPhone Duo"]),
     ]
 
     static func groupDeviceModels(_ names: [String]) -> [DeviceGroup] {
