@@ -54,3 +54,45 @@ struct ElectionLiveVersionCount: Codable, Identifiable, Equatable {
     let appVersion: String
     let starters: Int
 }
+
+/// The same usage as a time series for charts, in buckets of a few minutes
+/// (`GET v4/election-live-analytics/series`). Same events and undercount as
+/// `ElectionLiveAnalyticsResponse`.
+struct ElectionLiveSeriesResponse: Codable, Equatable {
+    /// Window start, rounded down to a bucket boundary (ISO 8601 UTC).
+    let since: String
+    let until: String
+    let bucketMinutes: Int
+    let uniqueStarters: Int
+    let totalStarts: Int
+    let uniqueStoppers: Int
+    /// Every bucket of the window in order, empty ones included.
+    let buckets: [ElectionLiveSeriesBucket]
+    let generatedAt: String
+}
+
+struct ElectionLiveSeriesBucket: Codable, Identifiable, Equatable {
+    var id: String { start }
+    /// Bucket start, ISO 8601 UTC.
+    let start: String
+    /// The same instant as "HH:mm" in Brasília time.
+    let startBrasilia: String
+    let starters: Int
+    let newStarters: Int
+    /// Everyone who started so far in the window.
+    let cumulativeStarters: Int
+    let stoppers: Int
+    /// Installs whose latest banner event is a start at most 8 hours old at the end of
+    /// the bucket. An estimate.
+    let watchingEstimate: Int
+
+    private static let isoFormatter: ISO8601DateFormatter = {
+        let formatter = ISO8601DateFormatter()
+        formatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
+        return formatter
+    }()
+
+    var date: Date? {
+        Self.isoFormatter.date(from: start) ?? ISO8601DateFormatter().date(from: start)
+    }
+}

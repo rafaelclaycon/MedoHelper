@@ -35,6 +35,7 @@ protocol AnalyticsRepositoryProtocol {
 
     // Feature Analytics
     func fetchElectionLiveAnalytics(since: Date) async throws -> ElectionLiveAnalyticsResponse
+    func fetchElectionLiveSeries(since: Date, until: Date, bucketMinutes: Int) async throws -> ElectionLiveSeriesResponse
 
     // Reactions
     func fetchTopReactions() async throws -> [ServerReaction]
@@ -686,6 +687,28 @@ final class AnalyticsRepository: AnalyticsRepositoryProtocol {
             return response
         } catch {
             print("❌ [Election Live Analytics] Failed: \(error)")
+            throw error
+        }
+    }
+
+    /// At most 48 hours between `since` and `until`; `bucketMinutes` is 5, 10, 15, 30 or 60.
+    func fetchElectionLiveSeries(since: Date, until: Date, bucketMinutes: Int) async throws -> ElectionLiveSeriesResponse {
+        let formatter = ISO8601DateFormatter()
+        let query = "since=\(formatter.string(from: since))&until=\(formatter.string(from: until))&bucketMinutes=\(bucketMinutes)"
+        let urlString = serverPath + "v4/election-live-analytics/series/\(Secrets.analyticsPassword)?\(query)"
+        print("🔍 [Election Live Series] Fetching from: \(urlString)")
+
+        guard let url = URL(string: urlString) else {
+            print("❌ [Election Live Series] Invalid URL: \(urlString)")
+            throw AnalyticsError.invalidURL
+        }
+
+        do {
+            let response: ElectionLiveSeriesResponse = try await apiClient.get(from: url)
+            print("✅ [Election Live Series] Success: \(response.buckets.count) buckets, \(response.uniqueStarters) starters")
+            return response
+        } catch {
+            print("❌ [Election Live Series] Failed: \(error)")
             throw error
         }
     }

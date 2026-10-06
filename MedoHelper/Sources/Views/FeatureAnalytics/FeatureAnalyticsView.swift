@@ -34,7 +34,7 @@ struct FeatureAnalyticsView: View {
                     }
                 }
 
-                ElectionLiveSection(state: viewModel.electionLive) {
+                ElectionLiveSection(state: viewModel.electionLive, series: viewModel.electionSeries) {
                     Task { await viewModel.onRetry() }
                 }
             }
