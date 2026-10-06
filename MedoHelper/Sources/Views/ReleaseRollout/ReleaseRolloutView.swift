@@ -534,6 +534,41 @@ struct HourlyAdoptionChart: View {
     }
 }
 
+// MARK: - Last Supported Version Tags
+
+/// Last app version that supports an iOS release we've since dropped, and the probable
+/// reason users are still on it.
+struct LastSupportedVersionTag {
+    let iosVersion: String
+    let reason: String
+
+    private static let byAppVersion: [String: LastSupportedVersionTag] = [
+        "7.7.2": .init(iosVersion: "15", reason: "Aparelhos como iPhone 6s/7/SE (1ª ger.) não passam do iOS 15; não têm como atualizar."),
+        "8.6.4": .init(iosVersion: "16", reason: "iPhone 8/8 Plus/X não passam do iOS 16; não têm como atualizar."),
+        "10.3.2": .init(iosVersion: "17", reason: "Todo aparelho com iOS 17 roda iOS 18; provavelmente só não atualizaram o sistema (ou estão sem atualização automática)."),
+        "13.1": .init(iosVersion: "18", reason: "iPhone XS/XR não recebem o iOS 26; sem como atualizar. Quem pode, provavelmente evita o Liquid Glass.")
+    ]
+
+    static func tag(for appVersion: String) -> LastSupportedVersionTag? {
+        byAppVersion[appVersion]
+    }
+}
+
+struct LastSupportedVersionTagView: View {
+    let tag: LastSupportedVersionTag
+
+    var body: some View {
+        Text("Último p/ iOS \(tag.iosVersion)")
+            .font(.caption2)
+            .fontWeight(.semibold)
+            .foregroundColor(.orange)
+            .padding(.horizontal, 6)
+            .padding(.vertical, 2)
+            .background(Color.orange.opacity(0.15), in: Capsule())
+            .help(tag.reason)
+    }
+}
+
 // MARK: - Version Pie Chart
 
 struct VersionPieChart: View {
@@ -594,6 +629,10 @@ struct VersionPieChart: View {
                         Text(version.appVersion)
                             .font(.body)
                             .foregroundColor(.primary)
+                        
+                        if let tag = LastSupportedVersionTag.tag(for: version.appVersion) {
+                            LastSupportedVersionTagView(tag: tag)
+                        }
                         
                         Spacer()
                         
