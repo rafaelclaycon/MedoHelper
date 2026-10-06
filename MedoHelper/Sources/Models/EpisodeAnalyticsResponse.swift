@@ -9,7 +9,10 @@ import Foundation
 
 struct EpisodeAnalyticsResponse: Codable, Equatable {
     let dailyUniqueUsers: [EpisodeDailyUserCount]
+    /// Installs that played at least one episode.
     let totalUniqueUsers: Int
+    /// Installs with any episode activity (play, view, bookmark). Absent on older servers.
+    let totalViewers: Int?
     let usersWhoPlayed: Int
     let usersWhoBookmarked: Int
     let averagePlaysPerUser: Double

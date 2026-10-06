@@ -445,21 +445,22 @@ struct AnalyticsView: View {
         switch episodeAnalytics {
         case .loading:
             VStack(spacing: 12) {
-                StatCardLoading(title: "Total de Usuários Únicos", icon: "person.2.fill", color: .red)
-                SectionLoadingView(title: "Usuários Únicos - Últimos 30 Dias", icon: "chart.line.uptrend.xyaxis", color: .red)
+                StatCardLoading(title: "Ouvintes Únicos (30 dias)", icon: "person.2.fill", color: .red)
+                SectionLoadingView(title: "Ouvintes Únicos - Últimos 30 Dias", icon: "chart.line.uptrend.xyaxis", color: .red)
                 StatCardLoading(title: "Reproduziram", icon: "play.circle.fill", color: .red)
                 StatCardLoading(title: "Favoritaram", icon: "bookmark.fill", color: .red)
             }
         case .loaded(let response):
-            let playedPct = response.totalUniqueUsers > 0
-                ? Double(response.usersWhoPlayed) / Double(response.totalUniqueUsers) * 100
+            let viewers = response.totalViewers ?? response.totalUniqueUsers
+            let playedPct = viewers > 0
+                ? Double(response.usersWhoPlayed) / Double(viewers) * 100
                 : 0
-            let bookmarkedPct = response.totalUniqueUsers > 0
-                ? Double(response.usersWhoBookmarked) / Double(response.totalUniqueUsers) * 100
+            let bookmarkedPct = viewers > 0
+                ? Double(response.usersWhoBookmarked) / Double(viewers) * 100
                 : 0
             
             VStack(spacing: 12) {
-                StatCard(title: "Total de Usuários Únicos", value: "\(response.totalUniqueUsers)", icon: "person.2.fill", color: .red)
+                StatCard(title: "Ouvintes Únicos (30 dias)", value: "\(response.totalUniqueUsers)", icon: "person.2.fill", color: .red)
                 
                 if !response.dailyUniqueUsers.isEmpty {
                     EpisodeDailyUsersChart(dailyUsers: response.dailyUniqueUsers)
@@ -469,14 +470,14 @@ struct AnalyticsView: View {
                     EpisodeMiniStatCard(
                         title: "Reproduziram",
                         value: "\(response.usersWhoPlayed)",
-                        subtitle: String(format: "%.0f%% do total", playedPct),
+                        subtitle: String(format: "%.0f%% de quem abriu", playedPct),
                         icon: "play.circle.fill",
                         color: .red
                     )
                     EpisodeMiniStatCard(
                         title: "Favoritaram",
                         value: "\(response.usersWhoBookmarked)",
-                        subtitle: String(format: "%.0f%% do total", bookmarkedPct),
+                        subtitle: String(format: "%.0f%% de quem abriu", bookmarkedPct),
                         icon: "bookmark.fill",
                         color: .red
                     )
@@ -491,7 +492,7 @@ struct AnalyticsView: View {
             }
         case .error(let message):
             VStack(spacing: 12) {
-                StatCardError(title: "Total de Usuários Únicos", icon: "person.2.fill", color: .red, message: message) {
+                StatCardError(title: "Ouvintes Únicos (30 dias)", icon: "person.2.fill", color: .red, message: message) {
                     fetchEpisodeAnalytics()
                 }
             }
@@ -1662,7 +1663,7 @@ struct EpisodeDailyUsersChart: View {
                 Image(systemName: "chart.line.uptrend.xyaxis")
                     .foregroundColor(.red)
                     .font(.title2)
-                Text("Usuários Únicos - Últimos 30 Dias")
+                Text("Ouvintes Únicos - Últimos 30 Dias")
                     .font(.headline)
                 Spacer()
                 
