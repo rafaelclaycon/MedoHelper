@@ -540,10 +540,10 @@ private struct ElectionLiveCaveats: View {
             Label("Como ler estes números", systemImage: "info.circle")
                 .font(.subheadline.bold())
             Group {
-                Text("• Só entram inícios e paradas feitos pelo banner \"Acompanhar ao Vivo\". A tela de resultados (13.1) não envia eventos, então os números ficam abaixo do real.")
+                Text("• Entram os inícios e as paradas feitos pelo banner \"Acompanhar ao Vivo\" e, a partir da versão seguinte à 13.2, pela tela de resultados. Nas versões 13.1 e 13.2, a tela de resultados não envia eventos, então o 1º turno (04/10) ficou abaixo do real.")
                 Text("• Um início só é contado se a Atividade ao Vivo começou de fato. Quem tem Atividades ao Vivo desligadas ou teve erro não aparece.")
                 Text("• Pessoas são contadas por instalação: iniciar e parar várias vezes conta uma vez só.")
-                Text("• \"Acompanhando agora\" considera quem teve como último evento um início nas últimas 8h. Não enxerga atividades encerradas pelo sistema ou pela tela de resultados. A linha \"Acompanhando\" dos gráficos usa a mesma regra a cada intervalo.")
+                Text("• \"Acompanhando agora\" considera quem teve como último evento um início nas últimas 8h. Não enxerga atividades encerradas pelo sistema ou pelo push de fim da apuração: depois do resultado final, a estimativa fica acima do real. A linha \"Acompanhando\" dos gráficos usa a mesma regra a cada intervalo.")
                 Text("• Os cartões contam do início do período até agora. Em \"04/10\" e \"25/10\", os gráficos vão das 17h às 3h do dia seguinte, no horário de Brasília.")
             }
             .font(.caption)
