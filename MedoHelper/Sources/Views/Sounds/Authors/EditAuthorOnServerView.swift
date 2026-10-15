@@ -16,6 +16,8 @@ struct EditAuthorOnServerView: View {
     @State private var description: String = ""
     @State private var photoURL: String = ""
     @State private var externalLinks: [ExternalLink] = []
+    @State private var isFeatured = false
+    @State private var featuredRank = 1
 
     @State private var showNewExternalLinkSheet = false
     @State private var selectedExternalLink: ExternalLink? = nil
@@ -73,6 +75,8 @@ struct EditAuthorOnServerView: View {
             TextField("Descrição do Autor", text: $description)
             
             TextField("URL para Foto", text: $photoURL)
+
+            featuredSection
 
             HStack {
                 Text("Links Externos:")
@@ -171,7 +175,25 @@ struct EditAuthorOnServerView: View {
             description = author.description ?? ""
             photoURL = author.photo ?? ""
             externalLinks = decode(externalLinks: author.externalLinks)
+            isFeatured = author.featuredRank != nil
+            featuredRank = author.featuredRank ?? 1
         }
+    }
+
+    /// The app's row of favorite profile photos, shown above the full list when picking
+    /// a photo in Você. Lower positions come first.
+    private var featuredSection: some View {
+        HStack(spacing: 16) {
+            Toggle("Destaque na escolha de foto do perfil", isOn: $isFeatured)
+
+            if isFeatured {
+                Stepper("Posição: \(featuredRank)", value: $featuredRank, in: 1...99)
+                    .fixedSize()
+            }
+
+            Spacer()
+        }
+        .help("Autores com destaque aparecem numa fileira antes de todos os outros, na ordem da posição. Precisam ter foto.")
     }
     
     private func createAuthor() {
@@ -190,6 +212,7 @@ struct EditAuthorOnServerView: View {
             if !externalLinks.isEmpty {
                 author.externalLinks = externalLinks.asJSONString()
             }
+            author.featuredRank = isFeatured ? featuredRank : nil
             dump(author)
             do {
                 let response = try await APIClient().post(data: author, to: url)
@@ -221,7 +244,10 @@ struct EditAuthorOnServerView: View {
                 name: author.name,
                 photo: photoURL.isEmpty ? nil : photoURL,
                 description: description,
-                externalLinks: externalLinks.asJSONString()
+                externalLinks: externalLinks.asJSONString(),
+                // Always a number on update: 0 takes the author out of the row, while a
+                // missing value leaves the server's as it was.
+                featuredRank: isFeatured ? featuredRank : 0
             )
 
             do {

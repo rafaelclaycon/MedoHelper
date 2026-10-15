@@ -46,6 +46,12 @@ struct ServerAuthorsCRUDView: View {
         VStack {
             Table(searchResults, selection: $selectedItem) {
                 TableColumn("Nome", value: \.name)
+                TableColumn("Destaque") { author in
+                    if let rank = author.featuredRank {
+                        Text("\(rank)º")
+                    }
+                }
+                .width(70)
             }.contextMenu(forSelectionType: Author.ID.self) { items in
                 Section {
                     Button("Editar Autor") {
