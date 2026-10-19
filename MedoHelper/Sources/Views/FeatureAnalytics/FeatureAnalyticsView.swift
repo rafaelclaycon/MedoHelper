@@ -7,8 +7,8 @@
 
 import SwiftUI
 
-/// Statistics for specific app features, one section per feature. Starts with the
-/// election Live Activity ("Apuração ao Vivo").
+/// Statistics for specific app features, one section per feature: the election Live
+/// Activity ("Apuração ao Vivo") and the games.
 struct FeatureAnalyticsView: View {
 
     @State private var viewModel = ViewModel()
@@ -37,6 +37,12 @@ struct FeatureAnalyticsView: View {
                 ElectionLiveSection(state: viewModel.electionLive, series: viewModel.electionSeries) {
                     Task { await viewModel.onRetry() }
                 }
+
+                Divider()
+
+                GamesSection(state: viewModel.games, window: $viewModel.gamesWindow) {
+                    Task { await viewModel.onRetryGames() }
+                }
             }
             .padding()
         }
@@ -45,6 +51,7 @@ struct FeatureAnalyticsView: View {
             ToolbarItem(placement: .primaryAction) {
                 Button {
                     Task { await viewModel.onRetry() }
+                    Task { await viewModel.onRetryGames() }
                 } label: {
                     Label("Recarregar", systemImage: "arrow.clockwise")
                 }
@@ -53,6 +60,9 @@ struct FeatureAnalyticsView: View {
         }
         .task(id: viewModel.period) {
             await viewModel.refreshPeriodically()
+        }
+        .task(id: viewModel.gamesWindow) {
+            await viewModel.refreshGamesPeriodically()
         }
     }
 }

@@ -68,6 +68,17 @@ extension FeatureAnalyticsView {
         }
     }
 
+    /// The games have their own window: the election periods are about one night.
+    enum GamesWindow: Int, CaseIterable, Identifiable {
+        case last7Days = 7
+        case last30Days = 30
+        case last90Days = 90
+
+        var id: Int { rawValue }
+
+        var label: String { "\(rawValue) dias" }
+    }
+
     @MainActor
     @Observable
     final class ViewModel {
@@ -79,10 +90,14 @@ extension FeatureAnalyticsView {
         var electionSeries: ElectionLiveSeriesResponse?
         var lastUpdated: Date?
 
+        var gamesWindow: GamesWindow = .last30Days
+        var games: LoadingState<GamesAnalyticsResponse> = .loading
+
         /// Period of the numbers on screen, so coming back to the tab keeps them while
         /// refreshing, and only a new period shows the spinner.
         private var loadedPeriod: Period?
         private var seriesPeriod: Period?
+        private var loadedGamesWindow: GamesWindow?
 
         static let seriesBucketMinutes = 10
 
@@ -113,6 +128,40 @@ extension FeatureAnalyticsView {
         func onRetry() async {
             electionLive = .loading
             await load()
+        }
+
+        /// Reloads the games until cancelled. Driven by `.task(id: gamesWindow)`, apart
+        /// from the election period.
+        func refreshGamesPeriodically() async {
+            if loadedGamesWindow != gamesWindow {
+                games = .loading
+            }
+            while !Task.isCancelled {
+                await loadGames()
+                try? await Task.sleep(for: Self.refreshInterval)
+            }
+        }
+
+        func onRetryGames() async {
+            games = .loading
+            await loadGames()
+        }
+
+        private func loadGames() async {
+            let window = gamesWindow
+            do {
+                let response = try await repository.fetchGamesAnalytics(days: window.rawValue)
+                guard !Task.isCancelled else { return }
+                games = .loaded(response)
+                loadedGamesWindow = window
+            } catch {
+                guard !Task.isCancelled else { return }
+                print(error)
+                // Keep the last good numbers on screen if a periodic refresh fails.
+                if case .loaded = games {} else {
+                    games = .error(error.localizedDescription)
+                }
+            }
         }
 
         private func load() async {

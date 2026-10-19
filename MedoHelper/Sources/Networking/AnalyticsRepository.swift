@@ -36,6 +36,7 @@ protocol AnalyticsRepositoryProtocol {
     // Feature Analytics
     func fetchElectionLiveAnalytics(since: Date) async throws -> ElectionLiveAnalyticsResponse
     func fetchElectionLiveSeries(since: Date, until: Date, bucketMinutes: Int) async throws -> ElectionLiveSeriesResponse
+    func fetchGamesAnalytics(days: Int) async throws -> GamesAnalyticsResponse
 
     // Reactions
     func fetchTopReactions() async throws -> [ServerReaction]
@@ -709,6 +710,26 @@ final class AnalyticsRepository: AnalyticsRepositoryProtocol {
             return response
         } catch {
             print("❌ [Election Live Series] Failed: \(error)")
+            throw error
+        }
+    }
+
+    /// `days` is the window in UTC days, today included: 1 to 365.
+    func fetchGamesAnalytics(days: Int) async throws -> GamesAnalyticsResponse {
+        let urlString = serverPath + "v4/games-analytics/\(Secrets.analyticsPassword)?days=\(days)"
+        print("🔍 [Games Analytics] Fetching from: \(urlString)")
+
+        guard let url = URL(string: urlString) else {
+            print("❌ [Games Analytics] Invalid URL: \(urlString)")
+            throw AnalyticsError.invalidURL
+        }
+
+        do {
+            let response: GamesAnalyticsResponse = try await apiClient.get(from: url)
+            print("✅ [Games Analytics] Success: \(response.players) players, \(response.starts) starts")
+            return response
+        } catch {
+            print("❌ [Games Analytics] Failed: \(error)")
             throw error
         }
     }
