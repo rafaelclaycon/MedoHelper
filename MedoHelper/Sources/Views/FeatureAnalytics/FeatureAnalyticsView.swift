@@ -8,10 +8,11 @@
 import SwiftUI
 
 /// Statistics for specific app features, one section per feature: the election Live
-/// Activity ("Apuração ao Vivo") and the games.
+/// Activity ("Apuração ao Vivo"), the games, episodes, Share Clip and chapters.
 struct FeatureAnalyticsView: View {
 
     @State private var viewModel = ViewModel()
+    @State private var containerWidth: CGFloat = 0
 
     var body: some View {
         ScrollView {
@@ -34,14 +35,23 @@ struct FeatureAnalyticsView: View {
                     }
                 }
 
-                ElectionLiveSection(state: viewModel.electionLive, series: viewModel.electionSeries) {
-                    Task { await viewModel.onRetry() }
+                HStack(alignment: .top, spacing: Feature.columnSpacing) {
+                    ForEach(Feature.columns(count: Feature.columnCount(for: containerWidth)), id: \.first) { column in
+                        VStack(alignment: .leading, spacing: 20) {
+                            ForEach(column) { feature in
+                                if feature != column.first {
+                                    Divider()
+                                }
+                                section(for: feature)
+                            }
+                        }
+                        .frame(maxWidth: .infinity, alignment: .topLeading)
+                    }
                 }
-
-                Divider()
-
-                GamesSection(state: viewModel.games, window: $viewModel.gamesWindow) {
-                    Task { await viewModel.onRetryGames() }
+                .onGeometryChange(for: CGFloat.self) { proxy in
+                    proxy.size.width
+                } action: { width in
+                    containerWidth = width
                 }
             }
             .padding()
@@ -52,6 +62,7 @@ struct FeatureAnalyticsView: View {
                 Button {
                     Task { await viewModel.onRetry() }
                     Task { await viewModel.onRetryGames() }
+                    Task { await viewModel.onRetryEpisodeFeatures() }
                 } label: {
                     Label("Recarregar", systemImage: "arrow.clockwise")
                 }
@@ -63,6 +74,35 @@ struct FeatureAnalyticsView: View {
         }
         .task(id: viewModel.gamesWindow) {
             await viewModel.refreshGamesPeriodically()
+        }
+        .task {
+            await viewModel.refreshEpisodeFeaturesPeriodically()
+        }
+    }
+
+    @ViewBuilder
+    private func section(for feature: Feature) -> some View {
+        switch feature {
+        case .election:
+            ElectionLiveSection(state: viewModel.electionLive, series: viewModel.electionSeries) {
+                Task { await viewModel.onRetry() }
+            }
+        case .games:
+            GamesSection(state: viewModel.games, window: $viewModel.gamesWindow) {
+                Task { await viewModel.onRetryGames() }
+            }
+        case .episodes:
+            EpisodesSection(state: viewModel.episodes, transcripts: viewModel.transcripts) {
+                Task { await viewModel.onRetryEpisodeFeatures() }
+            }
+        case .shareClip:
+            ShareClipSection(state: viewModel.shareClip) {
+                Task { await viewModel.onRetryEpisodeFeatures() }
+            }
+        case .chapters:
+            ChaptersSection(state: viewModel.chapters) {
+                Task { await viewModel.onRetryEpisodeFeatures() }
+            }
         }
     }
 }

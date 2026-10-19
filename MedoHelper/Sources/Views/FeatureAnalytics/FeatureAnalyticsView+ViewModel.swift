@@ -68,6 +68,46 @@ extension FeatureAnalyticsView {
         }
     }
 
+    /// One section of the tab.
+    enum Feature: CaseIterable, Identifiable {
+        case election
+        case games
+        case episodes
+        case shareClip
+        case chapters
+
+        var id: Self { self }
+
+        /// Room each column needs for the sections' 380pt charts side by side with padding.
+        static let minColumnWidth: CGFloat = 440
+        static let columnSpacing: CGFloat = 24
+
+        /// Up to three columns, as many as fit in `width`.
+        static func columnCount(for width: CGFloat) -> Int {
+            guard width > 0 else { return 1 }
+            for columns in stride(from: 3, to: 1, by: -1) {
+                let columnWidth = (width - columnSpacing * CGFloat(columns - 1)) / CGFloat(columns)
+                if columnWidth >= minColumnWidth {
+                    return columns
+                }
+            }
+            return 1
+        }
+
+        /// The sections in each column. Games and Episodes are the tallest, so they go in
+        /// different columns, and the shorter ones fill in under the others.
+        static func columns(count: Int) -> [[Feature]] {
+            switch count {
+            case 3...:
+                return [[.election, .shareClip], [.games], [.episodes, .chapters]]
+            case 2:
+                return [[.election, .games], [.episodes, .shareClip, .chapters]]
+            default:
+                return [allCases]
+            }
+        }
+    }
+
     /// The games have their own window: the election periods are about one night.
     enum GamesWindow: Int, CaseIterable, Identifiable {
         case last7Days = 7
@@ -92,6 +132,11 @@ extension FeatureAnalyticsView {
 
         var gamesWindow: GamesWindow = .last30Days
         var games: LoadingState<GamesAnalyticsResponse> = .loading
+
+        var episodes: LoadingState<EpisodeAnalyticsResponse> = .loading
+        var transcripts: LoadingState<[PodcastEpisode]> = .loading
+        var shareClip: LoadingState<ShareClipAnalyticsResponse> = .loading
+        var chapters: LoadingState<ChaptersUsageAnalyticsResponse> = .loading
 
         /// Period of the numbers on screen, so coming back to the tab keeps them while
         /// refreshing, and only a new period shows the spinner.
@@ -145,6 +190,65 @@ extension FeatureAnalyticsView {
         func onRetryGames() async {
             games = .loading
             await loadGames()
+        }
+
+        /// Reloads Episodes, Share Clip and Chapters until cancelled. They always cover the
+        /// last 30 days, so neither picker drives them.
+        func refreshEpisodeFeaturesPeriodically() async {
+            while !Task.isCancelled {
+                await loadEpisodeFeatures()
+                try? await Task.sleep(for: Self.refreshInterval)
+            }
+        }
+
+        func onRetryEpisodeFeatures() async {
+            episodes = .loading
+            transcripts = .loading
+            shareClip = .loading
+            chapters = .loading
+            await loadEpisodeFeatures()
+        }
+
+        private func loadEpisodeFeatures() async {
+            async let episodes: Void = loadEpisodes()
+            async let transcripts: Void = loadTranscripts()
+            async let shareClip: Void = loadShareClip()
+            async let chapters: Void = loadChapters()
+            _ = await (episodes, transcripts, shareClip, chapters)
+        }
+
+        private func loadEpisodes() async {
+            await load(\.episodes) { try await repository.fetchEpisodeAnalytics() }
+        }
+
+        private func loadTranscripts() async {
+            await load(\.transcripts) { try await repository.fetchTranscriptStatuses() }
+        }
+
+        private func loadShareClip() async {
+            await load(\.shareClip) { try await repository.fetchShareClipAnalytics() }
+        }
+
+        private func loadChapters() async {
+            await load(\.chapters) { try await repository.fetchChaptersUsageAnalytics() }
+        }
+
+        private func load<T: Equatable>(
+            _ state: ReferenceWritableKeyPath<ViewModel, LoadingState<T>>,
+            fetch: () async throws -> T
+        ) async {
+            do {
+                let value = try await fetch()
+                guard !Task.isCancelled else { return }
+                self[keyPath: state] = .loaded(value)
+            } catch {
+                guard !Task.isCancelled else { return }
+                print(error)
+                // Keep the last good numbers on screen if a periodic refresh fails.
+                if case .loaded = self[keyPath: state] {} else {
+                    self[keyPath: state] = .error(error.localizedDescription)
+                }
+            }
         }
 
         private func loadGames() async {

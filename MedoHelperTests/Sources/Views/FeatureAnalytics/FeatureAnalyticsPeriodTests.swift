@@ -51,4 +51,23 @@ final class FeatureAnalyticsPeriodTests: XCTestCase {
         XCTAssertEqual(bucket("2026-10-04T20:10:00Z").date, iso.date(from: "2026-10-04T20:10:00Z"))
         XCTAssertNil(bucket("ontem").date)
     }
+
+    // MARK: - Columns
+
+    func testEverySectionShowsOnceInAnyLayout() {
+        typealias Feature = FeatureAnalyticsView.Feature
+        for count in 1...3 {
+            let columns = Feature.columns(count: count)
+            XCTAssertEqual(columns.count, count)
+            XCTAssertEqual(columns.flatMap { $0 }.sorted { "\($0)" < "\($1)" }, Feature.allCases.sorted { "\($0)" < "\($1)" })
+        }
+    }
+
+    func testColumnCountFollowsTheWidth() {
+        typealias Feature = FeatureAnalyticsView.Feature
+        XCTAssertEqual(Feature.columnCount(for: 0), 1)
+        XCTAssertEqual(Feature.columnCount(for: 800), 1)
+        XCTAssertEqual(Feature.columnCount(for: 1000), 2)
+        XCTAssertEqual(Feature.columnCount(for: 1400), 3)
+    }
 }
