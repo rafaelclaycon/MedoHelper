@@ -6,7 +6,11 @@
 //
 
 import SwiftUI
+#if os(iOS)
+import UIKit
+#elseif os(macOS)
 import AppKit
+#endif
 
 extension DynamicBannerView {
 
@@ -127,11 +131,16 @@ extension DynamicBannerView {
             return problems
         }
 
-        /// SF Symbols come and go between OS versions, so a name missing on this Mac
-        /// might still exist on iOS. Worth a look, not a block.
+        /// SF Symbols come and go between OS versions, so a name missing on this device
+        /// might still exist on the users' iOS. Worth a look, not a block.
         var symbolIsUnknownHere: Bool {
             let symbol = draft.symbol.trimmed
-            return !symbol.isEmpty && NSImage(systemSymbolName: symbol, accessibilityDescription: nil) == nil
+            guard !symbol.isEmpty else { return false }
+            #if os(iOS)
+            return UIImage(systemName: symbol) == nil
+            #else
+            return NSImage(systemSymbolName: symbol, accessibilityDescription: nil) == nil
+            #endif
         }
 
         var canPublish: Bool {

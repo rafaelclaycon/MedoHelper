@@ -7,7 +7,9 @@
 //  the file for cutting — preferably in Audacity when installed.
 //
 
+#if os(macOS)
 import AppKit
+#endif
 import Foundation
 
 @MainActor
@@ -51,7 +53,9 @@ final class EpisodeAudioDownloader: ObservableObject {
         do {
             state = .downloading(episodeId: episode.id)
             let localFile = try await ensureLocalCopy(of: episode)
+            #if os(macOS)
             NSWorkspace.shared.activateFileViewerSelecting([localFile])
+            #endif
             state = .idle
         } catch {
             state = .failed(episodeId: episode.id, message: error.localizedDescription)
@@ -103,7 +107,9 @@ final class EpisodeAudioDownloader: ObservableObject {
         return destination
     }
 
+    /// Audacity and Finder only exist on the Mac; on iOS the buttons are hidden.
     private func open(file: URL) {
+        #if os(macOS)
         if let audacityURL = resolveAudacityURL() {
             let configuration = NSWorkspace.OpenConfiguration()
             configuration.activates = true
@@ -123,8 +129,10 @@ final class EpisodeAudioDownloader: ObservableObject {
             print("ℹ️ [Episode Audio] Audacity not installed; opening in default app")
             NSWorkspace.shared.open(file)
         }
+        #endif
     }
 
+    #if os(macOS)
     private func resolveAudacityURL() -> URL? {
         for bundleID in audacityBundleIDs {
             if let url = NSWorkspace.shared.urlForApplication(withBundleIdentifier: bundleID) {
@@ -135,6 +143,7 @@ final class EpisodeAudioDownloader: ObservableObject {
         let fallback = URL(fileURLWithPath: "/Applications/Audacity.app")
         return FileManager.default.fileExists(atPath: fallback.path) ? fallback : nil
     }
+    #endif
 }
 
 // MARK: - Errors

@@ -2498,7 +2498,7 @@ struct IOSVersionHistorySheet: View {
                         }
                         .padding(.horizontal)
                         .padding(.vertical, 8)
-                        .background(RoundedRectangle(cornerRadius: 8).fill(Color(nsColor: .controlBackgroundColor)))
+                        .background(RoundedRectangle(cornerRadius: 8).fill(Color.controlBackground))
                         .padding(.horizontal)
                     }
                 }
@@ -3743,3 +3743,14 @@ struct StatCardError: View {
     }
 }
 
+private extension Color {
+
+    /// The Mac's control background, and its closest match on iOS.
+    static var controlBackground: Color {
+        #if os(macOS)
+        Color(nsColor: .controlBackgroundColor)
+        #else
+        Color(uiColor: .secondarySystemBackground)
+        #endif
+    }
+}

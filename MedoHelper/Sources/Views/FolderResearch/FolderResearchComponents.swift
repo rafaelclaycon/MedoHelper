@@ -195,9 +195,13 @@ struct FolderResearchUserRow: View {
     }
 
     private func copyToClipboard(_ value: String) {
+        #if os(iOS)
+        UIPasteboard.general.string = value
+        #elseif os(macOS)
         let pasteboard = NSPasteboard.general
         pasteboard.clearContents()
         pasteboard.setString(value, forType: .string)
+        #endif
     }
 }
 

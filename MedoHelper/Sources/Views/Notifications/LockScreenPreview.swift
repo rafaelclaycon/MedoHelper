@@ -151,7 +151,7 @@ private extension View {
 
     @ViewBuilder
     func glassBackground(in shape: some Shape) -> some View {
-        if #available(macOS 26, *) {
+        if #available(macOS 26, iOS 26, *) {
             glassEffect(.regular, in: shape)
         } else {
             background(.ultraThinMaterial, in: shape)

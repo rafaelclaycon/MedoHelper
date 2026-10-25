@@ -51,7 +51,9 @@ struct NewSoundRequestSheet: View {
                 )
 
                 Toggle("Incluir horário", isOn: $includeTime)
+                    #if os(macOS)
                     .toggleStyle(.checkbox)
+                    #endif
             }
 
             HStack {

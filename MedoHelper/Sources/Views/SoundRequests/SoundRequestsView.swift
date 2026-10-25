@@ -12,6 +12,55 @@ struct SoundRequestsView: View {
     @StateObject private var viewModel = ViewModel()
 
     var body: some View {
+        panes
+            .navigationTitle("Pedidos")
+            .toolbar {
+                ToolbarItemGroup(placement: .primaryAction) {
+                    Button {
+                        viewModel.onCreateRequestSelected()
+                    } label: {
+                        Label("Novo Pedido", systemImage: "plus")
+                    }
+                    .help("Novo Pedido")
+
+                    Button {
+                        Task { await viewModel.onReloadSelected() }
+                    } label: {
+                        Label("Recarregar", systemImage: "arrow.clockwise")
+                    }
+                    .help("Recarregar")
+                }
+            }
+            .sheet(isPresented: $viewModel.showingNewRequestSheet) {
+                NewSoundRequestSheet(
+                    onConfirm: { title, requester, emailReceivedAt in
+                        Task {
+                            await viewModel.onConfirmCreate(
+                                title: title,
+                                requesterName: requester,
+                                emailReceivedAt: emailReceivedAt
+                            )
+                        }
+                    },
+                    onCancel: {
+                        viewModel.showingNewRequestSheet = false
+                    }
+                )
+            }
+            .alert(viewModel.alertTitle, isPresented: $viewModel.showAlert) {
+                Button("OK", role: .cancel) {}
+            } message: {
+                Text(viewModel.alertMessage)
+            }
+            .task {
+                await viewModel.onViewAppear()
+            }
+    }
+
+    /// A draggable split on the Mac; iOS has no HSplitView, so a plain side-by-side there.
+    @ViewBuilder
+    private var panes: some View {
+        #if os(macOS)
         HSplitView {
             leftPane
                 .frame(minWidth: 360, idealWidth: 440)
@@ -19,48 +68,17 @@ struct SoundRequestsView: View {
             TranscriptSearchPanel()
                 .frame(minWidth: 360)
         }
-        .navigationTitle("Pedidos")
-        .toolbar {
-            ToolbarItemGroup(placement: .primaryAction) {
-                Button {
-                    viewModel.onCreateRequestSelected()
-                } label: {
-                    Label("Novo Pedido", systemImage: "plus")
-                }
-                .help("Novo Pedido")
+        #else
+        HStack(spacing: 0) {
+            leftPane
+                .frame(minWidth: 360, idealWidth: 440)
 
-                Button {
-                    Task { await viewModel.onReloadSelected() }
-                } label: {
-                    Label("Recarregar", systemImage: "arrow.clockwise")
-                }
-                .help("Recarregar")
-            }
+            Divider()
+
+            TranscriptSearchPanel()
+                .frame(minWidth: 360)
         }
-        .sheet(isPresented: $viewModel.showingNewRequestSheet) {
-            NewSoundRequestSheet(
-                onConfirm: { title, requester, emailReceivedAt in
-                    Task {
-                        await viewModel.onConfirmCreate(
-                            title: title,
-                            requesterName: requester,
-                            emailReceivedAt: emailReceivedAt
-                        )
-                    }
-                },
-                onCancel: {
-                    viewModel.showingNewRequestSheet = false
-                }
-            )
-        }
-        .alert(viewModel.alertTitle, isPresented: $viewModel.showAlert) {
-            Button("OK", role: .cancel) {}
-        } message: {
-            Text(viewModel.alertMessage)
-        }
-        .task {
-            await viewModel.onViewAppear()
-        }
+        #endif
     }
 
     // MARK: - Left Pane

@@ -305,6 +305,7 @@ struct TranscriptSearchPanel: View {
                     .font(.caption)
                     .foregroundStyle(.secondary)
             default:
+                #if os(macOS)
                 Button {
                     viewModel.onOpenInAudacityTapped(episode)
                 } label: {
@@ -320,6 +321,7 @@ struct TranscriptSearchPanel: View {
                 }
                 .disabled(episode.audioURL == nil)
                 .help("Mostrar no Finder")
+                #endif
             }
         }
     }

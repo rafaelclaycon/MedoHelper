@@ -82,7 +82,9 @@ struct DonorsView: View {
             .help("Tipo de recorrência")
 
             Toggle("Já doou antes", isOn: $viewModel.draftHasDonatedBefore)
+                #if os(macOS)
                 .toggleStyle(.checkbox)
+                #endif
 
             Button {
                 viewModel.onAddDonor()
@@ -173,9 +175,11 @@ struct DonorsView: View {
                     }
                 }
             }
+            #if os(macOS)
             .onDeleteCommand {
                 viewModel.onRemoveSelected()
             }
+            #endif
 
             footer(count: donors.count)
         }

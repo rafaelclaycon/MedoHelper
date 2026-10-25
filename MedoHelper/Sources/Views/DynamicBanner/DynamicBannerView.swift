@@ -144,7 +144,7 @@ struct DynamicBannerView: View {
                     .font(.body.monospaced())
             }
             if viewModel.symbolIsUnknownHere {
-                Label("Esse símbolo não existe neste Mac. Pode existir no iOS, mas confira no app SF Symbols.", systemImage: "exclamationmark.triangle.fill")
+                Label("Esse símbolo não existe neste aparelho. Pode existir na versão do iOS de quem usa o app, mas confira no app SF Symbols.", systemImage: "exclamationmark.triangle.fill")
                     .font(.caption)
                     .foregroundStyle(.orange)
             }
