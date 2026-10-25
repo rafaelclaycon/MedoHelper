@@ -15,7 +15,7 @@ struct DynamicBannerView: View {
 
     var body: some View {
         ScrollView {
-            HStack(alignment: .top, spacing: 40) {
+            EditorWithPreview(editorMinWidth: 400) {
                 VStack(alignment: .leading, spacing: 28) {
                     statusRow
                     headerSection
@@ -23,9 +23,8 @@ struct DynamicBannerView: View {
                     buttonsSection
                     publishSection
                 }
-                .frame(minWidth: 400, maxWidth: 580)
                 .disabled(viewModel.isLoading || !viewModel.hasLoaded)
-
+            } preview: {
                 VStack(spacing: 16) {
                     Picker("Aparência", selection: $previewColorScheme) {
                         Text("Claro").tag(ColorScheme.light)
@@ -48,8 +47,6 @@ struct DynamicBannerView: View {
                         .frame(width: 300)
                 }
             }
-            .padding(32)
-            .frame(maxWidth: .infinity)
         }
         .overlay {
             if viewModel.isLoading {

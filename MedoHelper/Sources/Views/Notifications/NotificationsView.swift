@@ -13,7 +13,7 @@ struct NotificationsView: View {
 
     var body: some View {
         ScrollView {
-            HStack(alignment: .top, spacing: 40) {
+            EditorWithPreview {
                 VStack(alignment: .leading, spacing: 24) {
                     textSection
                     sendButton
@@ -27,16 +27,13 @@ struct NotificationsView: View {
                         .transition(.move(edge: .bottom).combined(with: .opacity))
                     }
                 }
-                .frame(minWidth: 380, maxWidth: 560)
                 .animation(.smooth, value: viewModel.broadcast?.id)
-
+            } preview: {
                 LockScreenPreview(
                     title: viewModel.title,
                     message: viewModel.body
                 )
             }
-            .padding(32)
-            .frame(maxWidth: .infinity)
         }
         .navigationTitle("Notificações")
         .confirmationDialog(
