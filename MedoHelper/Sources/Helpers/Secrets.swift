@@ -45,4 +45,14 @@ enum Secrets {
         }
         return value
     }()
+
+    /// Optional so the Notifications tab can say what's missing instead of crashing the app.
+    static let sendNotificationPassword: String? = {
+        guard let value = Bundle.main.infoDictionary?["SendNotificationPassword"] as? String,
+              !value.isEmpty,
+              !value.hasPrefix("$(") else {
+            return nil
+        }
+        return value
+    }()
 }

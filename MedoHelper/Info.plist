@@ -10,6 +10,8 @@
 	<string>$(ANALYTICS_PASSWORD)</string>
 	<key>DonorsPassword</key>
 	<string>$(DONORS_PASSWORD)</string>
+	<key>SendNotificationPassword</key>
+	<string>$(SEND_NOTIFICATION_PASSWORD)</string>
 	<key>NSAppTransportSecurity</key>
 	<dict>
 		<key>NSAllowsArbitraryLoads</key>
