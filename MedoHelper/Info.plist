@@ -12,6 +12,8 @@
 	<string>$(DONORS_PASSWORD)</string>
 	<key>SendNotificationPassword</key>
 	<string>$(SEND_NOTIFICATION_PASSWORD)</string>
+	<key>DynamicBannerPassword</key>
+	<string>$(DYNAMIC_BANNER_PASSWORD)</string>
 	<key>NSAppTransportSecurity</key>
 	<dict>
 		<key>NSAllowsArbitraryLoads</key>

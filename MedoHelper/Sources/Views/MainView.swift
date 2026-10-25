@@ -4,7 +4,7 @@ struct MainView: View {
 
     enum AppTab: Int {
 
-        case analytics, featureAnalytics, content, authors, reactions, musicGenres, soundRequests, donors, folderResearch, notifications
+        case analytics, featureAnalytics, content, authors, reactions, musicGenres, soundRequests, donors, folderResearch, notifications, dynamicBanner
     }
 
     @State private var tabSelection: AppTab = .analytics
@@ -47,8 +47,15 @@ struct MainView: View {
                 FolderResearchView()
             }
 
-            Tab("Notificações", systemImage: "bell.badge", value: .notifications) {
-                NotificationsView()
+            // The builder takes ten tabs at most; a section counts as one.
+            TabSection("Comunicação") {
+                Tab("Notificações", systemImage: "bell.badge", value: AppTab.notifications) {
+                    NotificationsView()
+                }
+
+                Tab("Banner Dinâmico", systemImage: "rectangle.portrait.on.rectangle.portrait", value: AppTab.dynamicBanner) {
+                    DynamicBannerView()
+                }
             }
         }
         .tabViewStyle(.sidebarAdaptable)

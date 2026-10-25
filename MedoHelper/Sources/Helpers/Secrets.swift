@@ -55,4 +55,14 @@ enum Secrets {
         }
         return value
     }()
+
+    /// Optional so the Banner tab can say what's missing instead of crashing the app.
+    static let dynamicBannerPassword: String? = {
+        guard let value = Bundle.main.infoDictionary?["DynamicBannerPassword"] as? String,
+              !value.isEmpty,
+              !value.hasPrefix("$(") else {
+            return nil
+        }
+        return value
+    }()
 }

@@ -13,35 +13,14 @@ struct LockScreenPreview: View {
     let title: String
     let message: String
 
-    private static let screenSize = CGSize(width: 300, height: 650)
-    private static let screenCornerRadius: CGFloat = 48
-    private static let bezelWidth: CGFloat = 11
     private static let ptBR = Locale(identifier: "pt_BR")
 
     var body: some View {
-        TimelineView(.everyMinute) { context in
-            screen(at: context.date)
+        PhoneFrame {
+            TimelineView(.everyMinute) { context in
+                screen(at: context.date)
+            }
         }
-        .frame(width: Self.screenSize.width, height: Self.screenSize.height)
-        .clipShape(RoundedRectangle(cornerRadius: Self.screenCornerRadius, style: .continuous))
-        .padding(Self.bezelWidth)
-        .background {
-            RoundedRectangle(cornerRadius: Self.screenCornerRadius + Self.bezelWidth, style: .continuous)
-                .fill(.black)
-        }
-        .overlay {
-            // Titanium band around the bezel.
-            RoundedRectangle(cornerRadius: Self.screenCornerRadius + Self.bezelWidth, style: .continuous)
-                .strokeBorder(
-                    LinearGradient(
-                        colors: [Color(white: 0.78), Color(white: 0.45), Color(white: 0.7)],
-                        startPoint: .topLeading,
-                        endPoint: .bottomTrailing
-                    ),
-                    lineWidth: 3
-                )
-        }
-        .shadow(color: .black.opacity(0.25), radius: 24, y: 12)
         .environment(\.colorScheme, .dark)
         .accessibilityElement(children: .combine)
         .accessibilityLabel("Prévia da notificação na tela bloqueada")
@@ -73,11 +52,6 @@ struct LockScreenPreview: View {
                 bottomControls
             }
             .foregroundStyle(.white)
-
-            Capsule()
-                .fill(.black)
-                .frame(width: 94, height: 28)
-                .padding(.top, 11)
         }
     }
 
