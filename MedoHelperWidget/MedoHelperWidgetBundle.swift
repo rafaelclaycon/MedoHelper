@@ -12,5 +12,6 @@ import SwiftUI
 struct MedoHelperWidgetBundle: WidgetBundle {
     var body: some Widget {
         AnalyticsWidget()
+        TodayWidget()
     }
 }

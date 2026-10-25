@@ -45,6 +45,36 @@ struct WidgetTopReaction: Codable {
     let title: String
 }
 
+/// `v4/widget-summary`: everything the Hoje widget shows, in one request.
+struct WidgetSummaryResponse: Codable {
+
+    /// Today, all of yesterday, and yesterday up to this time of day.
+    struct DayComparison: Codable {
+        let today: Int
+        let yesterday: Int
+        let yesterdayUntilNow: Int
+
+        /// Today against yesterday at the same time, so a day in progress isn't measured
+        /// against a whole one. Nil when yesterday had nobody to compare with.
+        var changePercent: Double? {
+            guard yesterdayUntilNow > 0 else { return nil }
+            return (Double(today) - Double(yesterdayUntilNow)) / Double(yesterdayUntilNow) * 100
+        }
+    }
+
+    struct TopVersion: Codable {
+        let appVersion: String
+        let uniqueUsers: Int
+        let percentage: Double
+    }
+
+    let day: String
+    let activeUsers: DayComparison
+    let chapterUsers: DayComparison
+    let gamePlayers: Int
+    let topVersion: TopVersion?
+}
+
 // MARK: - Data Fetcher
 
 struct WidgetDataFetcher {
@@ -89,6 +119,11 @@ struct WidgetDataFetcher {
             mostSharedSoundCount: soundResult?.shareCount,
             mostOpenedReactionTitle: reactionResult
         )
+    }
+
+    static func fetchSummary() async -> WidgetSummaryResponse? {
+        guard let password = analyticsPassword else { return nil }
+        return await get(from: serverPath + "v4/widget-summary/\(password)")
     }
 
     // MARK: - Individual Fetchers
