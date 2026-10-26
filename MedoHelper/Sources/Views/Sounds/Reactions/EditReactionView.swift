@@ -64,7 +64,7 @@ struct EditReactionView: View {
             }
 
             VStack {
-                Table(viewModel.reactionSounds, selection: $viewModel.selectedItem) {
+                Table(of: ReactionSoundForDisplay.self, selection: $viewModel.selectedItem) {
                     TableColumn("Posição") { reaction in
                         Text("\(reaction.position)")
                     }
@@ -76,6 +76,14 @@ struct EditReactionView: View {
 
                     TableColumn("Data de Adição") { soundForDisplay in
                         return Text(soundForDisplay.dateAdded.formattedDate)
+                    }
+                } rows: {
+                    ForEach(viewModel.reactionSounds) { soundForDisplay in
+                        TableRow(soundForDisplay)
+                            .draggable(soundForDisplay.id)
+                    }
+                    .dropDestination(for: String.self) { index, ids in
+                        viewModel.onSoundsDropped(ids, at: index)
                     }
                 }
 

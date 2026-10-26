@@ -132,6 +132,11 @@ extension EditReactionView.ViewModel {
         moveUp(selectedID: selectedItem)
         didChangeSounds = true
     }
+
+    public func onSoundsDropped(_ ids: [String], at destination: Int) {
+        move(ids: ids, to: destination)
+        didChangeSounds = true
+    }
 }
 
 // MARK: - Other
@@ -280,6 +285,14 @@ extension EditReactionView.ViewModel {
             index < reactionSounds.count - 1
         else { return }
         reactionSounds.swapAt(index, index + 1)
+        updatePositions()
+    }
+
+    /// Ignores dropped strings that aren't rows of this Reaction, like text dragged in from elsewhere.
+    private func move(ids: [String], to destination: Int) {
+        let offsets = IndexSet(ids.compactMap { id in reactionSounds.firstIndex(where: { $0.id == id }) })
+        guard !offsets.isEmpty else { return }
+        reactionSounds.move(fromOffsets: offsets, toOffset: destination)
         updatePositions()
     }
 
