@@ -188,6 +188,13 @@ extension ReactionsCRUDView.ViewModel {
                 fetchedSounds[i].authorName = allAuthors.first(where: { $0.id == fetchedSounds[i].authorId })?.name ?? ""
             }
 
+            // Reactions can hold songs too. They ride along as Sounds so the editor and picker stay as they are.
+            fetchedSounds += try await allSongs().map { song in
+                var sound = Sound(id: song.id, title: song.title, dateAdded: song.dateAdded, duration: song.duration)
+                sound.authorName = "Música"
+                return sound
+            }
+
             fetchedSounds.sort(by: { $0.dateAdded ?? Date() > $1.dateAdded ?? Date() })
 
             self.sounds = fetchedSounds
@@ -310,6 +317,11 @@ extension ReactionsCRUDView.ViewModel {
 
     private func allSounds() async throws -> [Sound] {
         let url = URL(string: serverPath + "v3/all-sounds")!
+        return try await APIClient().getArray(from: url)
+    }
+
+    private func allSongs() async throws -> [Song] {
+        let url = URL(string: serverPath + "v3/all-songs")!
         return try await APIClient().getArray(from: url)
     }
 
